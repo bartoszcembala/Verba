@@ -1,0 +1,28 @@
+@import url("https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&display=swap");
+:root {
+  --container-color: #1f1f1f;
+  --background-color: #1a1a1a;
+  --btn-color: #2b2b2b;
+}
+
+html {
+  font-size: 62.5%;
+  color: white;
+}
+
+body {
+  background-color: var(--background-color);
+  font-size: 2rem;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  font-family: "Outfit", sans-serif;
+}
+
+.container {
+  height: 100vh;
+}
