@@ -1,0 +1,293 @@
+.btnContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  justify-content: center;
+  align-items: center;
+  height: 30rem;
+}
+
+.lessonBtn {
+  width: 40rem;
+  height: 6rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.link {
+  text-decoration: none;
+  color: #fff;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  height: 100vh;
+  background-color: var(--background-color);
+}
+
+.containerAcc {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.insideContainerAcc {
+  align-self: center;
+  justify-self: center;
+  max-width: 80rem;
+  width: 80rem;
+  min-height: 40rem;
+  grid-column: 1 / -1;
+  border-radius: 4rem;
+  background-color: var(--container-color);
+  padding: 2rem 3rem;
+
+  transition: all 0.2s ease-in-out;
+}
+
+.insideContainerAcc h1 {
+  text-align: center;
+}
+
+.divContainer {
+  display: grid;
+  gap: 4rem;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 3fr 1fr;
+}
+
+.accDiv {
+  border-radius: 4rem;
+  background-color: var(--container-color);
+  padding: 1.6rem 2.8rem;
+}
+
+.insideContainer {
+  align-self: center;
+  justify-self: center;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  max-width: 90rem;
+  width: 90rem;
+  min-height: 60rem;
+  transform: translate(-14%, -18%);
+
+  border-radius: 6rem;
+  background-color: var(--container-color);
+
+  transition: all 0.2s ease-in-out;
+}
+
+.correct {
+  background-color: #323a34;
+  transition: all 0.2s ease-in-out;
+}
+
+.wrong {
+  background-color: #3a3232;
+  transition: all 0.2s ease-in-out;
+}
+
+.answersContainer {
+  display: flex;
+  gap: 1rem;
+  margin-top: 5rem;
+  margin-bottom: 2rem;
+}
+
+.inputContainer {
+  height: 5rem;
+  margin-top: 5rem;
+  margin-bottom: 2rem;
+}
+
+.input {
+  border: none;
+  background-color: var(--btn-color);
+  color: #fff;
+  width: 30rem;
+  border-radius: 2rem;
+  padding: 1rem;
+  height: 100%;
+  font-size: 2rem;
+}
+
+.toggleBtn {
+  margin-right: 2rem;
+  height: 100%;
+}
+
+.checkBtn {
+  height: 100%;
+  margin-left: 2rem;
+}
+
+.answer {
+  background-color: var(--btn-color);
+  border-radius: 10px;
+  padding: 1rem;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn {
+  background-color: var(--btn-color);
+  border-radius: 42px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #fff;
+  font-size: 1.5rem;
+  padding: 1rem 2rem;
+  transition: all 0.15s ease-in-out;
+}
+.btn:hover {
+  background-color: #373737;
+}
+
+.verbs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.verbsContainer {
+  position: relative;
+  height: 100vh;
+  overflow-y: scroll;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+  padding: 2rem 5rem 12rem 5rem;
+}
+
+.verbsContainer::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.load {
+  width: 100%;
+  background-color: aqua;
+}
+
+.translation {
+  padding-top: 1rem;
+}
+
+.pieChart {
+  position: fixed;
+  top: 5%;
+  right: -25%;
+  z-index: 1000;
+  width: 20rem;
+  height: 20rem;
+}
+
+.accountBtn {
+  text-decoration: none;
+  padding: 1.4rem 2.4rem;
+  font-size: 1.7rem;
+}
+
+.navigation {
+  padding: 2.6rem 5rem 2.6rem 5rem;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 3rem;
+
+  border-bottom: #121212 3px solid;
+}
+
+.exercisesTypes {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  align-items: center;
+
+  transform: translateY(650%);
+}
+
+.verbsBtns {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+}
+
+.lettersContainer {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.letterBtn {
+  border-radius: 0.5rem;
+  padding: 1rem 1.2rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.form input,
+textarea {
+  margin-bottom: 2rem;
+  background-color: var(--btn-color);
+  border: none;
+  max-width: 50rem;
+  height: 3rem;
+  color: #fff;
+  font-size: 2rem;
+  border-radius: 0.5rem;
+}
+
+.data {
+  min-height: 10rem;
+}
+
+.navBtn {
+  border-radius: 1rem;
+  padding: 1.3rem 2.6rem;
+  margin-right: 1rem;
+  text-decoration: none;
+  font-size: 2rem;
+}
+
+.dashboard {
+  position: fixed;
+  bottom: 5%;
+  right: 5%;
+}
+
+.formSubmit {
+  cursor: pointer;
+}
+
+.p {
+  margin-top: 20px;
+}
+
+.div {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  padding: 20px;
+  height: 100%;
+  max-height: 100vh;
+}

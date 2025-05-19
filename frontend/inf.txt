@@ -1,0 +1,7 @@
+1. Database ✔
+2. Admin dashboard
+3. Graphs ✔
+4. Authorization ✔
+5. Mobile app
+6. Typy zadań
+7. Navigation ✔
