@@ -8,9 +8,22 @@ import {
   calculatePercentContext,
 } from "../lib/calculatePercent";
 import DATA from "../data/verbs";
+import { SettingsContext } from "../lib/contexts";
+import { useModules, useProgress } from "../lib/queries";
 
-function Home({ modules, logged, mode, progress }) {
+function Home() {
   const { account } = useContext(AccountCtx);
+  const { mode, authorized } = useContext(SettingsContext);
+  const { modules, isLoadingModules } = useModules();
+  const { progress, isLoadingProgress } = useProgress();
+
+  if (isLoadingModules || isLoadingProgress) {
+    return (
+      <div className="flex items-center justify-center">
+        <div className="w-48 h-48 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   function percentWEmoji(val1, val2) {
     const percent = calculatePercent(val1, val2);
@@ -46,11 +59,12 @@ function Home({ modules, logged, mode, progress }) {
   }
 
   return (
-    <div>
-      <div className="btnContainer">
+    <div className="flex items-center justify-center ">
+      <div className="flex flex-col items-center justify-center w-[80rem] gap-10">
         {mode === "user" &&
-          logged &&
+          authorized &&
           modules &&
+          progress &&
           modules.map((module) => {
             const wordsNumber = progress.find(
               (m) => m.moduleName === module.title
@@ -60,9 +74,11 @@ function Home({ modules, logged, mode, progress }) {
               <Link
                 key={module._id}
                 to={`/${module.title}`}
-                className="btn lessonBtn link"
+                className="w-full h-34 rounded-2xl flex items-center justify-center text-4xl text-white font-bold hover:bg-neutral-800 transition duration-200 border-1 border-solid border-neutral-400"
               >
-                {`${module.title.slice(0, -2)} ${module.title.slice(-2)}`}{" "}
+                {`${module.title.slice(0, -2).toUpperCase()} ${module.title
+                  .slice(-2)
+                  .toUpperCase()}`}{" "}
                 {percentWEmoji(wordsNumber, module.words.length)}%
               </Link>
             );
@@ -72,9 +88,9 @@ function Home({ modules, logged, mode, progress }) {
             <Link
               key={key}
               to={`/${module.name}`}
-              className="btn lessonBtn link"
+              className="bg-neutral-900 w-full h-34 rounded-2xl flex items-center justify-center text-4xl text-white font-bold hover:bg-neutral-800 transition duration-200 border-1 border-solid border-neutral-400"
             >
-              {module.nameDisplay}{" "}
+              {module.nameDisplay.toUpperCase()}{" "}
               {percentWEmojiContext(
                 account.modulesPercent[module.name].length,
                 account.notLearned[module.name].length
