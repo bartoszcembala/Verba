@@ -4,17 +4,10 @@ import "../App.css";
 import { AccountCtx } from "../lib/AccountContext";
 import { useContext, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import { SettingsContext } from "../lib/contexts";
 
-function Layout({
-  setProgress,
-  setModules,
-  setLogged,
-  logged,
-  setAuthorized,
-  setDbAccount,
-  dbAccount,
-  setMode,
-}) {
+function Layout({ setProgress, setModules, setDbAccount, dbAccount }) {
+  const { authorized, setAuthorized, setMode } = useContext(SettingsContext);
   const { setAccount } = useContext(AccountCtx);
 
   useEffect(() => {
@@ -35,7 +28,6 @@ function Layout({
       setProgress("");
       setModules("");
       setDbAccount("");
-      setLogged(false);
       setAuthorized(false);
       toast(
         "You are in guest mode.\n To use all features and save your progress between devices, please log in.",
@@ -53,27 +45,45 @@ function Layout({
       <Toaster />
       <nav className="navigation">
         <div>
-          <Link to="/" className="navBtn btn">
+          <Link
+            to="/"
+            className="hover:bg-neutral-800 transition duration-200 border-1 border-solid border-neutral-400 py-5 px-10 uppercase text-4xl font-bold text-white rounded-2xl mr-5"
+          >
             Home
           </Link>
-          <Link to="/lesson" className="navBtn btn">
+          <Link
+            to="/lesson"
+            className="hover:bg-neutral-800 transition duration-200 border-1 border-solid border-neutral-400 py-5 px-10 uppercase text-4xl font-bold text-white rounded-2xl mr-5"
+          >
             Lessons
           </Link>
-          <Link to="/addmodule" className="navBtn btn">
+          <Link
+            to="/addmodule"
+            className="hover:bg-neutral-800 transition duration-200 border-1 border-solid border-neutral-400 py-5 px-10 uppercase text-4xl font-bold text-white rounded-2xl "
+          >
             Add Module
           </Link>
         </div>
         <div>
-          {!logged ? (
-            <Link to="/login" className="navBtn btn">
+          {!authorized ? (
+            <Link
+              to="/login"
+              className="hover:bg-neutral-800 transition duration-200 border-1 border-solid border-neutral-400 py-5 px-10 uppercase text-4xl font-bold text-white rounded-2xl ml-5"
+            >
               Log in
             </Link>
           ) : (
-            <button onClick={handleLogout} className="navBtn btn">
+            <button
+              onClick={handleLogout}
+              className="hover:bg-neutral-800 transition duration-200 border-1 border-solid border-neutral-400 py-5 px-10 uppercase text-4xl font-bold text-white rounded-2xl ml-5"
+            >
               Log out
             </button>
           )}
-          <Link to="/account" className="navBtn btn">
+          <Link
+            to="/account"
+            className="hover:bg-neutral-800 transition duration-200 border-1 border-solid border-neutral-400 py-5 px-10 uppercase text-4xl font-bold text-white rounded-2xl ml-5"
+          >
             {dbAccount ? dbAccount.name : "GuesT"}
           </Link>
         </div>

@@ -12,8 +12,10 @@ import {
   calculatePercentContext,
 } from "../lib/calculatePercent";
 import { shuffleArray } from "../lib/shuffle";
+import { SettingsContext } from "../lib/contexts";
 
-function Exercise({ initVerbs, progress, setProgress, mode }) {
+function Exercise({ initVerbs, progress, setProgress }) {
+  const { mode } = useContext(SettingsContext);
   const inputRef = useRef(null);
   const letters = ["á", "é", "í", "ó", "ú", "ñ"];
   const module = useHref().slice(1);
