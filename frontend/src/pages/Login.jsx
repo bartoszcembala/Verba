@@ -1,41 +1,31 @@
 import { useForm } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { Link } from "react-router-dom";
-import { SettingsContext } from "../lib/contexts";
+import { SettingsContext, UserContext } from "../lib/contexts";
 import { useContext } from "react";
+import { useLogin } from "../lib/queries";
 
-// eslint-disable-next-line react/prop-types
-function Login({ setDbAccount }) {
+function Login() {
   const { setAuthorized, setMode } = useContext(SettingsContext);
+  const { setUser } = useContext(UserContext);
   const { register, handleSubmit, reset } = useForm();
+  const { login } = useLogin();
 
-  async function onSubmit(data) {
-    try {
-      const res = await fetch("http://localhost:5000/api/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(data),
-      });
-
-      if (!res.ok) {
-        throw new Error("bad credentials");
-      }
-
-      const responseReady = await res.json();
-      const user = responseReady.data.user;
-
-      toast.success("Loged in successfully!");
-      setDbAccount(user);
-      setMode("user");
-      setAuthorized(true);
-    } catch (error) {
-      toast.error("Logging went wrong!");
-    } finally {
-      reset();
-    }
+  function onSubmit(data) {
+    login(data, {
+      onSuccess(user) {
+        localStorage.setItem("user", JSON.stringify(user));
+        toast.success("Logged in successfully!");
+        setUser(user);
+        setMode("user");
+        setAuthorized(true);
+        reset();
+      },
+      onError() {
+        toast.error("Logging went wrong!");
+        reset();
+      },
+    });
   }
 
   return (

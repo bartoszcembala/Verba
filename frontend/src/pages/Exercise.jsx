@@ -14,7 +14,7 @@ import {
 import { shuffleArray } from "../lib/shuffle";
 import { SettingsContext } from "../lib/contexts";
 
-function Exercise({ initVerbs, progress, setProgress }) {
+function Exercise({ initVerbs }) {
   const { mode } = useContext(SettingsContext);
   const inputRef = useRef(null);
   const letters = ["á", "é", "í", "ó", "ú", "ñ"];

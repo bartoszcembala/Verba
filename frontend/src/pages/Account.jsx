@@ -2,13 +2,13 @@
 import { calculatePercent } from "../lib/calculatePercent";
 import "../App.css";
 import { Link } from "react-router-dom";
-import { SettingsContext } from "../lib/contexts";
+import { UserContext } from "../lib/contexts";
 import { useContext } from "react";
 import { useModules, useProgress } from "../lib/queries";
 import { getPreviousDates } from "../lib/getPreviousDates";
 
-function Account({ dbAccount }) {
-  const { authorized } = useContext(SettingsContext);
+function Account() {
+  const { user } = useContext(UserContext);
   const { modules, isLoadingModules } = useModules();
   const { progress, isLoadingProgress } = useProgress();
   const previousDates = getPreviousDates(5);
@@ -24,10 +24,10 @@ function Account({ dbAccount }) {
   return (
     <div className="containerAcc">
       <div className="divContainer">
-        {authorized && dbAccount ? (
+        {user ? (
           <>
             <div className="insideContainerAcc border-1 border-solid border-neutral-400">
-              <h1>{dbAccount.name}</h1>
+              <h1>{user.name}</h1>
               <br />
               {progress.map((module) => {
                 const wordsNumber = modules.find(

@@ -12,48 +12,25 @@ import AddModule from "../pages/AddModule";
 import Lesson from "../pages/Lesson";
 import { useContext } from "react";
 import { SettingsContext } from "../lib/contexts";
+import { useModules, useProgress } from "../lib/queries";
 
-function AppRoutes({
-  setModules,
-  setProgress,
-  setDbAccount,
-  dbAccount,
-  progress,
-  modules,
-}) {
+function AppRoutes({ setProgress  }) {
   const { mode } = useContext(SettingsContext);
+  const { progress } = useProgress();
+  const { modules } = useModules();
 
   return (
     <BrowserRouter>
       <Routes>
         <Route
           path="/"
-          element={
-            <Layout
-              setModules={setModules}
-              setProgress={setProgress}
-              setDbAccount={setDbAccount}
-              dbAccount={dbAccount}
-            />
-          }
+          element={<Layout/>}
         >
           <Route index element={<Home />} />
-          <Route
-            path="/account"
-            element={
-              <Account
-                dbAccount={dbAccount}
-                progress={progress}
-                modules={modules}
-              />
-            }
-          />
+          <Route path="/account" element={<Account />} />
           <Route path="/lesson" element={<Lesson />} />
           <Route path="/signup" element={<Signup />} />
-          <Route
-            path="/login"
-            element={<Login setDbAccount={setDbAccount} />}
-          />
+          <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/addmodule" element={<AddModule />} />
 
