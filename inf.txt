@@ -3,15 +3,21 @@
 3. Graphs ✔
 4. Authorization ✔
 8. React Query ✔
+12. Auto generate progress ✔
+11. Expercises on seperate page ✔
+16. Latest activity ✔
+10. Lessons ✔
+15. Streak ✔
 5. Mobile app
-2. Admin dashboard
 6. Typy zadań
-9. Components
-10. Lessons
-15. Streak
+9. More components
 17. Guest mode warning
-16. Latest activity
 13. Add own modules
 14. Decide on styling
-11. Expercises on seperate page ➡
-12. Auto generate progress ➡
+18. Day time spent learning
+19. Subscription payment
+20. Light/dark mode
+2. Admin dashboard ➡
+
+/////////
+1.Przy zmianie słów z modułu, progres u uzytkownika pozostaje stary co moze prowadzic do problemów

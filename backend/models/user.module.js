@@ -22,6 +22,15 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  latestActivity: {
+    type: [String],
+    required: false,
+    unique: false,
+  },
+  streak: {
+    type: [String],
+    required: false,
+  },
 });
 
 userSchema.pre("save", async function (next) {

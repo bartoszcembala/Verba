@@ -2,38 +2,37 @@
 import { calculatePercent } from "../lib/calculatePercent";
 import "../App.css";
 import { Link } from "react-router-dom";
-import { UserContext } from "../lib/contexts";
-import { useContext } from "react";
 import { useModules, useProgress } from "../lib/queries";
 import { getPreviousDates } from "../lib/getPreviousDates";
+import Spinner from "../components/Spinner";
 
 function Account() {
-  const { user } = useContext(UserContext);
+  const user = JSON.parse(localStorage.getItem("user"));
   const { modules, isLoadingModules } = useModules();
   const { progress, isLoadingProgress } = useProgress();
-  const previousDates = getPreviousDates(5);
-
+  const previousDates = getPreviousDates(4);
   if (isLoadingModules || isLoadingProgress) {
-    return (
-      <div className="flex items-center justify-center">
-        <div className="w-48 h-48 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
-      </div>
-    );
+    return <Spinner />;
   }
 
   return (
-    <div className="containerAcc">
-      <div className="divContainer">
+    <div className="flex justify-center items-center">
+      <div className="w-[90rem] flex flex-col gap-8">
         {user ? (
           <>
-            <div className="insideContainerAcc border-1 border-solid border-neutral-400">
-              <h1>{user.name}</h1>
+            <div className="rounded-2xl border-1 border-neutral-400 py-10 px-20">
+              <div className="flex gap-20">
+                <img
+                  src="https://i.pinimg.com/736x/2f/15/f2/2f15f2e8c688b3120d3d26467b06330c.jpg"
+                  className="w-30 h-30 rounded-full border-2 border-neutral-300"
+                />
+                <h1 className="text-8xl pt-5">{user.name}</h1>
+              </div>
               <br />
               {progress.map((module) => {
                 const wordsNumber = modules.find(
                   (m) => m.title === module.moduleName
                 )?.words.length;
-                console.log(wordsNumber, module.learned.length);
                 return (
                   <p key={module._id}>
                     {" "}
@@ -42,29 +41,44 @@ function Account() {
                   </p>
                 );
               })}
-              {/* {Object.entries(DATA).map(([key, value]) => (
-                <p key={key}>
-                  Dział: {value.nameDisplay} | Progress:{" "}
-                  {calculatePercent(
-                    account.modulesPercent[value.name].length,
-                    account.notLearned[value.name].length
-                  )}
-                  %
-                </p>
-              ))} */}
             </div>
-            <div className="accDiv flex items-center justify-center gap-2">
-              {previousDates.map((date) => (
-                <span
-                  key={date}
-                  className="h-30 w-30 text-center flex items-center justify-center border-1 border-solid border-neutral-400 rounded-2xl"
-                >
-                  {date.split("-")[2]}🔥
-                </span>
-              ))}
-            </div>
-            <div className="accDiv border-1 border-solid border-neutral-400">
-              Modules
+
+            <div className="flex gap-8 w-[90rem]">
+              <div className="rounded-2xl border-1 border-neutral-400 w-full py-4 px-8">
+                <h3>Latest activity: </h3>
+                {user.latestActivity.map((activity) => {
+                  return (
+                    <Link
+                      to={`/${activity}`}
+                      key={activity}
+                      className="py-1 px-8 block"
+                    >
+                      {activity}
+                      <span> ➡</span>
+                    </Link>
+                  );
+                })}
+              </div>
+
+              <div className="flex items-center justify-center gap-2 border-1  border-neutral-400 rounded-2xl p-5">
+                {" "}
+                <div className="border-r-1 h-full flex items-center pr-8 border-neutral-400">
+                  STREAK: {user.streak.length}d
+                </div>
+                {previousDates.map((date) => (
+                  <span
+                    key={date}
+                    className="h-30 w-30 text-center rounded-2xl pt-4 "
+                  >
+                    <span className="block text-5xl pb-4">
+                      {user.streak.includes(date) ? "🔥" : "⚫"}
+                    </span>
+                    <span className="block text-neutral-300">
+                      {date.split("-")[2]}
+                    </span>
+                  </span>
+                ))}
+              </div>
             </div>
           </>
         ) : (

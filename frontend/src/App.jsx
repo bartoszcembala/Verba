@@ -6,8 +6,18 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AppRoutes from "./components/AppRoutes";
 import { SettingsContext, UserContext } from "./lib/contexts";
+import { useDailyStudyTimer } from "./components/useDailyStudyTimer";
 
 function App() {
+  const seconds = useDailyStudyTimer();
+
+  // const formatTime = (s) => {
+  //   const min = Math.floor(s / 60);
+  //   const sec = s % 60;
+  //   return `${min}m ${sec}s`;
+  // };
+  // console.log(formatTime(seconds));
+
   const [user, setUser] = useState();
   const [authorized, setAuthorized] = useState(false);
   const [mode, setMode] = useState("guest");
@@ -58,7 +68,7 @@ function App() {
           value={{ mode, setMode, authorized, setAuthorized }}
         >
           <AccountContext>
-            <AppRoutes  />
+            <AppRoutes />
           </AccountContext>
         </SettingsContext.Provider>
       </UserContext.Provider>

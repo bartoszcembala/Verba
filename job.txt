@@ -1,0 +1,19 @@
+1. ci/cd
+2. kubernest
+3. docer
+4. typescript
+5. redux
+
+////////////////////////////////////// haben jak to sie mowi
+1. ReactJS + Redux, React Query, React Router, Tailwind, styledComponents, Zustand, axios, react-hook-form
+2. React Native
+3. NodeJS + Express.js, MongoDB, Mongoose, JWT, bcrypt, stripe
+4. Git i GitHub
+5. Postman
+6. Vite
+7. Microservices
+
+1. 5+ years with web oriented programming and databases
+2. 4 years in technician school with programming specialization
+3. Commercial experiece: 2 months appriceship in programming company (with contract)
+4. C1 english

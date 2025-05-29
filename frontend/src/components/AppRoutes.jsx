@@ -9,26 +9,27 @@ import DATA from "../data/verbs";
 import Signup from "../pages/Signup";
 import Dashboard from "../pages/Dashboard";
 import AddModule from "../pages/AddModule";
-import Lesson from "../pages/Lesson";
 import { useContext } from "react";
 import { SettingsContext } from "../lib/contexts";
-import { useModules, useProgress } from "../lib/queries";
+import { useLessons, useModules, useProgress } from "../lib/queries";
+import Exercises from "../pages/Exercises";
+import Lessons from "../pages/Lessons";
+import Lesson from "../pages/Lesson";
 
-function AppRoutes({ setProgress  }) {
-  const { mode } = useContext(SettingsContext);
+function AppRoutes({ setProgress }) {
+  const { mode, authorized } = useContext(SettingsContext);
   const { progress } = useProgress();
   const { modules } = useModules();
+  const { lessons } = useLessons();
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/"
-          element={<Layout/>}
-        >
+        <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="/account" element={<Account />} />
-          <Route path="/lesson" element={<Lesson />} />
+          <Route path="/lessons" element={<Lessons />} />
+          <Route path="/exercises" element={<Exercises />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
@@ -38,6 +39,7 @@ function AppRoutes({ setProgress  }) {
           {mode === "user" &&
             modules &&
             progress &&
+            authorized &&
             modules.map((module) => (
               <Route
                 key={module._id}
@@ -51,6 +53,17 @@ function AppRoutes({ setProgress  }) {
                     setProgress={setProgress}
                   />
                 }
+              />
+            ))}
+
+          {mode === "user" &&
+            lessons &&
+            authorized &&
+            lessons.map((lesson) => (
+              <Route
+                key={lesson._id}
+                path={`/${lesson.title}`}
+                element={<Lesson html={lesson.html} lesson={lesson} />}
               />
             ))}
 

@@ -28,7 +28,7 @@ export async function createProgress(req, res) {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Server Error",
+      message: "Server Error: " + error,
     });
   }
 }
@@ -73,7 +73,7 @@ export async function deleteProgress(req, res) {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Server Error",
+      message: "Server Error: " + error,
     });
   }
 }

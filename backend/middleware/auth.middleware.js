@@ -12,13 +12,11 @@ export async function protectedRoute(req, res, next) {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(decoded);
     if (!decoded) {
       return res.status(401).json({ message: "Unautorized - Invalid Token" });
     }
 
     const user = await User.findById(decoded.id);
-    console.log("user:" + user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
