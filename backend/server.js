@@ -4,6 +4,7 @@ import { connectDB } from "./db.js";
 import moduleRoutes from "./routes/module.route.js";
 import userRoutes from "./routes/user.route.js";
 import progressRoutes from "./routes/progress.route.js";
+import lessonRoutes from "./routes/lesson.route.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
@@ -24,6 +25,7 @@ app.use(
 app.use("/api/modules", moduleRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/progress", progressRoutes);
+app.use("/api/lesson", lessonRoutes);
 
 app.listen(PORT, () => {
   connectDB();

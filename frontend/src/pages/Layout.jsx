@@ -6,7 +6,8 @@ import { useContext, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { SettingsContext, UserContext } from "../lib/contexts";
 import { useQueryClient } from "@tanstack/react-query";
-import { useLogout } from "../lib/queries";
+import { useEditUser, useLogout } from "../lib/queries";
+import { btn } from "../lib/styles";
 
 function Layout() {
   const { user, setUser } = useContext(UserContext);
@@ -14,6 +15,27 @@ function Layout() {
   const { authorized, setAuthorized, setMode } = useContext(SettingsContext);
   const { setAccount } = useContext(AccountCtx);
   const { logout } = useLogout();
+  const { editUser } = useEditUser();
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    console.log(new Date().toISOString().split("T")[0], user);
+    if (!user.streak.includes(new Date().toISOString().split("T")[0])) {
+      editUser({
+        id: user._id,
+        data: {
+          streak: [...user.streak, new Date().toISOString().split("T")[0]],
+        },
+      });
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          ...user,
+          streak: [...user.streak, new Date().toISOString().split("T")[0]],
+        })
+      );
+    }
+  }, [editUser]);
 
   useEffect(() => {
     setAccount((prev) => JSON.parse(localStorage.getItem("account")) || prev);
@@ -40,45 +62,30 @@ function Layout() {
       <Toaster />
       <nav className="navigation">
         <div>
-          <Link
-            to="/"
-            className="hover:bg-neutral-800 transition duration-200 border-1 border-solid border-neutral-400 py-5 px-10 uppercase text-4xl font-bold text-white rounded-2xl mr-5"
-          >
+          <Link to="/" className={btn + " mr-5"}>
             Home
           </Link>
-          <Link
-            to="/lesson"
-            className="hover:bg-neutral-800 transition duration-200 border-1 border-solid border-neutral-400 py-5 px-10 uppercase text-4xl font-bold text-white rounded-2xl mr-5"
-          >
+          <Link to="/lessons" className={btn + " mr-5"}>
             Lessons
           </Link>
-          <Link
-            to="/addmodule"
-            className="hover:bg-neutral-800 transition duration-200 border-1 border-solid border-neutral-400 py-5 px-10 uppercase text-4xl font-bold text-white rounded-2xl "
-          >
+          <Link to="/exercises" className={btn + " mr-5"}>
+            Exercises
+          </Link>
+          <Link to="/addmodule" className={btn + " mr-5"}>
             Add Module
           </Link>
         </div>
         <div>
           {!authorized ? (
-            <Link
-              to="/login"
-              className="hover:bg-neutral-800 transition duration-200 border-1 border-solid border-neutral-400 py-5 px-10 uppercase text-4xl font-bold text-white rounded-2xl ml-5"
-            >
+            <Link to="/login" className={btn + " mr-5"}>
               Log in
             </Link>
           ) : (
-            <button
-              onClick={handleLogout}
-              className="hover:bg-neutral-800 transition duration-200 border-1 border-solid border-neutral-400 py-5 px-10 uppercase text-4xl font-bold text-white rounded-2xl ml-5"
-            >
+            <button onClick={handleLogout} className={btn + " ml-5"}>
               Log out
             </button>
           )}
-          <Link
-            to="/account"
-            className="hover:bg-neutral-800 transition duration-200 border-1 border-solid border-neutral-400 py-5 px-10 uppercase text-4xl font-bold text-white rounded-2xl ml-5"
-          >
+          <Link to="/account" className={btn + " ml-5"}>
             {user ? user.name : "Guest"}
           </Link>
         </div>

@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import "../App.css";
 import "../index.css";
 import toast, { Toaster } from "react-hot-toast";
@@ -12,7 +12,15 @@ import {
   calculatePercentContext,
 } from "../lib/calculatePercent";
 import { shuffleArray } from "../lib/shuffle";
-import { SettingsContext } from "../lib/contexts";
+import { SettingsContext, UserContext } from "../lib/contexts";
+import {
+  useActivity,
+  useAddLearnedWord,
+  useAddProgress,
+  useProgress,
+} from "../lib/queries";
+import { useQueryClient } from "@tanstack/react-query";
+import Sidebar from "../components/Exercise/Sidebar";
 
 function Exercise({ initVerbs }) {
   const { mode } = useContext(SettingsContext);
@@ -34,47 +42,119 @@ function Exercise({ initVerbs }) {
   const [exerciseType, setExerciseType] = useState("translate");
   const randomVerb =
     selectedVerbs[Math.floor(Math.random() * selectedVerbs.length)];
-  const { account, setAccount, dbAccount } = useContext(AccountCtx);
-
-  if (dbAccount && mode === "user") {
-    if (!progress) {
-      const progressObj = {
-        userName: dbAccount.email,
-        moduleName: module,
-        words: [],
-      };
-
-      const createProgress = async () => {
-        await fetch("http://localhost:5000/api/progress/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(progressObj),
-        });
-      };
-
-      createProgress();
-      setProgress((progress) => [...progress, progressObj]);
-    }
-  }
+  const { account, setAccount } = useContext(AccountCtx);
+  const user = JSON.parse(localStorage.getItem("user"));
+  const { progress } = useProgress();
+  const { addProgress } = useAddProgress();
+  const queryClient = useQueryClient();
+  const { addLearnedWord } = useAddLearnedWord();
+  const activeProgress = progress?.find(
+    (p) => p.moduleName === module && p.userName === user.email
+  );
+  const { setUser } = useContext(UserContext);
+  const { addActivity } = useActivity();
 
   const [correct, setCorrect] = useState([
     {
       name: "correct",
       value:
-        JSON.parse(localStorage.getItem("account"))?.modulesPercent[module] ||
-        account.modulesPercent[module],
+        mode === "guest"
+          ? JSON.parse(localStorage.getItem("account"))?.modulesPercent[
+              module
+            ] || account.modulesPercent[module]
+          : activeProgress?.learned.length,
       color: "#34563c",
     },
     {
       name: "wrong",
       value:
-        JSON.parse(localStorage.getItem("account"))?.notLearned[module] ||
-        account.notLearned[module],
+        mode === "guest"
+          ? JSON.parse(localStorage.getItem("account"))?.notLearned[module] ||
+            account.notLearned[module]
+          : initVerbs.length - activeProgress?.learned.length,
       color: "#563434",
     },
   ]);
+
+  useEffect(() => {
+    const arrWithout = user.latestActivity.filter((item) => item !== module);
+    const readyArr = [...arrWithout, module];
+
+    while (readyArr.length > 3) {
+      readyArr.shift();
+    }
+
+    addActivity(
+      {
+        id: user._id,
+        activities: readyArr,
+      },
+      {
+        onSuccess: () => {
+          console.log(readyArr);
+        },
+      }
+    );
+    localStorage.setItem(
+      "user",
+      JSON.stringify({ ...user, latestActivity: readyArr.reverse() })
+    );
+    setUser({ ...user, latestActivity: readyArr.reverse() });
+  }, []);
+
+  useEffect(() => {
+    if (
+      user &&
+      mode === "user" &&
+      progress &&
+      !progress?.some((p) => p.moduleName === module)
+    ) {
+      const progressObj = {
+        moduleName: module,
+        userName: user.email,
+        learned: [],
+      };
+
+      addProgress(progressObj, {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["progress"] });
+          toast.success("Progress added");
+        },
+        // onError: (err) => {
+        //   console.error("Add progress error:", err);
+        //   toast.error("Could not save progress.");
+        // },
+      });
+    } else if (
+      user &&
+      mode === "user" &&
+      progress?.some((p) => p.moduleName === module)
+    ) {
+      console.log("Jest");
+    }
+    setCorrect([
+      {
+        name: "correct",
+        value:
+          mode === "guest"
+            ? JSON.parse(localStorage.getItem("account"))?.modulesPercent[
+                module
+              ] || account.modulesPercent[module]
+            : activeProgress?.learned.length,
+        color: "#34563c",
+      },
+      {
+        name: "wrong",
+        value:
+          mode === "guest"
+            ? JSON.parse(localStorage.getItem("account"))?.notLearned[module] ||
+              account.notLearned[module]
+            : initVerbs.length - activeProgress?.learned.length,
+        color: "#563434",
+      },
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [progress]);
 
   // async function fetchVerbs() {
   //   const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -137,6 +217,10 @@ function Exercise({ initVerbs }) {
 
   // eslint-disable-next-line no-unused-vars
   async function handleAnswer(answer) {
+    const activeProgress = progress.find(
+      (p) => p.moduleName === module && p.userName === user.email
+    );
+
     if (mode === "guest") {
       let newAccount;
 
@@ -219,23 +303,46 @@ function Exercise({ initVerbs }) {
       }
 
       localStorage.setItem("account", JSON.stringify(newAccount));
-    } else {
+    } else if (mode === "user") {
       if (answer === exercise.correctAnswer) {
+        if (!activeProgress.learned.includes(answer)) {
+          addLearnedWord(
+            {
+              id: activeProgress._id,
+              word: {
+                learned: [...activeProgress.learned, answer],
+              },
+            },
+            {
+              onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: ["progress"] });
+                toast.success("Progress updated!");
+              },
+            }
+          );
+        }
+
         toast.success("Brawo! Poprawna odpowiedź!");
         setIsCorrect("correct");
-        await fetch(
-          `http://localhost:5000/api/users/68247ecb33697efa326dd245`,
+      } else {
+        const filtered = activeProgress.learned.filter(
+          (x) => x !== exercise.correctAnswer
+        );
+        addLearnedWord(
           {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
+            id: activeProgress._id,
+            word: {
+              learned: [...filtered],
             },
-            body: JSON.stringify({
-              progress: { verbsb1: ["ok", "xpp"] },
-            }),
+          },
+          {
+            onSuccess: () => {
+              queryClient.invalidateQueries({ queryKey: ["progress"] });
+              toast.error("Progress updated!");
+            },
           }
         );
-        console.log("completed");
+        toast.error("Źle");
       }
     }
   }
@@ -251,123 +358,19 @@ function Exercise({ initVerbs }) {
     }
   }
 
-  function addVerb(verb) {
-    if (selectedVerbs.includes(verb)) {
-      setSelectedVerbs((prevVerbs) => prevVerbs.filter((v) => v !== verb));
-      toast.success("Czasownik usunięty.");
-    } else {
-      setSelectedVerbs((prevVerbs) => [...prevVerbs, verb]);
-      toast.success("Czasownik dodany.");
-    }
-  }
-
   return (
     <>
       <Toaster />
-      <div className="container">
-        <div className="verbsContainer">
-          <div className="verbsBtns">
-            <button className="btn" onClick={() => setSelectedVerbs(verbs)}>
-              Add all
-            </button>
-            <button
-              className="btn"
-              onClick={() => setSelectedVerbs(account.notLearned[module])}
-            >
-              Add not learned
-            </button>
-            <button
-              className="btn"
-              onClick={() => {
-                const acc = {
-                  ...account,
-                  modulesPercent: {
-                    ...account.modulesPercent,
-                    [module]: [],
-                  },
-                  notLearned: {
-                    ...account.notLearned,
-                    [module]: [...verbs],
-                  },
-                };
-                setCorrect((prev) => [
-                  { ...prev[0], value: [] },
-                  { ...prev[1], value: [...verbs] },
-                ]);
-                setAccount(acc);
-                localStorage.setItem("account", JSON.stringify(acc));
-              }}
-            >
-              Reset progress
-            </button>
-          </div>
-          {verbs.length >= 1 ? (
-            verbs.map((verb) => (
-              <div key={verb[0]} className="verbs">
-                <span>
-                  {mode === "guest" &&
-                  account.modulesPercent[module].includes(verb[0])
-                    ? "🟩"
-                    : "🟥"}
-                </span>
-                <p>{verb[0] + ` (${verb[1]})`}</p>
-                <button className="btn" onClick={() => addVerb(verb)}>
-                  {selectedVerbs.some(([element]) => element === verb[0])
-                    ? "Delete"
-                    : "Add"}
-                </button>
-              </div>
-            ))
-          ) : (
-            <div className="load">Loading</div>
-          )}
-        </div>
-        <div className={`insideContainer ${isCorrect}`}>
-          <div className="pieChart">
-            {correct[0].value !== 0 || correct[1].value !== 0 ? (
-              <>
-                <p>
-                  {mode === "guest" &&
-                    calculatePercentContext(
-                      correct[0].value.length,
-                      correct[1].value.length
-                    ) + "%"}
-                  {/* {mode === "user" &&
-                    calculatePercent(
-                      correct[0].value.length,
-                      correct[1].value.length
-                    ) + "%"} */}
-                </p>
-                <PieChart width={150} height={200}>
-                  <Pie
-                    data={correct}
-                    name="name"
-                    dataKey="value.length"
-                    innerRadius={25}
-                    animationDuration={1000}
-                    animationBegin={0}
-                  >
-                    {correct.map((entry) => (
-                      <Cell
-                        fill={entry.color}
-                        stroke={entry.color}
-                        key={entry.name}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                  <Legend
-                    iconType="circle"
-                    // layout="vertical"
-                    // align="right"
-                    // verticalAlign="middle"
-                  />
-                </PieChart>
-              </>
-            ) : (
-              <p>Answer to see chart</p>
-            )}
-          </div>
+      <div className="grid grid-cols-[3fr_6fr_3fr] gap-40">
+        <Sidebar
+          verbs={verbs}
+          selectedVerbs={selectedVerbs}
+          setSelectedVerbs={setSelectedVerbs}
+          module={module}
+          setCorrect={setCorrect}
+          user={user}
+        />
+        <div className="flex flex-col items-center justify-center border-3 border-solid border-neutral-300 rounded-2xl py-10 px-10 h-[60rem]">
           {selectedVerbs.length === 0 ? (
             <p>Add words to start</p>
           ) : exercise.correctAnswer === "" ? (
@@ -483,7 +486,7 @@ function Exercise({ initVerbs }) {
               </div>{" "}
             </>
           )}
-          <div className="exercisesTypes">
+          <div className="mt-4">
             <button
               onClick={() => setExerciseType("translate")}
               className="btn"
@@ -497,6 +500,51 @@ function Exercise({ initVerbs }) {
               Fill the Blank
             </button>
           </div>
+        </div>
+        <div className="">
+          {correct[0].value !== 0 || correct[1].value !== 0 ? (
+            <>
+              <p>
+                {mode === "guest" &&
+                  calculatePercentContext(
+                    correct[0].value.length,
+                    correct[1].value.length
+                  ) + "%"}
+                {mode === "user" &&
+                  calculatePercent(
+                    activeProgress?.learned.length,
+                    initVerbs.length
+                  ) + "%"}
+              </p>
+              <PieChart width={150} height={200}>
+                <Pie
+                  data={correct}
+                  name="name"
+                  dataKey="value"
+                  innerRadius={25}
+                  animationDuration={1000}
+                  animationBegin={0}
+                >
+                  {correct.map((entry) => (
+                    <Cell
+                      fill={entry.color}
+                      stroke={entry.color}
+                      key={entry.name}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend
+                  iconType="circle"
+                  // layout="vertical"
+                  // align="right"
+                  // verticalAlign="middle"
+                />
+              </PieChart>
+            </>
+          ) : (
+            <p>Answer to see chart</p>
+          )}
         </div>
       </div>
     </>
