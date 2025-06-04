@@ -4,7 +4,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AppRoutes from "./components/AppRoutes";
-import { SettingsContext, UserContext } from "./lib/contexts";
+import { SettingsContext } from "./lib/contexts";
 import { useDailyStudyTimer } from "./components/useDailyStudyTimer";
 
 interface User {
@@ -75,15 +75,15 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Toaster />
-      <UserContext.Provider value={{ user, setUser }}>
-        <SettingsContext.Provider
-          value={{ mode, setMode, authorized, setAuthorized }}
-        >
-          <AccountContext>
-            <AppRoutes />
-          </AccountContext>
-        </SettingsContext.Provider>
-      </UserContext.Provider>
+
+      <SettingsContext.Provider
+        value={{ mode, setMode, authorized, setAuthorized }}
+      >
+        <AccountContext>
+          <AppRoutes />
+        </AccountContext>
+      </SettingsContext.Provider>
+
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );

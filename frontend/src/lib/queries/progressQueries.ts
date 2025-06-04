@@ -11,7 +11,7 @@ interface Progress {
 interface NewProgressInput {
   moduleName: string;
   userName: string;
-  learned: [];
+  learned: string[];
 }
 
 interface LearnedWordInput {

@@ -1,24 +1,31 @@
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { Link } from "react-router-dom";
-import { SettingsContext, UserContext } from "../lib/contexts";
+import { SettingsContext } from "../lib/contexts";
 import { useContext } from "react";
-import { useLogin } from "../lib/queries";
+import { useNavigate } from "react-router";
+import { useLogin } from "../lib/queries/userQueries";
+
+interface LoginFormInputs {
+  email: string;
+  password: string;
+}
 
 function Login() {
-  const { setAuthorized, setMode } = useContext(SettingsContext);
-  const { setUser } = useContext(UserContext);
-  const { register, handleSubmit, reset } = useForm();
-  const { login } = useLogin();
+  const { setAuthorized, setMode } = useContext(SettingsContext)!;
 
-  function onSubmit(data) {
+  const { register, handleSubmit, reset } = useForm<LoginFormInputs>();
+  const { login } = useLogin();
+  const navigate = useNavigate();
+
+  const onSubmit: SubmitHandler<LoginFormInputs> = (data) => {
     login(data, {
       onSuccess(user) {
         localStorage.setItem("user", JSON.stringify(user));
         toast.success("Logged in successfully!");
-        setUser(user);
         setMode("user");
         setAuthorized(true);
+        navigate("/");
         reset();
       },
       onError() {
@@ -26,7 +33,7 @@ function Login() {
         reset();
       },
     });
-  }
+  };
 
   return (
     <>
@@ -47,7 +54,7 @@ function Login() {
             <label>Password</label>
             <input
               className="mt-2 mb-8 border-1 border-solid border-neutral-400 rounded-xl w-full h-16 px-6"
-              type="text"
+              type="password"
               {...register("password")}
             />
             <input

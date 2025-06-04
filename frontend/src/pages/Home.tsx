@@ -1,13 +1,24 @@
+type User = {
+  _id: string;
+  __v: number;
+  name: string;
+  email: string;
+  password: string;
+  latestActivity: string[];
+  streak: string[];
+};
+
 function Home() {
-  const user = JSON.parse(localStorage.getItem("user"));
-  console.log(user);
+  const storedUser = localStorage.getItem("user");
+  const user: User | null = storedUser ? JSON.parse(storedUser) : null;
+  const firstName = user?.name?.split(" ")[0] || "...";
 
   return (
-    <div className="flex items-center justify-center ">
+    <div className="flex items-center justify-center">
       <div>
         <div className="flex w-[90rem] h-[30rem]">
           <div className="w-[70%]">
-            Hi, {user.name.split(" ")[0]}
+            Hi, {firstName}
             <p>Welcome back!</p>
           </div>
           <div>[PICK UP WHERE YOU LEFT OFF]</div>

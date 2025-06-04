@@ -1,34 +1,35 @@
 import { useContext, useState } from "react";
 import { SettingsContext } from "../lib/contexts";
-import {
-  useAddLesson,
-  useEditModules,
-  useModules,
-  useUsers,
-} from "../lib/queries";
+import { useAddLesson } from "../lib/queries/lessonsQueries";
+import { useEditModules, useModules } from "../lib/queries/modulesQueries";
+import { useUsers } from "../lib/queries/userQueries";
+import { Module, User } from "../types";
 
 function Dashboard() {
   const [action, setAction] = useState("");
-  const [selectedModule, setSelectedModule] = useState(null);
-  const { users } = useUsers();
+  const [selectedModule, setSelectedModule] = useState<Module>();
   const [input, setInput] = useState("");
-  const { authorized } = useContext(SettingsContext);
+
+  const { authorized } = useContext(SettingsContext)!;
+  const { users } = useUsers();
   const { modules } = useModules();
   const { editModules } = useEditModules();
   const { addLesson } = useAddLesson();
 
-  function handleModuleSelection(moduleId) {
-    const module = modules.find((mod) => mod._id === moduleId);
-    console.log(module.words);
-    setSelectedModule(module);
-    setInput(module.words);
+  function handleModuleSelection(moduleId: string) {
+    const module = modules?.find((mod: Module) => mod._id === moduleId);
+    if (module) {
+      console.log(module.words);
+      setSelectedModule(module);
+      setInput(module.words.flat().join(" * "));
+    }
   }
 
   function handleAddLesson() {
     addLesson(
       { title: "Main lesson", html: input },
       {
-        onSuccess: (data) => {
+        onSuccess: (data: any) => {
           console.log(data);
         },
       }
@@ -36,14 +37,18 @@ function Dashboard() {
   }
 
   function handleSend() {
-    const words = input.split("*");
-    const result = [];
+    const words = input.split(" * ");
+    const result: [string, string][] = [];
 
     for (let i = 0; i < words.length; i += 2) {
-      result.push([words[i], words[i + 1]]);
+      if (words[i + 1] !== undefined) {
+        result.push([words[i], words[i + 1]]);
+      }
     }
-    editModules({ id: selectedModule._id, change: { words: result } });
-    console.log(result);
+
+    if (selectedModule) {
+      editModules({ id: selectedModule._id, change: { words: result } });
+    }
   }
 
   return (
@@ -67,25 +72,28 @@ function Dashboard() {
               Edit Module
             </p>
           </div>
+
           {action === "" && (
             <div className="flex flex-col gap-6">
-              {users?.map((user) => (
-                <>
-                  <p key={user._id}>
+              {users?.map((user: User) => (
+                <div key={user._id}>
+                  <p>
                     {user.name} | {user.email}
                   </p>
                   <hr />
-                </>
+                </div>
               ))}
             </div>
           )}
+
           {action === "editModules" && (
             <>
               <div>
-                {modules?.map((module) => (
+                {modules?.map((module: Module) => (
                   <p
                     onClick={() => handleModuleSelection(module._id)}
                     key={module._id}
+                    className="cursor-pointer"
                   >
                     {module.title}
                   </p>
@@ -93,12 +101,12 @@ function Dashboard() {
               </div>
               {selectedModule && (
                 <div className="w-[120rem]">
-                  <h2>Edit Module {selectedModule?.title}</h2>
+                  <h2>Edit Module {selectedModule.title}</h2>
                   <form onSubmit={(e) => e.preventDefault()}>
                     <textarea
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
-                      className="w-full h-50"
+                      className="w-full"
                       style={{ minHeight: "30rem" }}
                     />
                     <input type="submit" onClick={handleSend} />
@@ -107,14 +115,15 @@ function Dashboard() {
               )}
             </>
           )}
+
           {action === "addLesson" && (
             <div className="w-[120rem]">
-              <h2>Add Lesson </h2>
+              <h2>Add Lesson</h2>
               <form onSubmit={(e) => e.preventDefault()}>
                 <textarea
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  className="w-full h-50"
+                  className="w-full"
                   style={{ minHeight: "30rem" }}
                 />
                 <input type="submit" onClick={handleAddLesson} />

@@ -1,0 +1,33 @@
+export interface User {
+  _id: string;
+  __v: number;
+  name: string;
+  email: string;
+  password: string;
+  latestActivity: string[];
+  streak: string[];
+}
+
+export interface Lesson {
+  _id: string;
+  title: string;
+  html: string;
+  relatedExercises: string[];
+  __v: number;
+}
+
+export interface Module {
+  _id: string;
+  title: string;
+  displayName: string;
+  words: string[][];
+  __v: number;
+}
+
+export interface Progress {
+  _id: string;
+  userName: string;
+  moduleName: string;
+  learned: string[];
+  __v: number;
+}

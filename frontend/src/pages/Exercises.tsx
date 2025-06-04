@@ -1,7 +1,6 @@
-/* eslint-disable react/prop-types */
+import { useContext } from "react";
 import { Link } from "react-router-dom";
 import "../App.css";
-import { useContext } from "react";
 import { AccountCtx } from "../lib/AccountContext";
 import {
   calculatePercent,
@@ -9,11 +8,13 @@ import {
 } from "../lib/calculatePercent";
 import DATA from "../data/verbs";
 import { SettingsContext } from "../lib/contexts";
-import { useModules, useProgress } from "../lib/queries";
+import { useModules } from "../lib/queries/modulesQueries";
+import { useProgress } from "../lib/queries/progressQueries";
 
 function Exercises() {
-  const { account } = useContext(AccountCtx);
-  const { mode, authorized } = useContext(SettingsContext);
+  const { account } = useContext(AccountCtx)!;
+
+  const { mode, authorized } = useContext(SettingsContext)!;
   const { modules, isLoadingModules } = useModules();
   const { progress, isLoadingProgress } = useProgress();
 
@@ -25,49 +26,41 @@ function Exercises() {
     );
   }
 
-  function percentWEmoji(val1, val2) {
+  function percentWEmoji(val1: number, val2: number) {
     const percent = calculatePercent(val1, val2);
     let emoji = "";
 
-    if (percent >= 80) {
-      emoji = "🟩";
-    } else if (percent >= 50) {
-      emoji = "🟨";
-    } else if (percent >= 25) {
-      emoji = "🟧";
-    } else if (percent >= 0) {
-      emoji = "🟥";
-    }
+    if (percent >= 80) emoji = "🟩";
+    else if (percent >= 50) emoji = "🟨";
+    else if (percent >= 25) emoji = "🟧";
+    else emoji = "🟥";
 
-    return emoji + " " + percent;
+    return `${emoji} ${percent}`;
   }
-  function percentWEmojiContext(val1, val2) {
+
+  function percentWEmojiContext(val1: number, val2: number) {
     const percent = calculatePercentContext(val1, val2);
     let emoji = "";
 
-    if (percent >= 80) {
-      emoji = "🟩";
-    } else if (percent >= 50) {
-      emoji = "🟨";
-    } else if (percent >= 25) {
-      emoji = "🟧";
-    } else if (percent >= 0) {
-      emoji = "🟥";
-    }
+    if (percent >= 80) emoji = "🟩";
+    else if (percent >= 50) emoji = "🟨";
+    else if (percent >= 25) emoji = "🟧";
+    else emoji = "🟥";
 
-    return emoji + " " + percent;
+    return `${emoji} ${percent}`;
   }
 
   return (
-    <div className="flex items-center justify-center ">
+    <div className="flex items-center justify-center">
       <div className="flex flex-col items-center justify-center w-[80rem] gap-10">
         {mode === "user" &&
           authorized &&
           modules &&
           progress &&
           modules.map((mod) => {
-            const wordsNumber = progress.find((m) => m.moduleName === mod.title)
-              ?.learned.length;
+            const wordsNumber =
+              progress.find((m) => m.moduleName === mod.title)?.learned
+                .length || 0;
 
             return (
               <Link
@@ -91,8 +84,8 @@ function Exercises() {
             >
               {module.nameDisplay.toUpperCase()}{" "}
               {percentWEmojiContext(
-                account.modulesPercent[module.name].length,
-                account.notLearned[module.name].length
+                account.modulesPercent[module.name]?.length || 0,
+                account.notLearned[module.name]?.length || 1
               )}
               %
             </Link>

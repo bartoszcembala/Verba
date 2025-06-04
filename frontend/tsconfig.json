@@ -10,9 +10,8 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "isolatedModules": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true
   },
-  "include": ["src"],
-  "allowJs": true,
-  "jsx": "react-jsx"
+  "include": ["src"]
 }

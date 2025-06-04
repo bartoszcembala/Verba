@@ -3,18 +3,13 @@ import toast from "react-hot-toast";
 import { btn } from "../../lib/styles";
 import { useContext } from "react";
 import { AccountCtx } from "../../lib/AccountContext";
-import { SettingsContext } from "../../lib/contexts";
-import { useProgress } from "../../lib/queries";
+import { ExerciseContext } from "../../lib/contexts";
+import { useProgress } from "../../lib/queries/progressQueries";
 
-function Sidebar({
-  verbs,
-  selectedVerbs,
-  setSelectedVerbs,
-  setCorrect,
-  module,
-  user,
-}) {
-  const { mode } = useContext(SettingsContext);
+function Sidebar({ setCorrect }) {
+  const { mode, verbs, selectedVerbs, setSelectedVerbs, module, user } =
+    useContext(ExerciseContext);
+
   const { account, setAccount } = useContext(AccountCtx);
   const { progress } = useProgress();
 
@@ -29,7 +24,7 @@ function Sidebar({
   }
 
   return (
-    <div className="px-12">
+    <div className="px-12 hidden lg:block">
       <div className="pb-12">
         <button className={btn} onClick={() => setSelectedVerbs(verbs)}>
           Add all

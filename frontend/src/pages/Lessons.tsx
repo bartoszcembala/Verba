@@ -1,5 +1,13 @@
 import { Link } from "react-router-dom";
-import { useLessons } from "../lib/queries";
+import { useLessons } from "../lib/queries/lessonsQueries";
+
+interface Lesson {
+  _id: string;
+  title: string;
+  html: string;
+  relatedExercises: string[];
+  __v: number;
+}
 
 function Lessons() {
   const { lessons } = useLessons();
@@ -7,7 +15,7 @@ function Lessons() {
   return (
     <div className="flex items-center justify-center ">
       <div className="flex flex-col items-center justify-center w-[80rem] gap-10">
-        {lessons?.map((les) => (
+        {lessons?.map((les: Lesson) => (
           <Link
             key={les._id}
             to={`/${les.title}`}

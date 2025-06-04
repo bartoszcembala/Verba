@@ -1,44 +1,60 @@
-/* eslint-disable react/prop-types */
 import { Link, Outlet } from "react-router-dom";
 import "../App.css";
 import { AccountCtx } from "../lib/AccountContext";
 import { useContext, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { SettingsContext, UserContext } from "../lib/contexts";
+import { SettingsContext } from "../lib/contexts";
 import { useQueryClient } from "@tanstack/react-query";
-import { useEditUser, useLogout } from "../lib/queries";
+import { useEditUser, useLogout } from "../lib/queries/userQueries";
 import { btn } from "../lib/styles";
 
+type User = {
+  _id: string;
+  __v: number;
+  name: string;
+  email: string;
+  password: string;
+  latestActivity: string[];
+  streak: string[];
+};
+
 function Layout() {
-  const { user, setUser } = useContext(UserContext);
   const queryClient = useQueryClient();
-  const { authorized, setAuthorized, setMode } = useContext(SettingsContext);
-  const { setAccount } = useContext(AccountCtx);
+  const { authorized, setAuthorized, setMode } = useContext(SettingsContext)!;
+  const { setAccount } = useContext(AccountCtx)!;
   const { logout } = useLogout();
   const { editUser } = useEditUser();
+  
+  const storedUser = localStorage.getItem("user");
+  const user: User | undefined = storedUser
+    ? (JSON.parse(storedUser) as User)
+    : undefined;
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    console.log(new Date().toISOString().split("T")[0], user);
-    if (!user.streak.includes(new Date().toISOString().split("T")[0])) {
-      editUser({
-        id: user._id,
-        data: {
-          streak: [...user.streak, new Date().toISOString().split("T")[0]],
-        },
-      });
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          ...user,
-          streak: [...user.streak, new Date().toISOString().split("T")[0]],
-        })
-      );
+    if (user) {
+      const today = new Date().toISOString().split("T")[0];
+
+      if (!user.streak.includes(today)) {
+        const updatedStreak = [...user.streak, today];
+
+        editUser({
+          id: user._id,
+          data: { streak: updatedStreak },
+        });
+
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            ...user,
+            streak: updatedStreak,
+          })
+        );
+      }
     }
   }, [editUser]);
 
   useEffect(() => {
-    setAccount((prev) => JSON.parse(localStorage.getItem("account")) || prev);
+    setAccount(JSON.parse(localStorage.getItem("account") || "null"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -46,7 +62,6 @@ function Layout() {
     logout();
     queryClient.clear();
     localStorage.removeItem("user");
-    setUser(null);
     setMode("guest");
     setAuthorized(false);
     toast(

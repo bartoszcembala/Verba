@@ -1,23 +1,26 @@
 /* eslint-disable react/prop-types */
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Login from "../pages/Login";
-import Account from "../pages/Account";
-import Exercise from "../pages/Exercise";
-import Home from "../pages/Home";
-import Layout from "../pages/Layout";
-import DATA from "../data/verbs";
-import Signup from "../pages/Signup";
-import Dashboard from "../pages/Dashboard";
-import AddModule from "../pages/AddModule";
+import Login from "../pages/Login.js";
+import Signup from "../pages/Signup.js";
+import Account from "../pages/Account.jsx";
+import Exercise from "../pages/Exercise.js";
+import Home from "../pages/Home.js";
+import Layout from "../pages/Layout.js";
+import DATA from "../data/verbs.js";
+import Dashboard from "../pages/Dashboard.js";
+import AddModule from "../pages/AddModule.jsx";
 import { useContext } from "react";
-import { SettingsContext } from "../lib/contexts";
-import { useLessons, useModules, useProgress } from "../lib/queries";
-import Exercises from "../pages/Exercises";
-import Lessons from "../pages/Lessons";
-import Lesson from "../pages/Lesson";
+import { SettingsContext } from "../lib/contexts.js";
+import Exercises from "../pages/Exercises.js";
+import Lessons from "../pages/Lessons.js";
+import Lesson from "../pages/Lesson.js";
 
-function AppRoutes({ setProgress }) {
-  const { mode, authorized } = useContext(SettingsContext);
+import { useLessons } from "../lib/queries/lessonsQueries.js";
+import { useModules } from "../lib/queries/modulesQueries.js";
+import { useProgress } from "../lib/queries/progressQueries.js";
+
+function AppRoutes() {
+  const { mode, authorized } = useContext(SettingsContext)!;
   const { progress } = useProgress();
   const { modules } = useModules();
   const { lessons } = useLessons();
@@ -44,15 +47,7 @@ function AppRoutes({ setProgress }) {
               <Route
                 key={module._id}
                 path={`/${module.title}`}
-                element={
-                  <Exercise
-                    initVerbs={module.words}
-                    progress={progress.find(
-                      (progress) => progress.moduleName === module.title
-                    )}
-                    setProgress={setProgress}
-                  />
-                }
+                element={<Exercise initVerbs={module.words} />}
               />
             ))}
 
@@ -63,7 +58,7 @@ function AppRoutes({ setProgress }) {
               <Route
                 key={lesson._id}
                 path={`/${lesson.title}`}
-                element={<Lesson html={lesson.html} lesson={lesson} />}
+                element={<Lesson lesson={lesson} />}
               />
             ))}
 

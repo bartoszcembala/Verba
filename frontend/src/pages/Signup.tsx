@@ -1,12 +1,19 @@
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { Link } from "react-router-dom";
 
-function Signup() {
-  const { register, handleSubmit } = useForm();
+interface SignupFormInputs {
+  name: string;
+  email: string;
+  password: string;
+  passwordConfirm: string;
+}
 
-  async function onSubmit(data) {
+function Signup() {
+  const { register, handleSubmit } = useForm<SignupFormInputs>();
+
+  const onSubmit: SubmitHandler<SignupFormInputs> = async (data) => {
     try {
-      console.log("DATA: " + data);
+      console.log("DATA: ", data);
       await fetch("http://localhost:5000/api/users/signup", {
         method: "POST",
         headers: {
@@ -17,9 +24,9 @@ function Signup() {
       });
       console.log("Signed up");
     } catch (error) {
-      console.log("not loged" + error);
+      console.log("not logged in: ", error);
     }
-  }
+  };
 
   return (
     <div className="flex items-center justify-center">
@@ -43,13 +50,13 @@ function Signup() {
           />
           <label>Password</label>
           <input
-            type="text"
+            type="password"
             {...register("password")}
             className="mt-2 mb-8 border-1 border-solid border-neutral-400 rounded-xl w-full h-16 px-6"
           />
           <label>Confirm password</label>
           <input
-            type="text"
+            type="password"
             {...register("passwordConfirm")}
             className="mt-2 mb-8 border-1 border-solid border-neutral-400 rounded-xl w-full h-16 px-6"
           />

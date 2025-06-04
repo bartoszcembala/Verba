@@ -2,12 +2,17 @@
 import { calculatePercent } from "../lib/calculatePercent";
 import "../App.css";
 import { Link } from "react-router-dom";
-import { useModules, useProgress } from "../lib/queries";
-import { getPreviousDates } from "../lib/getPreviousDates";
 import Spinner from "../components/Spinner";
+import { getPreviousDates } from "../lib/getPreviousDates";
+
+import { useProgress } from "../lib/queries/progressQueries";
+import { useModules } from "../lib/queries/modulesQueries";
+import { User } from "../types";
 
 function Account() {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const storedUser = localStorage.getItem("user");
+  const user: User | null = storedUser ? JSON.parse(storedUser) : null;
+
   const { modules, isLoadingModules } = useModules();
   const { progress, isLoadingProgress } = useProgress();
   const previousDates = getPreviousDates(4);
@@ -29,10 +34,10 @@ function Account() {
                 <h1 className="text-8xl pt-5">{user.name}</h1>
               </div>
               <br />
-              {progress.map((module) => {
-                const wordsNumber = modules.find(
+              {progress?.map((module) => {
+                const wordsNumber = modules!.find(
                   (m) => m.title === module.moduleName
-                )?.words.length;
+                )!.words.length;
                 return (
                   <p key={module._id}>
                     {" "}
