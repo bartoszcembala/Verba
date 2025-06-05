@@ -7,6 +7,7 @@ import { SettingsContext } from "../lib/contexts";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEditUser, useLogout } from "../lib/queries/userQueries";
 import { btn } from "../lib/styles";
+import { useDailyStudyTimer } from "../components/useDailyStudyTimer";
 
 type User = {
   _id: string;
@@ -24,7 +25,8 @@ function Layout() {
   const { setAccount } = useContext(AccountCtx)!;
   const { logout } = useLogout();
   const { editUser } = useEditUser();
-  
+  useDailyStudyTimer();
+
   const storedUser = localStorage.getItem("user");
   const user: User | undefined = storedUser
     ? (JSON.parse(storedUser) as User)

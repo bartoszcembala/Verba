@@ -1,15 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-
-interface User {
-  _id: string;
-  __v: number;
-  name: string;
-  email: string;
-  password: string;
-  latestActivity: string[];
-  streak: string[];
-}
+import { User } from "../../types";
 
 interface LoginInput {
   email: string;
@@ -114,6 +105,9 @@ export function useEditUser() {
       );
 
       return res.data;
+    },
+    onError: (error) => {
+      console.error("❌ Błąd edycji użytkownika:", error.message);
     },
   });
 

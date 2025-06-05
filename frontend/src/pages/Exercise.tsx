@@ -69,7 +69,7 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
       );
     }
   }, []);
-
+  
   useEffect(() => {
     if (
       user &&

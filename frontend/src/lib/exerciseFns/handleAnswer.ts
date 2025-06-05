@@ -164,6 +164,7 @@ export async function handleAnswer(
       toast.success("Brawo! Poprawna odpowiedź!");
       setIsCorrect("correct");
     } else {
+      setIsCorrect("wrong");
       const filtered = activeProgress.learned.filter(
         (x) => x !== exercise.correctAnswer
       );

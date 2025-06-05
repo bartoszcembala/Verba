@@ -9,6 +9,15 @@ import { useProgress } from "../lib/queries/progressQueries";
 import { useModules } from "../lib/queries/modulesQueries";
 import { User } from "../types";
 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+
 function Account() {
   const storedUser = localStorage.getItem("user");
   const user: User | null = storedUser ? JSON.parse(storedUser) : null;
@@ -47,8 +56,8 @@ function Account() {
                 );
               })}
             </div>
-
             <div className="flex gap-8 w-[90rem]">
+              {/* ACTIVITY */}
               <div className="rounded-2xl border-1 border-neutral-400 w-full py-4 px-8">
                 <h3>Latest activity: </h3>
                 {user.latestActivity.map((activity) => {
@@ -65,6 +74,7 @@ function Account() {
                 })}
               </div>
 
+              {/* STREAK */}
               <div className="flex items-center justify-center gap-2 border-1  border-neutral-400 rounded-2xl p-5">
                 {" "}
                 <div className="border-r-1 h-full flex items-center pr-8 border-neutral-400">
@@ -84,6 +94,26 @@ function Account() {
                   </span>
                 ))}
               </div>
+            </div>{" "}
+            <div className="w-[65rem] h-[20rem] flex items-center justify-center p-10 mx-auto">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  width={730}
+                  height={250}
+                  data={user?.timeSpentLearning}
+                >
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "#696969",
+                      borderColor: "#6e6e6e",
+                    }}
+                    cursor={{ fill: "#474747" }}
+                  />
+                  <Bar dataKey="value" fill="#3b3b3b" />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </>
         ) : (

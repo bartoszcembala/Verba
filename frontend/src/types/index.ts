@@ -1,3 +1,8 @@
+type timeSpentLearningType = {
+  date: string;
+  value: number;
+};
+
 export interface User {
   _id: string;
   __v: number;
@@ -6,6 +11,7 @@ export interface User {
   password: string;
   latestActivity: string[];
   streak: string[];
+  timeSpentLearning: timeSpentLearningType[];
 }
 
 export interface Lesson {

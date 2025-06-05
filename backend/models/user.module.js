@@ -1,6 +1,17 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
+const chartEntrySchema = new mongoose.Schema({
+  date: {
+    type: String,
+    required: true,
+  },
+  value: {
+    type: Number,
+    required: true,
+  },
+});
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -31,6 +42,7 @@ const userSchema = new mongoose.Schema({
     type: [String],
     required: false,
   },
+  timeSpentLearning: { type: [chartEntrySchema] },
 });
 
 userSchema.pre("save", async function (next) {

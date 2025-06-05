@@ -1,6 +1,5 @@
 import { createContext } from "react";
 import { Progress, User } from "../types";
-import Module from "module";
 
 export type SettingsContextType = {
   mode: "guest" | "user";

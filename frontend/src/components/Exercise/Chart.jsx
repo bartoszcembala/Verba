@@ -1,11 +1,9 @@
 /* eslint-disable react/prop-types */
 import { Cell, Legend, Pie, PieChart, Tooltip } from "recharts";
 import Percent from "./Percent";
-import { useContext } from "react";
-import { ExerciseContext } from "../../lib/contexts";
 
 function Chart({ correct, activeProgress }) {
-  const { mode, verbs } = useContext(ExerciseContext);
+
 
   return (
     <div>
@@ -13,9 +11,7 @@ function Chart({ correct, activeProgress }) {
         <>
           <Percent
             correct={correct}
-            mode={mode}
             activeProgress={activeProgress}
-            verbs={verbs}
           />
           <PieChart width={150} height={200}>
             <Pie

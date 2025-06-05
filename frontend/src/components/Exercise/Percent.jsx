@@ -1,16 +1,19 @@
 /* eslint-disable react/prop-types */
+import { useContext } from "react";
 import {
   calculatePercent,
   calculatePercentContext,
 } from "../../lib/calculatePercent";
+import { ExerciseContext } from "../../lib/contexts";
 
-function Percent({ mode, correct, activeProgress, verbs }) {
+function Percent({ correct, activeProgress }) {
+  const { mode, verbs } = useContext(ExerciseContext);
   return (
     <p>
       {mode === "guest" &&
         calculatePercentContext(
-          correct[0].value.length,
-          correct[1].value.length
+          correct[0]?.value?.length,
+          correct[1]?.value?.length
         ) + "%"}
       {mode === "user" &&
         calculatePercent(activeProgress?.learned.length, verbs.length) + "%"}

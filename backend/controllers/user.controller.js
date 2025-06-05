@@ -53,6 +53,7 @@ export async function updateUser(req, res) {
       data: editedUser,
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       success: false,
       message: "Server Error",

@@ -2,12 +2,13 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useContext, useRef, useState } from "react";
 import { useAddLearnedWord } from "../../lib/queries/progressQueries";
-import { handleAnswer } from "../../lib/exerciseFns/handleAnswer";
+import { handleAnswer as handleAnswerImported } from "../../lib/exerciseFns/handleAnswer";
 import {
   getExerciseFill,
   getExerciseTranslate,
 } from "../../lib/exerciseFns/exericsesFn";
 import { ExerciseContext } from "../../lib/contexts";
+import Letters from "./Letters";
 
 function Main({ account, setAccount, setCorrect }) {
   const {
@@ -32,43 +33,60 @@ function Main({ account, setAccount, setCorrect }) {
   const [isCorrect, setIsCorrect] = useState("");
   const inputRef = useRef(null);
   const [exerciseType, setExerciseType] = useState("translate");
-  const letters = ["á", "é", "í", "ó", "ú", "ñ"];
   const [showTranslation, setShowTranslation] = useState(false);
   const [writing, setWriting] = useState(true);
+
+  function getExercise(type) {
+    if (type === "translate") {
+      getExerciseTranslate(
+        setInputValue,
+        setIsCorrect,
+        setExercise,
+        verbs,
+        selectedVerbs
+      );
+    }
+
+    if (type === "fill") {
+      getExerciseFill(setInputValue, setIsCorrect, setExercise, selectedVerbs);
+    }
+  }
+
+  function handleAnswer(input) {
+    handleAnswerImported(
+      input,
+      addLearnedWord,
+      mode,
+      progress,
+      module,
+      user,
+      exercise,
+      setIsCorrect,
+      account,
+      setAccount,
+      setCorrect,
+      setSelectedVerbs,
+      queryClient
+    );
+  }
 
   function handleKeyDown(e) {
     if (e.key === "Enter") {
       e.preventDefault();
       if (isCorrect === "" || isCorrect === "wrong") {
-        handleAnswer(
-          inputValue,
-          addLearnedWord,
-          mode,
-          progress,
-          module,
-          user,
-          exercise,
-          setIsCorrect,
-          account,
-          setAccount,
-          setCorrect,
-          setSelectedVerbs,
-          queryClient
-        );
+        handleAnswer(inputValue);
       } else if (isCorrect === "correct") {
-        getExerciseTranslate(
-          setInputValue,
-          setIsCorrect,
-          setExercise,
-          verbs,
-          selectedVerbs
-        );
+        getExercise("translate");
       }
     }
   }
 
   return (
-    <div className="flex flex-col items-center justify-center border-3 border-solid border-neutral-300 rounded-2xl py-10 px-10 h-[60rem]">
+    <div
+      className={`flex flex-col items-center justify-center border-3 border-solid border-neutral-300 rounded-2xl py-10 px-10 h-[60rem] transition-colors duration-300 ease-in-out ${
+        isCorrect === "correct" && "bg-[#323a34]"
+      } ${isCorrect === "wrong" && "bg-[#3a3232]"}`}
+    >
       {selectedVerbs.length === 0 ? (
         <p>Add words to start</p>
       ) : exercise.correctAnswer === "" ? (
@@ -126,19 +144,8 @@ function Main({ account, setAccount, setCorrect }) {
                   className="btn checkBtn"
                   onClick={() =>
                     exerciseType === "translate"
-                      ? getExerciseTranslate(
-                          setInputValue,
-                          setIsCorrect,
-                          setExercise,
-                          verbs,
-                          selectedVerbs
-                        )
-                      : getExerciseFill(
-                          setInputValue,
-                          setIsCorrect,
-                          setExercise,
-                          selectedVerbs
-                        )
+                      ? getExercise("translate")
+                      : getExercise("fill")
                   }
                 >
                   ➡
@@ -146,23 +153,7 @@ function Main({ account, setAccount, setCorrect }) {
               ) : (
                 <button
                   className="btn checkBtn"
-                  onClick={() =>
-                    handleAnswer(
-                      inputValue,
-                      addLearnedWord,
-                      mode,
-                      progress,
-                      module,
-                      user,
-                      exercise,
-                      setIsCorrect,
-                      account,
-                      setAccount,
-                      setCorrect,
-                      setSelectedVerbs,
-                      queryClient
-                    )
-                  }
+                  onClick={() => handleAnswer(inputValue)}
                 >
                   Check answer
                 </button>
@@ -178,23 +169,7 @@ function Main({ account, setAccount, setCorrect }) {
               </button>
               {exercise.options.map((answer) => (
                 <div
-                  onClick={() =>
-                    handleAnswer(
-                      answer,
-                      addLearnedWord,
-                      mode,
-                      progress,
-                      module,
-                      user,
-                      exercise,
-                      setIsCorrect,
-                      account,
-                      setAccount,
-                      setCorrect,
-                      setSelectedVerbs,
-                      queryClient
-                    )
-                  }
+                  onClick={() => handleAnswer(answer)}
                   key={answer}
                   className="answer"
                 >
@@ -203,20 +178,7 @@ function Main({ account, setAccount, setCorrect }) {
               ))}
             </div>
           )}
-          <div className="lettersContainer">
-            {letters.map((letter) => (
-              <span
-                key={letter}
-                onClick={() => {
-                  setInputValue((prev) => prev + letter);
-                  inputRef.current.focus();
-                }}
-                className="btn letterBtn"
-              >
-                {letter}
-              </span>
-            ))}
-          </div>
+          <Letters inputRef={inputRef} setInputValue={setInputValue} />
           <div className="buttons">
             {/* <button
           className="btn"
@@ -229,19 +191,8 @@ function Main({ account, setAccount, setCorrect }) {
               className="btn"
               onClick={() =>
                 exerciseType === "translate"
-                  ? getExerciseTranslate(
-                      setInputValue,
-                      setIsCorrect,
-                      setExercise,
-                      verbs,
-                      selectedVerbs
-                    )
-                  : getExerciseFill(
-                      setInputValue,
-                      setIsCorrect,
-                      setExercise,
-                      selectedVerbs
-                    )
+                  ? getExercise("translate")
+                  : getExercise("fill")
               }
             >
               Get an exercise
