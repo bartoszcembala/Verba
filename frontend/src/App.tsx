@@ -71,7 +71,9 @@ function App() {
         value={{ mode, setMode, authorized, setAuthorized }}
       >
         <AccountContext>
-          <AppRoutes />
+          <div className="text-neutral-800/90 bg-neutral-200 dark:bg-[#171717] dark:text-white  min-h-screen transition-colors">
+            <AppRoutes />
+          </div>
         </AccountContext>
       </SettingsContext.Provider>
 

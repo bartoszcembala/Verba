@@ -12,7 +12,6 @@ interface Lesson {
 }
 
 function Lesson({ lesson }: { lesson: Lesson }) {
-  console.log(lesson);
   const { addActivity } = useActivity();
   const { authorized } = useContext(SettingsContext)!;
   const user = JSON.parse(localStorage.getItem("user")!);
@@ -47,8 +46,8 @@ function Lesson({ lesson }: { lesson: Lesson }) {
   }, []);
 
   return (
-    <div className="grid grid-cols-[1fr_3fr_1fr] p-4 gap-20">
-      <div>
+    <div className="grid grid-cols-[1fr_3fr_1fr] p-4 gap-20 text-white">
+      <div >
         Exercises for this topic:
         {lesson.relatedExercises &&
           authorized &&

@@ -1,13 +1,19 @@
 import { Link, Outlet } from "react-router-dom";
-import "../App.css";
 import { AccountCtx } from "../lib/AccountContext";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { SettingsContext } from "../lib/contexts";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEditUser, useLogout } from "../lib/queries/userQueries";
-import { btn } from "../lib/styles";
 import { useDailyStudyTimer } from "../components/useDailyStudyTimer";
+import { IoHomeOutline, IoHome } from "react-icons/io5";
+import { HiOutlineBookOpen } from "react-icons/hi2";
+import { CiSquarePlus } from "react-icons/ci";
+import { GoPencil } from "react-icons/go";
+import { FaArrowRightFromBracket } from "react-icons/fa6";
+import { FaRegUser } from "react-icons/fa6";
+import { FaRegMoon } from "react-icons/fa";
+import { FiSun } from "react-icons/fi";
 
 type User = {
   _id: string;
@@ -26,6 +32,11 @@ function Layout() {
   const { logout } = useLogout();
   const { editUser } = useEditUser();
   useDailyStudyTimer();
+
+  const [darkMode, setDarkMode] = useState(true);
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", darkMode);
+  }, [darkMode]);
 
   const storedUser = localStorage.getItem("user");
   const user: User | undefined = storedUser
@@ -77,33 +88,71 @@ function Layout() {
   return (
     <>
       <Toaster />
-      <nav className="navigation">
-        <div>
-          <Link to="/" className={btn + " mr-5"}>
-            Home
+      <nav className="flex justify-between items-center  uppercase  px-6 mb-8 dark:border-b-2 dark:border-indigo-500 font-semibold tracking-wide bg-white dark:bg-[#171717]">
+        <div className="flex text-3xl">
+          <Link
+            to="/"
+            className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
+          >
+            {/* <IoHomeOutline className="w-10 h-10 text-indigo-500" /> */}
+            <IoHome className="w-10 h-10 " />
+            <p className="translate-y-0.5">Home</p>
           </Link>
-          <Link to="/lessons" className={btn + " mr-5"}>
-            Lessons
+          <Link
+            to="/lessons"
+            className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
+          >
+            <HiOutlineBookOpen className="w-10 h-10 " />
+            <p className="translate-y-0.5">Lessons</p>
           </Link>
-          <Link to="/exercises" className={btn + " mr-5"}>
-            Exercises
+          <Link
+            to="/exercises"
+            className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
+          >
+            <GoPencil className="w-10 h-10 " />
+            <p className="translate-y-0.5">Exercises</p>
           </Link>
-          <Link to="/addmodule" className={btn + " mr-5"}>
-            Add Module
+          <Link
+            to="/add-module"
+            className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
+          >
+            <CiSquarePlus className="w-10 h-10 " />
+            <p className="translate-y-0.5">Add Module</p>
           </Link>
         </div>
-        <div>
+        <div className="flex justify-center items-center">
+          <div
+            className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 cursor-pointer  py-5 px-6 transition-colors rounded-full"
+            onClick={() => setDarkMode((prev) => !prev)}
+          >
+            {darkMode ? (
+              <FiSun className=" w-10 h-10" />
+            ) : (
+              <FaRegMoon className=" w-10 h-10" />
+            )}
+          </div>
           {!authorized ? (
-            <Link to="/login" className={btn + " mr-5"}>
+            <Link
+              to="/login"
+              className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors"
+            >
               Log in
             </Link>
           ) : (
-            <button onClick={handleLogout} className={btn + " ml-5"}>
-              Log out
+            <button
+              onClick={handleLogout}
+              className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors uppercase cursor-pointer flex justify-center items-center gap-4"
+            >
+              <p>Log out</p>
+              <FaArrowRightFromBracket />
             </button>
           )}
-          <Link to="/account" className={btn + " ml-5"}>
-            {user ? user.name : "Guest"}
+          <Link
+            to="/account"
+            className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
+          >
+            <p>{user ? user.name : "Guest"}</p>
+            <FaRegUser />
           </Link>
         </div>
       </nav>

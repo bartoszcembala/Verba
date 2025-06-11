@@ -82,131 +82,135 @@ function Main({ account, setAccount, setCorrect }) {
   }
 
   return (
-    <div
-      className={`flex flex-col items-center justify-center border-3 border-solid border-neutral-300 rounded-2xl py-10 px-10 h-[60rem] transition-colors duration-300 ease-in-out ${
-        isCorrect === "correct" && "bg-[#323a34]"
-      } ${isCorrect === "wrong" && "bg-[#3a3232]"}`}
-    >
-      {selectedVerbs.length === 0 ? (
-        <p>Add words to start</p>
-      ) : exercise.correctAnswer === "" ? (
-        <button
-          className="btn"
-          onClick={() =>
-            exerciseType === "translate"
-              ? getExerciseTranslate(
-                  setInputValue,
-                  setIsCorrect,
-                  setExercise,
-                  verbs,
-                  selectedVerbs
-                )
-              : getExerciseFill(
-                  setInputValue,
-                  setIsCorrect,
-                  setExercise,
-                  selectedVerbs
-                )
-          }
-        >
-          Get an exercise
-        </button>
-      ) : (
-        <>
-          <h2>
-            {exercise.question}{" "}
-            <span onClick={() => setShowTranslation(!showTranslation)}>
-              TRANSLATE
-            </span>
-          </h2>
-          <p className="translation">
-            {showTranslation && exercise.translation}
-          </p>
-          {writing ? (
-            <div className="inputContainer">
-              <button
-                className="btn toggleBtn"
-                onClick={() => setWriting(false)}
-              >
-                🔠
-              </button>
-              <input
-                className="input"
-                type="text"
-                ref={inputRef}
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Type your answer"
-              />
-              {isCorrect === "correct" || isCorrect === "wrong" ? (
+    <div className="overflow-hidden h-[85vh] ">
+      <div
+        className={`flex flex-col items-center justify-center border-3 border-solid border-neutral-300 rounded-2xl py-10 px-10 h-[60rem] transition-colors duration-300 ease-in-out  ${
+          isCorrect === "" && "bg-neutral-700"
+        } ${isCorrect === "correct" && "bg-[#323a34]"} ${
+          isCorrect === "wrong" && "bg-[#3a3232]"
+        }`}
+      >
+        {selectedVerbs.length === 0 ? (
+          <p>Add words to start</p>
+        ) : exercise.correctAnswer === "" ? (
+          <button
+            className="btn"
+            onClick={() =>
+              exerciseType === "translate"
+                ? getExerciseTranslate(
+                    setInputValue,
+                    setIsCorrect,
+                    setExercise,
+                    verbs,
+                    selectedVerbs
+                  )
+                : getExerciseFill(
+                    setInputValue,
+                    setIsCorrect,
+                    setExercise,
+                    selectedVerbs
+                  )
+            }
+          >
+            Get an exercise
+          </button>
+        ) : (
+          <>
+            <h2>
+              {exercise.question}{" "}
+              <span onClick={() => setShowTranslation(!showTranslation)}>
+                TRANSLATE
+              </span>
+            </h2>
+            <p className="translation">
+              {showTranslation && exercise.translation}
+            </p>
+            {writing ? (
+              <div className="inputContainer">
                 <button
-                  className="btn checkBtn"
-                  onClick={() =>
-                    exerciseType === "translate"
-                      ? getExercise("translate")
-                      : getExercise("fill")
-                  }
+                  className="btn toggleBtn"
+                  onClick={() => setWriting(false)}
                 >
-                  ➡
+                  🔠
                 </button>
-              ) : (
+                <input
+                  className="input"
+                  type="text"
+                  ref={inputRef}
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Type your answer"
+                />
+                {isCorrect === "correct" || isCorrect === "wrong" ? (
+                  <button
+                    className="btn checkBtn"
+                    onClick={() =>
+                      exerciseType === "translate"
+                        ? getExercise("translate")
+                        : getExercise("fill")
+                    }
+                  >
+                    ➡
+                  </button>
+                ) : (
+                  <button
+                    className="btn checkBtn"
+                    onClick={() => handleAnswer(inputValue)}
+                  >
+                    Check answer
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="answersContainer">
                 <button
-                  className="btn checkBtn"
-                  onClick={() => handleAnswer(inputValue)}
+                  className="btn toggleBtn"
+                  onClick={() => setWriting(true)}
                 >
-                  Check answer
+                  ✍
                 </button>
-              )}
-            </div>
-          ) : (
-            <div className="answersContainer">
-              <button
-                className="btn toggleBtn"
-                onClick={() => setWriting(true)}
-              >
-                ✍
-              </button>
-              {exercise.options.map((answer) => (
-                <div
-                  onClick={() => handleAnswer(answer)}
-                  key={answer}
-                  className="answer"
-                >
-                  {answer}
-                </div>
-              ))}
-            </div>
-          )}
-          <Letters inputRef={inputRef} setInputValue={setInputValue} />
-          <div className="buttons">
-            {/* <button
+                {exercise.options.map((answer) => (
+                  <div
+                    onClick={() => handleAnswer(answer)}
+                    key={answer}
+                    className="answer"
+                  >
+                    {answer}
+                  </div>
+                ))}
+              </div>
+            )}
+            <Letters inputRef={inputRef} setInputValue={setInputValue} />
+            <div className="buttons">
+              {/* <button
           className="btn"
           onClick={() => setShowTranslation(!showTranslation)}
         >
           Translation {exercise.answer}
         </button> */}
 
-            <button
-              className="btn"
-              onClick={() =>
-                exerciseType === "translate"
-                  ? getExercise("translate")
-                  : getExercise("fill")
-              }
-            >
-              Get an exercise
-            </button>
-          </div>{" "}
-        </>
-      )}
-      <div className="mt-4">
-        <button onClick={() => setExerciseType("translate")} className="btn">
-          Translate the Word
-        </button>
-        <button onClick={() => setExerciseType("fillblank")} className="btn">
-          Fill the Blank
-        </button>
+              <button
+                className="btn"
+                onClick={() =>
+                  exerciseType === "translate"
+                    ? getExercise("translate")
+                    : getExercise("fill")
+                }
+              >
+                Get an exercise
+              </button>
+            </div>{" "}
+          </>
+        )}
+        <div className="mt-4">
+          <button onClick={() => setExerciseType("translate")} className="btn">
+            Translate the Word
+          </button>
+          <button onClick={() => setExerciseType("fillblank")} className="btn">
+            Fill the Blank
+          </button>
+        </div>
       </div>
     </div>
   );

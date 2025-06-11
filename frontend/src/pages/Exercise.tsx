@@ -1,6 +1,5 @@
-import { useContext, useEffect, useState } from "react";
-import "../App.css";
 import "../index.css";
+import { useContext, useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { useLocation } from "react-router-dom";
 import { AccountCtx } from "../lib/AccountContext";
@@ -69,7 +68,7 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
       );
     }
   }, []);
-  
+
   useEffect(() => {
     if (
       user &&
@@ -120,7 +119,7 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
           user,
         }}
       >
-        <div className="grid  grid-cols-[2fr_1fr] lg:grid-cols-[3fr_6fr_3fr] gap-40">
+        <div className="grid  grid-cols-[2fr_1fr] lg:grid-cols-[4fr_7fr_3fr] gap-16 text-white">
           <Sidebar setCorrect={setCorrect} />
           <Main
             account={account}

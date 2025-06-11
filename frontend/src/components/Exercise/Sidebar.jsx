@@ -1,10 +1,13 @@
 /* eslint-disable react/prop-types */
 import toast from "react-hot-toast";
-import { btn } from "../../lib/styles";
 import { useContext } from "react";
 import { AccountCtx } from "../../lib/AccountContext";
 import { ExerciseContext } from "../../lib/contexts";
-import { useProgress } from "../../lib/queries/progressQueries";
+import {
+  useEditProgress,
+  useProgress,
+} from "../../lib/queries/progressQueries";
+import { FaArrowAltCircleDown } from "react-icons/fa";
 
 function Sidebar({ setCorrect }) {
   const { mode, verbs, selectedVerbs, setSelectedVerbs, module, user } =
@@ -12,6 +15,10 @@ function Sidebar({ setCorrect }) {
 
   const { account, setAccount } = useContext(AccountCtx);
   const { progress } = useProgress();
+  const { editProgress } = useEditProgress();
+  const activeProgress = progress?.find(
+    (p) => p.moduleName === module && p.userName === user?.email
+  );
 
   function addVerb(verb) {
     if (selectedVerbs.includes(verb)) {
@@ -24,20 +31,38 @@ function Sidebar({ setCorrect }) {
   }
 
   return (
-    <div className="px-12 hidden lg:block">
-      <div className="pb-12">
-        <button className={btn} onClick={() => setSelectedVerbs(verbs)}>
+    <div
+      className="px-12  hidden lg:block overflow-y-auto h-[80vh] relative bg-neutral-700 rounded-3xl"
+      style={{
+        scrollbarWidth: "none", // Firefox
+        msOverflowStyle: "none", // IE i Edge
+      }}
+    >
+      <div className="pb-12 flex gap-3">
+        <button
+          className="cursor-pointer hover:bg-neutral-700 transition-colors px-4 py-2 rounded-2xl"
+          onClick={() => setSelectedVerbs(verbs)}
+        >
           Add all
         </button>
         <button
-          className={btn}
-          onClick={() => setSelectedVerbs(account.notLearned[module])}
+          className="cursor-pointer hover:bg-neutral-700 transition-colors px-4 py-2 rounded-2xl"
+          onClick={() => {
+            mode === "guest"
+              ? setSelectedVerbs(account.notLearned[module])
+              : setSelectedVerbs(
+                  verbs.filter(
+                    (item) => !activeProgress?.learned.includes(item[0])
+                  )
+                );
+          }}
         >
           Add not learned
         </button>
         <button
-          className={btn}
+          className="cursor-pointer hover:bg-neutral-700 transition-colors px-4 py-2 rounded-2xl"
           onClick={() => {
+            editProgress({ id: activeProgress._id, data: { learned: [] } });
             const acc = {
               ...account,
               modulesPercent: {
@@ -73,7 +98,7 @@ function Sidebar({ setCorrect }) {
                       (p) =>
                         p.moduleName === module && p.userName === user.email
                     )
-                    .learned?.includes(verb[0])
+                    ?.learned?.includes(verb[0])
                 ? "🟩"
                 : "🟥"}
             </span>
@@ -89,6 +114,10 @@ function Sidebar({ setCorrect }) {
       ) : (
         <div className="load">Loading</div>
       )}
+      <FaArrowAltCircleDown
+        className="fixed bottom-[4.8%] left-[11%] w-20 h-20"
+        style={{ color: "rgb(0, 144, 103)" }}
+      />
     </div>
   );
 }

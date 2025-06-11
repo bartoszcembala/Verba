@@ -51,12 +51,12 @@ export async function updateProgress(req, res) {
       });
     }
     //
-
     res.status(200).json({
       success: true,
       data: editedProgress,
     });
   } catch (error) {
+    console.log("err");
     res.status(500).json({
       success: false,
       message: "Server Error",

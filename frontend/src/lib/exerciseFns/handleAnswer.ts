@@ -160,7 +160,7 @@ export async function handleAnswer(
           }
         );
       }
-
+      setSelectedVerbs((prev) => prev.filter((v) => v[0] !== answer));
       toast.success("Brawo! Poprawna odpowiedź!");
       setIsCorrect("correct");
     } else {

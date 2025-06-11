@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 interface Progress {
   _id: string;
@@ -17,6 +18,11 @@ interface NewProgressInput {
 interface LearnedWordInput {
   id: string;
   word: { learned: string[] };
+}
+
+interface EditProgressInput {
+  id: string;
+  data: unknown;
 }
 
 export function useProgress() {
@@ -84,4 +90,26 @@ export function useAddLearnedWord() {
   return {
     addLearnedWord: mutation.mutateAsync,
   };
+}
+
+export function useEditProgress() {
+  const mutation = useMutation<Progress, Error, EditProgressInput>({
+    mutationFn: async ({ id, data }) => {
+      console.log("dat", id);
+      const res = await axios.patch<Progress>(
+        `http://localhost:5000/api/progress/${id}`,
+        data,
+        {
+          withCredentials: true,
+        }
+      );
+
+      return res.data;
+    },
+    onError: (error) => {
+      console.error("❌ Błąd edycji progresu:", error.message);
+    },
+  });
+
+  return { editProgress: mutation.mutateAsync };
 }

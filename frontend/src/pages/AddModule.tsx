@@ -79,6 +79,6 @@
 // export default AddModule;
 
 function AddModule() {
-  return <div>In work 🚧</div>;
+  return <div className="text-white text-center text-6xl pt-12">In work 🚧</div>;
 }
 export default AddModule;

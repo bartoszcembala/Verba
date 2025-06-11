@@ -14,14 +14,14 @@ export async function signup(req, res, next) {
     const newUser = await User.create(req.body);
 
     const token = signToken(newUser._id);
-    console.log(token);
+
     res.cookie("jwt", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
       sameSite: "lax",
       secure: false,
     });
-    console.log(res.cookie.jwt);
+
     res.status(201).json({
       success: true,
       data: {
