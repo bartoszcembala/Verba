@@ -55,7 +55,9 @@ function Account() {
                     to="/buy-premium"
                     className="text-neutral-400 cursor-pointer"
                   >
-                    Get a premium membership!{" "}
+                    {user.premium
+                      ? "Premium user"
+                      : "Get a premium membership!"}{" "}
                     <LuCrown className="inline-block text-indigo-500 -translate-y-0.5 ml-1" />
                   </Link>
                 </div>

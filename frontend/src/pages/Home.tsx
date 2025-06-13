@@ -20,7 +20,7 @@ function Home() {
     <div className="flex items-center justify-center ">
       <div className="grid grid-cols-[2fr_5fr] w-[120rem] gap-20">
         <div className="flex flex-col text-5xl gap-10">
-          <div className="flex flex-col justify-center items-center border-neutral-300  bg-white border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-6 h-[28rem] ">
+          <div className="flex shadow-xs flex-col justify-center items-center border-neutral-300  bg-white border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-6 h-[28rem] ">
             <img
               src="https://avatar.iran.liara.run/public/9"
               className="w-34 h-34 rounded-full border-2 border-indigo-500 mb-4"
@@ -35,7 +35,7 @@ function Home() {
               Master (1.1k exp)
             </p>
           </div>
-          <div className="flex items-center justify-center gap-2 border-neutral-300  bg-white border-1 dark:border-none dark:bg-neutral-700/70 rounded-2xl px-5 py-9">
+          <div className="flex items-center justify-center gap-2 shadow-xs border-neutral-300  bg-white border-1 dark:border-none dark:bg-neutral-700/70 rounded-2xl px-5 py-9">
             {previousDates.map((date) => (
               <span key={date} className="h-20 w-20 text-center rounded-2xl">
                 <span className="block text-4xl pb-4">
@@ -48,7 +48,7 @@ function Home() {
             ))}
           </div>
 
-          <div className="bg-white border-1 dark:border-none border-neutral-300  dark:bg-neutral-700/70 rounded-2xl px-5 py-9 text-center">
+          <div className="bg-white shadow-xs border-1 dark:border-none border-neutral-300  dark:bg-neutral-700/70 rounded-2xl px-5 py-9 text-center">
             <p className=" text-4xl mb-4 dark:text-neutral-100">
               This week you studied for:
             </p>
@@ -59,10 +59,10 @@ function Home() {
             <p className="italic ">Get a premium!</p>
           </div> */}
         </div>
-        <div className="flex flex-col gap-18 ">
+        <div className="flex  flex-col gap-18 ">
           <Link
             to={`/${user?.latestActivity[0]}`}
-            className="bg-white border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-12 flex justify-between hover:bg-neutral-700 transition-colors"
+            className="bg-white shadow-xs border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-12 flex justify-between dark:hover:bg-neutral-700 hover:bg-neutral-200 transition-colors"
           >
             <div>
               <p className="text-5xl mb-4">Pick up where you left of: </p>
@@ -71,7 +71,7 @@ function Home() {
             <HiOutlinePlay className="text-8xl text-indigo-500" />
           </Link>
 
-          <div className="bg-white border-neutral-300 border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-8 h-[20rem] flex justify-center items-center gap-8">
+          <div className="bg-white shadow-xs border-neutral-300 border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-8 h-[20rem] flex justify-center items-center gap-8">
             <div className="self-center py-12 pl-12 text-9xl h-full w-[30%] border-r-2 border-neutral-400 cursor-pointer">
               GO
             </div>
@@ -80,7 +80,7 @@ function Home() {
             </div>
           </div>
 
-          <div className="bg-white border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-8 h-[35rem] dark:border-2 dark:border-indigo-500">
+          <div className="bg-white border-1 shadow-xs border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-8 h-[35rem] dark:border-2 dark:border-indigo-500">
             <h3 className="text-4xl mb-5 pb-5 text-center border-b-2 border-indigo-500 ">
               Daily Quests:
             </h3>

@@ -12,6 +12,7 @@ export interface User {
   latestActivity: string[];
   streak: string[];
   timeSpentLearning: timeSpentLearningType[];
+  premium: boolean;
 }
 
 export interface Lesson {

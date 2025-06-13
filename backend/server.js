@@ -5,6 +5,7 @@ import moduleRoutes from "./routes/module.route.js";
 import userRoutes from "./routes/user.route.js";
 import progressRoutes from "./routes/progress.route.js";
 import lessonRoutes from "./routes/lesson.route.js";
+import checkoutRouter from "./routes/checkout.route.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
@@ -26,6 +27,7 @@ app.use("/api/modules", moduleRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/progress", progressRoutes);
 app.use("/api/lesson", lessonRoutes);
+app.use("/api/checkout", checkoutRouter);
 
 app.listen(PORT, () => {
   connectDB();

@@ -43,6 +43,10 @@ const userSchema = new mongoose.Schema({
     required: false,
   },
   timeSpentLearning: { type: [chartEntrySchema] },
+  premium: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 userSchema.pre("save", async function (next) {
