@@ -75,7 +75,7 @@ function Account() {
               </div>{" "}
               <div className="p-10 bg-white border-1 dark:border-none border-neutral-300 dark:bg-neutral-700/70 rounded-2xl flex flex-col items-center justify-center gap-4">
                 <p>STREAK:</p>
-                <p className="text-7xl">12D</p>
+                <p className="text-7xl">{user.streak.length} DAYS</p>
               </div>
             </div>
 

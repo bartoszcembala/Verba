@@ -1,11 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { useEditUser } from "../lib/queries/userQueries";
+import {
+  useEditDailyQuests,
+  useGetDailyQuests,
+} from "../lib/queries/dailyQuestsQueries";
+import { useUpdateDailyQuests } from "../lib/useUpdateDailyQuests";
 
 export const useDailyStudyTimer = (): number => {
   const [secondsToday, setSecondsToday] = useState<number>(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const updateRef = useRef<NodeJS.Timeout | null>(null);
   const { editUser } = useEditUser();
+  const { dailyQuests } = useGetDailyQuests();
+  const { editDailyQuests } = useEditDailyQuests();
+  const { handleUpdateDailyQuest } = useUpdateDailyQuests();
 
   useEffect(() => {
     const today = new Date().toISOString().split("T")[0];
@@ -31,6 +39,8 @@ export const useDailyStudyTimer = (): number => {
 
     // Wysyłka danych do backendu co 1 minutę
     updateRef.current = setInterval(() => {
+      if (!dailyQuests || dailyQuests.length === 0) return;
+
       const stored = localStorage.getItem("user");
       if (!stored) return;
 
@@ -60,6 +70,9 @@ export const useDailyStudyTimer = (): number => {
         },
       });
 
+      //Daily Quest logic
+      handleUpdateDailyQuest("spend 10 minutes learning");
+
       // Aktualizacja usera w localStorage
       localStorage.setItem(
         "user",
@@ -80,7 +93,7 @@ export const useDailyStudyTimer = (): number => {
       if (intervalRef.current) clearInterval(intervalRef.current);
       if (updateRef.current) clearInterval(updateRef.current);
     };
-  }, [editUser]);
+  }, [editUser, dailyQuests]);
 
   return secondsToday;
 };

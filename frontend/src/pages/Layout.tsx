@@ -14,6 +14,8 @@ import { FaArrowRightFromBracket } from "react-icons/fa6";
 import { FaRegUser } from "react-icons/fa6";
 import { FaRegMoon } from "react-icons/fa";
 import { FiSun } from "react-icons/fi";
+import { useGetDailyQuests } from "../lib/queries/dailyQuestsQueries";
+import { useUpdateDailyQuests } from "../lib/useUpdateDailyQuests";
 
 type User = {
   _id: string;
@@ -31,9 +33,13 @@ function Layout() {
   const { setAccount } = useContext(AccountCtx)!;
   const { logout } = useLogout();
   const { editUser } = useEditUser();
+  const { dailyQuests } = useGetDailyQuests();
+  const { handleDeleteDailyQuest } = useUpdateDailyQuests();
+
   useDailyStudyTimer();
 
   const [darkMode, setDarkMode] = useState(true);
+
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
   }, [darkMode]);
@@ -42,6 +48,17 @@ function Layout() {
   const user: User | undefined = storedUser
     ? (JSON.parse(storedUser) as User)
     : undefined;
+
+  useEffect(() => {
+    const userDailyQuest =
+      dailyQuests && dailyQuests.find((item) => item.userId === user?._id);
+
+    if (!userDailyQuest) return;
+
+    if (userDailyQuest.day !== new Date().toISOString().split("T")[0]) {
+      handleDeleteDailyQuest(true);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (user) {

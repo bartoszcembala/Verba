@@ -2,6 +2,7 @@ import { useContext, useEffect } from "react";
 import { useActivity } from "../lib/queries/userQueries";
 import { SettingsContext } from "../lib/contexts";
 import { Link, useLocation } from "react-router-dom";
+import { useUpdateDailyQuests } from "../lib/useUpdateDailyQuests";
 
 interface Lesson {
   _id: string;
@@ -12,6 +13,7 @@ interface Lesson {
 }
 
 function Lesson({ lesson }: { lesson: Lesson }) {
+  const { handleUpdateDailyQuest } = useUpdateDailyQuests();
   const { addActivity } = useActivity();
   const { authorized } = useContext(SettingsContext)!;
   const user = JSON.parse(localStorage.getItem("user")!);
@@ -46,8 +48,8 @@ function Lesson({ lesson }: { lesson: Lesson }) {
   }, []);
 
   return (
-    <div className="grid grid-cols-[1fr_3fr_1fr] p-4 gap-20 text-white">
-      <div >
+    <div className="grid grid-cols-[1fr_3fr_1fr] p-4 gap-20 text-white relative">
+      <div>
         Exercises for this topic:
         {lesson.relatedExercises &&
           authorized &&
@@ -58,6 +60,12 @@ function Lesson({ lesson }: { lesson: Lesson }) {
           ))}
       </div>
       <div dangerouslySetInnerHTML={{ __html: lesson.html }} />
+      <button
+        onClick={() => handleUpdateDailyQuest("finish lesson")}
+        className="bg-indigo-500 cursor-pointer rounded-xl px-4 py-2 absolute top-[3%] right-[10%]"
+      >
+        Finish Lesson
+      </button>
     </div>
   );
 }

@@ -9,6 +9,11 @@ import {
 } from "../../lib/exerciseFns/exericsesFn";
 import { ExerciseContext } from "../../lib/contexts";
 import Letters from "./Letters";
+import {
+  useEditDailyQuests,
+  useGetDailyQuests,
+} from "../../lib/queries/dailyQuestsQueries";
+import { useUpdateDailyQuests } from "../../lib/useUpdateDailyQuests";
 
 function Main({ account, setAccount, setCorrect }) {
   const {
@@ -21,7 +26,10 @@ function Main({ account, setAccount, setCorrect }) {
     user,
   } = useContext(ExerciseContext);
 
+  const { dailyQuests } = useGetDailyQuests();
+  const { editDailyQuests } = useEditDailyQuests();
   const { addLearnedWord } = useAddLearnedWord();
+  const { handleUpdateDailyQuest } = useUpdateDailyQuests();
   const queryClient = useQueryClient();
   const [exercise, setExercise] = useState({
     question: "",
@@ -66,7 +74,10 @@ function Main({ account, setAccount, setCorrect }) {
       setAccount,
       setCorrect,
       setSelectedVerbs,
-      queryClient
+      queryClient,
+      dailyQuests,
+      editDailyQuests,
+      handleUpdateDailyQuest
     );
   }
 

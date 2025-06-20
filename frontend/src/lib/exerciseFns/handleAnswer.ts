@@ -1,5 +1,6 @@
 import toast from "react-hot-toast";
 import { QueryClient } from "@tanstack/react-query";
+import { DailyQuestsInterface } from "../../types";
 
 //////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////
@@ -50,7 +51,10 @@ export async function handleAnswer(
   setAccount: SetState<Account>,
   setCorrect: SetState<[{ value: string[] }, { value: [string, string][] }]>,
   setSelectedVerbs: SetState<[string, string][]>,
-  queryClient: QueryClient
+  queryClient: QueryClient,
+  dailyQuests: DailyQuestsInterface[],
+  editDailyQuests: any,
+  handleUpdateDailyQuest: any
 ) {
   if (mode === "guest") {
     let newAccount: Account;
@@ -138,7 +142,6 @@ export async function handleAnswer(
     );
 
     if (!activeProgress) {
-      // Obsłuż przypadek, gdy progress nie został znaleziony
       console.warn("Active progress not found");
       return;
     }
@@ -159,7 +162,11 @@ export async function handleAnswer(
             },
           }
         );
+
+        //Daily Quest logic
+        handleUpdateDailyQuest("learn words");
       }
+
       setSelectedVerbs((prev) => prev.filter((v) => v[0] !== answer));
       toast.success("Brawo! Poprawna odpowiedź!");
       setIsCorrect("correct");

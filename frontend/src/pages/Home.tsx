@@ -7,14 +7,32 @@ import { IoMdTime } from "react-icons/io";
 import { MdOutlineQuiz } from "react-icons/md";
 import { IoBulbOutline } from "react-icons/io5";
 import { FaStar } from "react-icons/fa";
+import {
+  useEditDailyQuests,
+  useGetDailyQuests,
+} from "../lib/queries/dailyQuestsQueries";
+import { calculatePercent } from "../lib/calculatePercent";
+import Spinner from "../components/Spinner";
+import { useUpdateDailyQuests } from "../lib/useUpdateDailyQuests";
 
 function Home() {
+  const { handleUpdateDailyQuest, handleDeleteDailyQuest } =
+    useUpdateDailyQuests();
+  const { dailyQuests } = useGetDailyQuests();
+  const { editDailyQuests } = useEditDailyQuests();
+  const todayDailyQuests = dailyQuests && dailyQuests[0];
   const previousDates = getPreviousDates(7);
   const storedUser = localStorage.getItem("user");
   const user: User | null = storedUser ? JSON.parse(storedUser) : null;
   const timeSpent = user?.timeSpentLearning
     .slice(-7)
     .reduce((sum, curr) => sum + curr.value, 0);
+
+  const iconStore: Record<string, JSX.Element> = {
+    flag: <FaFlagCheckered className="h-16 w-16" />,
+    clock: <IoMdTime className="h-16 w-16" />,
+    bulb: <IoBulbOutline className="h-16 w-16" />,
+  };
 
   return (
     <div className="flex items-center justify-center ">
@@ -32,7 +50,7 @@ function Home() {
             <p className="text-neutral-700 dark:text-neutral-200 text-3xl translate-y-9">
               level 8.{" "}
               <FaStar className="inline-block -translate-y-1 text-indigo-500" />{" "}
-              Master (1.1k exp)
+              Master ({user?.exp && Math.floor(user?.exp)} exp)
             </p>
           </div>
           <div className="flex items-center justify-center gap-2 shadow-xs border-neutral-300  bg-white border-1 dark:border-none dark:bg-neutral-700/70 rounded-2xl px-5 py-9">
@@ -68,11 +86,14 @@ function Home() {
               <p className="text-5xl mb-4">Pick up where you left of: </p>
               <p className="text-4xl">{user?.latestActivity[0]}</p>{" "}
             </div>
-            <HiOutlinePlay className="text-8xl text-indigo-500" />
+            <HiOutlinePlay className="hover:scale-130 transition text-8xl text-indigo-500" />
           </Link>
 
           <div className="bg-white shadow-xs border-neutral-300 border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-8 h-[20rem] flex justify-center items-center gap-8">
-            <div className="self-center py-12 pl-12 text-9xl h-full w-[30%] border-r-2 border-neutral-400 cursor-pointer">
+            <div
+              onClick={() => handleUpdateDailyQuest("finish quiz")}
+              className="self-center py-12 pl-12 text-9xl h-full w-[30%] border-r-2 border-neutral-400 cursor-pointer"
+            >
               GO
             </div>
             <div className="w-[70%] text-5xl">
@@ -82,30 +103,89 @@ function Home() {
 
           <div className="bg-white border-1 shadow-xs border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-8 h-[35rem] dark:border-2 dark:border-indigo-500">
             <h3 className="text-4xl mb-5 pb-5 text-center border-b-2 border-indigo-500 ">
-              Daily Quests:
+              Daily Quests:{" "}
+              <button onClick={() => handleDeleteDailyQuest()}>delete</button>
             </h3>
-            <div className=" grid grid-cols-2 gap-y-10">
-              <div className="flex flex-col justify-center items-center gap-3">
-                <p>Complete one lesson</p>
-                <FaFlagCheckered className="h-16 w-16" />
-                <p>0/1 (0%)</p>
+            {todayDailyQuests ? (
+              <div className=" grid grid-cols-2 gap-y-10">
+                <div className="flex flex-col justify-center items-center gap-3 relative">
+                  <p>{todayDailyQuests.quest1.title}</p>
+                  {iconStore[todayDailyQuests.quest1.icon]}
+                  <p>
+                    {todayDailyQuests.quest1.progress}/
+                    {todayDailyQuests.quest1.toObtain} (
+                    {calculatePercent(
+                      todayDailyQuests.quest1.progress,
+                      todayDailyQuests.quest1.toObtain
+                    )}
+                    %)
+                  </p>
+                  {todayDailyQuests.quest1.completed && (
+                    <span className="absolute rotate-14  bg-indigo-500/90 px-4 top-20 rounded-lg">
+                      COMPLETED
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-col justify-center items-center gap-3 relative">
+                  <p>{todayDailyQuests.quest2.title}</p>
+                  {iconStore[todayDailyQuests.quest2.icon]}
+                  <p>
+                    {todayDailyQuests.quest2.progress}/
+                    {todayDailyQuests.quest2.toObtain} (
+                    {calculatePercent(
+                      todayDailyQuests.quest2.progress,
+                      todayDailyQuests.quest2.toObtain
+                    )}
+                    %)
+                  </p>
+                  {todayDailyQuests.quest2.completed && (
+                    <span className="absolute rotate-14  bg-indigo-500/90 px-4 top-20 rounded-lg">
+                      COMPLETED
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-col justify-center items-center gap-3 relative">
+                  <p>{todayDailyQuests.quest3.title}</p>
+                  {iconStore[todayDailyQuests.quest3.icon]}
+
+                  <p>
+                    {todayDailyQuests.quest3.progress}/
+                    {todayDailyQuests.quest3.toObtain} (
+                    {calculatePercent(
+                      todayDailyQuests.quest3.progress,
+                      todayDailyQuests.quest3.toObtain
+                    )}
+                    %)
+                  </p>
+                  {todayDailyQuests.quest3.completed && (
+                    <span className="absolute rotate-14  bg-indigo-500/90 px-4 top-20 rounded-lg">
+                      COMPLETED
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-col justify-center items-center gap-3 relative">
+                  <p>{todayDailyQuests.quest4.title}</p>
+                  {iconStore[todayDailyQuests.quest4.icon]}
+
+                  <p>
+                    {todayDailyQuests.quest4.progress}/
+                    {todayDailyQuests.quest4.toObtain} (
+                    {calculatePercent(
+                      todayDailyQuests.quest4.progress,
+                      todayDailyQuests.quest4.toObtain
+                    )}
+                    %)
+                  </p>
+                  {todayDailyQuests.quest4.completed && (
+                    <span className="absolute rotate-14  bg-indigo-500/90 px-4 top-20 rounded-lg">
+                      COMPLETED
+                    </span>
+                  )}
+                </div>
               </div>
-              <div className="flex flex-col justify-center items-center gap-3">
-                <p>Spent 10 minutes learning</p>
-                <IoMdTime className="h-16 w-16" />
-                <p>5/10 (50%)</p>
-              </div>{" "}
-              <div className="flex flex-col justify-center items-center gap-3">
-                <p>Learn 5 new words</p>
-                <IoBulbOutline className="h-16 w-16" />
-                <p>2/5 (40%)</p>
-              </div>
-              <div className="flex flex-col justify-center items-center gap-3">
-                <p>Finish Daily Quiz</p>
-                <MdOutlineQuiz className="h-16 w-16" />
-                <p>0/1 (0%)</p>
-              </div>{" "}
-            </div>
+            ) : (
+              <Spinner />
+            )}
           </div>
         </div>
       </div>
