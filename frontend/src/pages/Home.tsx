@@ -4,22 +4,63 @@ import { getPreviousDates } from "../lib/getPreviousDates";
 import { HiOutlinePlay } from "react-icons/hi2";
 import { FaFlagCheckered } from "react-icons/fa6";
 import { IoMdTime } from "react-icons/io";
-import { MdOutlineQuiz } from "react-icons/md";
 import { IoBulbOutline } from "react-icons/io5";
 import { FaStar } from "react-icons/fa";
-import {
-  useEditDailyQuests,
-  useGetDailyQuests,
-} from "../lib/queries/dailyQuestsQueries";
+import { useGetDailyQuests } from "../lib/queries/dailyQuestsQueries";
 import { calculatePercent } from "../lib/calculatePercent";
 import Spinner from "../components/Spinner";
 import { useUpdateDailyQuests } from "../lib/useUpdateDailyQuests";
+import { LuCrown } from "react-icons/lu";
+import { useState } from "react";
 
 function Home() {
+  const levels = [
+    { level: 1, name: "Novice", xp: 0 },
+    { level: 2, name: "Learner", xp: 150 },
+    { level: 3, name: "Beginner", xp: 400 },
+    { level: 4, name: "Word Seeker", xp: 800 },
+    { level: 5, name: "Phrase Tamer", xp: 1300 },
+    { level: 6, name: "Apprentice", xp: 2000 },
+    { level: 7, name: "Converser", xp: 2900 },
+    { level: 8, name: "Language Explorer", xp: 4000 },
+    { level: 9, name: "Proficient", xp: 5300 },
+    { level: 10, name: "Advanced", xp: 6800 },
+    { level: 11, name: "Idiom Master", xp: 8500 },
+    { level: 12, name: "Expert", xp: 10500 },
+    { level: 13, name: "Mentor", xp: 13000 },
+    { level: 14, name: "Polyglot", xp: 16000 },
+    { level: 15, name: "Legendary Linguist", xp: 20000 },
+  ];
+
+  function getUserLevel(userXP: number) {
+    let currentLevel = levels[0];
+
+    for (let i = 0; i < levels.length; i++) {
+      if (userXP >= levels[i].xp) {
+        currentLevel = levels[i];
+      } else {
+        const nextLevel = levels[i];
+        return {
+          level: currentLevel.level,
+          levelName: currentLevel.name,
+          xpToNextLevel: nextLevel.xp - userXP,
+          nextLevelXP: nextLevel.xp,
+          totalXP: userXP,
+        };
+      }
+    }
+    return {
+      level: currentLevel.level,
+      levelName: currentLevel.name,
+      xpToNextLevel: 0,
+      nextLevelXP: null,
+      totalXP: userXP,
+    };
+  }
+
   const { handleUpdateDailyQuest, handleDeleteDailyQuest } =
     useUpdateDailyQuests();
   const { dailyQuests } = useGetDailyQuests();
-  const { editDailyQuests } = useEditDailyQuests();
   const todayDailyQuests = dailyQuests && dailyQuests[0];
   const previousDates = getPreviousDates(7);
   const storedUser = localStorage.getItem("user");
@@ -27,30 +68,34 @@ function Home() {
   const timeSpent = user?.timeSpentLearning
     .slice(-7)
     .reduce((sum, curr) => sum + curr.value, 0);
-
+  const userLevel = getUserLevel(user?.exp ? Math.floor(user.exp) : 0);
   const iconStore: Record<string, JSX.Element> = {
     flag: <FaFlagCheckered className="h-16 w-16" />,
     clock: <IoMdTime className="h-16 w-16" />,
     bulb: <IoBulbOutline className="h-16 w-16" />,
   };
+  const [dailyQuizOpen, setDailyQuizOpen] = useState(false);
 
   return (
     <div className="flex items-center justify-center ">
       <div className="grid grid-cols-[2fr_5fr] w-[120rem] gap-20">
         <div className="flex flex-col text-5xl gap-10">
-          <div className="flex shadow-xs flex-col justify-center items-center border-neutral-300  bg-white border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-6 h-[28rem] ">
+          <div className="flex shadow-xs flex-col justify-center items-center border-neutral-300  bg-white border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-6 h-[30rem] relative">
             <img
-              src="https://avatar.iran.liara.run/public/9"
+              src={`/avatars/AV${user?.avatar}.png`}
               className="w-34 h-34 rounded-full border-2 border-indigo-500 mb-4"
             />
             <h1 className="text-5xl pt-5 mb-3">{user?.name}</h1>
-            <p className="text-neutral-500 dark:text-neutral-300 text-3xl">
+            <p className="text-neutral-500 dark:text-neutral-300 text-3xl mb-5">
               Welcome back!
             </p>
             <p className="text-neutral-700 dark:text-neutral-200 text-3xl translate-y-9">
-              level 8.{" "}
+              level {userLevel.level}.{" "}
               <FaStar className="inline-block -translate-y-1 text-indigo-500" />{" "}
-              Master ({user?.exp && Math.floor(user?.exp)} exp)
+              {userLevel.levelName} ({userLevel.totalXP} exp)
+            </p>
+            <p className="absolute bottom-1 text-2xl text-neutral-400">
+              Next level in: {userLevel.xpToNextLevel}XP
             </p>
           </div>
           <div className="flex items-center justify-center gap-2 shadow-xs border-neutral-300  bg-white border-1 dark:border-none dark:bg-neutral-700/70 rounded-2xl px-5 py-9">
@@ -72,10 +117,15 @@ function Home() {
             </p>
             <p className="text-5xl underline">{timeSpent} minutes!</p>{" "}
           </div>
-          {/* <div className="bg-neutral-700/70 rounded-2xl px-5 py-9 text-center hover:bg-neutral-700 transition-colors cursor-pointer flex flex-col items-center justify-center gap-4">
-            <LuCrown className="w-38 h-38 text-indigo-500 " />
-            <p className="italic ">Get a premium!</p>
-          </div> */}
+          <div className="bg-white shadow-xs border-1 dark:border-none border-neutral-300  dark:bg-neutral-700/70 rounded-2xl px-5 text-center text-4xl py-5 font-semibold cursor-pointer dark:hover:bg-neutral-700 hover:bg-neutral-200 transition-colors">
+            <Link to="/buy-premium">
+              <p className="translate-y-2">
+                GET
+                <LuCrown className="inline-block mx-3 w-16 h-16 -translate-y-3 text-indigo-500" />
+                PREMIUM!
+              </p>
+            </Link>
+          </div>
         </div>
         <div className="flex  flex-col gap-18 ">
           <Link
@@ -91,7 +141,8 @@ function Home() {
 
           <div className="bg-white shadow-xs border-neutral-300 border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-8 h-[20rem] flex justify-center items-center gap-8">
             <div
-              onClick={() => handleUpdateDailyQuest("finish quiz")}
+              // onClick={() => handleUpdateDailyQuest("finish quiz")}
+              onClick={() => setDailyQuizOpen(true)}
               className="self-center py-12 pl-12 text-9xl h-full w-[30%] border-r-2 border-neutral-400 cursor-pointer"
             >
               GO

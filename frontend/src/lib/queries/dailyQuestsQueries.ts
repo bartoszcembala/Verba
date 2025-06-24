@@ -33,6 +33,8 @@ export function useEditDailyQuests() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["dailyQuests"] });
+      queryClient.refetchQueries({ queryKey: ["dailyQuests"] });
+
     },
   });
 

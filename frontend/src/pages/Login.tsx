@@ -22,11 +22,12 @@ function Login() {
     login(data, {
       onSuccess(user) {
         localStorage.setItem("user", JSON.stringify(user));
-        toast.success("Logged in successfully!");
         setMode("user");
         setAuthorized(true);
         navigate("/");
         reset();
+        window.location.reload();
+        toast.success("Logged in successfully!");
       },
       onError() {
         toast.error("Logging went wrong!");

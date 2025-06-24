@@ -12,6 +12,21 @@ const chartEntrySchema = new mongoose.Schema({
   },
 });
 
+const friendsSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  friendId: {
+    type: String,
+    required: true,
+  },
+  avatar: {
+    type: String,
+    required: true,
+  },
+});
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -42,7 +57,9 @@ const userSchema = new mongoose.Schema({
     type: [String],
     required: false,
   },
-  timeSpentLearning: { type: [chartEntrySchema] },
+  timeSpentLearning: {
+    type: [chartEntrySchema],
+  },
   premium: {
     type: Boolean,
     default: false,
@@ -51,6 +68,18 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  finishedLessons: {
+    type: [String],
+    default: [],
+  },
+  friends: {
+    type: [friendsSchema],
+    default: [],
+  },
+  avatar: {
+    type: String,
+    default: "1",
+  }
 });
 
 userSchema.pre("save", async function (next) {

@@ -15,6 +15,7 @@ const moduleSchema = new mongoose.Schema({
     type: [[String]],
     required: true,
   },
+  level: String,
 });
 
 export const Module = mongoose.model("Module", moduleSchema);

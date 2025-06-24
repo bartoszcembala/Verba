@@ -7,12 +7,12 @@ import {
   useEditProgress,
   useProgress,
 } from "../../lib/queries/progressQueries";
-import { FaArrowAltCircleDown } from "react-icons/fa";
+import { useQueryClient } from "@tanstack/react-query";
 
 function Sidebar({ setCorrect }) {
+  const queryClient = useQueryClient();
   const { mode, verbs, selectedVerbs, setSelectedVerbs, module, user } =
     useContext(ExerciseContext);
-
   const { account, setAccount } = useContext(AccountCtx);
   const { progress } = useProgress();
   const { editProgress } = useEditProgress();
@@ -32,21 +32,21 @@ function Sidebar({ setCorrect }) {
 
   return (
     <div
-      className="px-12  hidden lg:block overflow-y-auto h-[80vh] relative bg-neutral-700 rounded-3xl"
+      className="ml-4 px-12  hidden lg:block overflow-y-auto max-h-[90vh] relative dark:bg-neutral-700/70 rounded-3xl bg-white border-1 dark:border-none border-neutral-300 "
       style={{
         scrollbarWidth: "none", // Firefox
         msOverflowStyle: "none", // IE i Edge
       }}
     >
-      <div className="pb-12 flex gap-3">
+      <div className="py-6 mb-6 flex gap-3 border-b-2">
         <button
-          className="cursor-pointer hover:bg-neutral-700 transition-colors px-4 py-2 rounded-2xl"
+          className="border-1 cursor-pointer border-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors px-4 py-2 rounded-xl"
           onClick={() => setSelectedVerbs(verbs)}
         >
           Add all
         </button>
         <button
-          className="cursor-pointer hover:bg-neutral-700 transition-colors px-4 py-2 rounded-2xl"
+          className="border-1 cursor-pointer border-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors px-4 py-2 rounded-xl"
           onClick={() => {
             mode === "guest"
               ? setSelectedVerbs(account.notLearned[module])
@@ -60,9 +60,10 @@ function Sidebar({ setCorrect }) {
           Add not learned
         </button>
         <button
-          className="cursor-pointer hover:bg-neutral-700 transition-colors px-4 py-2 rounded-2xl"
+          className="border-1 cursor-pointer border-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors px-4 py-2 rounded-xl"
           onClick={() => {
             editProgress({ id: activeProgress._id, data: { learned: [] } });
+            queryClient.invalidateQueries({ queryKey: ["progress"] });
             const acc = {
               ...account,
               modulesPercent: {
@@ -87,7 +88,7 @@ function Sidebar({ setCorrect }) {
       </div>
       {verbs.length >= 1 ? (
         verbs.map((verb) => (
-          <div key={verb[0]} className="verbs">
+          <div key={verb[0]} className="flex items-center gap-4 pb-2 ">
             <span>
               {mode === "guest"
                 ? account.modulesPercent[module].includes(verb[0])
@@ -104,20 +105,19 @@ function Sidebar({ setCorrect }) {
             </span>
             <span className="cursor-pointer">🔈</span>
             <p>{verb[0] + ` (${verb[1]})`}</p>
-            <button className="btn" onClick={() => addVerb(verb)}>
+            <button
+              className="border-1 cursor-pointer uppercase text-3xl border-neutral-300 rounded-xl px-3 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors"
+              onClick={() => addVerb(verb)}
+            >
               {selectedVerbs.some(([element]) => element === verb[0])
-                ? "Delete"
-                : "Add"}
+                ? "-"
+                : "+"}
             </button>
           </div>
         ))
       ) : (
         <div className="load">Loading</div>
       )}
-      <FaArrowAltCircleDown
-        className="fixed bottom-[4.8%] left-[11%] w-20 h-20"
-        style={{ color: "rgb(0, 144, 103)" }}
-      />
     </div>
   );
 }

@@ -121,7 +121,7 @@ function Layout() {
           >
             <HiOutlineBookOpen className="w-10 h-10 " />
             <p className="translate-y-0.5">Lessons</p>
-          </Link>
+          </Link>{" "}
           <Link
             to="/exercises"
             className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
@@ -129,13 +129,41 @@ function Layout() {
             <GoPencil className="w-10 h-10 " />
             <p className="translate-y-0.5">Exercises</p>
           </Link>
-          <Link
+          {/* <Link
             to="/add-module"
             className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
           >
             <CiSquarePlus className="w-10 h-10 " />
             <p className="translate-y-0.5">Add Module</p>
-          </Link>
+          </Link> */}
+          <div className="relative group inline-block">
+            {/* Główny przycisk */}
+            <button className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4 ">
+              MORE
+            </button>
+
+            {/* Menu rozwijane */}
+            <div className="absolute left-0 mt-2 w-65 bg-white rounded-md shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition duration-300 z-50 -translate-y-4">
+              <Link
+                to="/add-module"
+                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+              >
+                Leaderboard
+              </Link>
+              <Link
+                to=""
+                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+              >
+                XP Guide
+              </Link>
+              <Link
+                to=""
+                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+              >
+                Logout
+              </Link>
+            </div>
+          </div>
         </div>
         <div className="flex justify-center items-center">
           <div

@@ -69,6 +69,22 @@ export function useUsers() {
   return { users: data, isLoadingUsers: isLoading };
 }
 
+export function useUser(userId: string) {
+  const { data, isLoading } = useQuery<User>({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const res = await fetch(`http://localhost:5000/api/users/${userId}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      const json = await res.json();
+      return json.data as User;
+    },
+  });
+
+  return { user: data, isLoadingUser: isLoading };
+}
+
 export function useActivity() {
   const { mutateAsync } = useMutation<User, Error, ActivityInput>({
     mutationFn: async ({ id, activities }) => {

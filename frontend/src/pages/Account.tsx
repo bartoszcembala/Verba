@@ -1,10 +1,5 @@
-import { calculatePercent } from "../lib/calculatePercent";
+import { calculateStreak } from "../lib/calculateStreak";
 import { Link } from "react-router-dom";
-import Spinner from "../components/Spinner";
-import { getPreviousDates } from "../lib/getPreviousDates";
-
-import { useProgress } from "../lib/queries/progressQueries";
-import { useModules } from "../lib/queries/modulesQueries";
 import { User } from "../types";
 import { LuCrown } from "react-icons/lu";
 import { IoSettingsOutline } from "react-icons/io5";
@@ -20,23 +15,22 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
+import { useState } from "react";
+import Modal from "../components/Modal";
 
 function Account() {
   const storedUser = localStorage.getItem("user");
   const user: User | null = storedUser ? JSON.parse(storedUser) : null;
 
-  const { modules, isLoadingModules } = useModules();
-  const { progress, isLoadingProgress } = useProgress();
-  const previousDates = getPreviousDates(4);
+  const streak = user && calculateStreak(user.streak);
 
-  if (isLoadingModules || isLoadingProgress) {
-    return <Spinner />;
-  }
-
-  const dates = user?.timeSpentLearning.map((d) => ({
-    date: `${d.date.split("-")[2]}-${d.date.split("-")[1]}`,
-    value: d.value,
-  }));
+  const [isOpen, setIsOpen] = useState(false);
+  const dates = user?.timeSpentLearning
+    .map((d) => ({
+      date: `${d.date.split("-")[2]}-${d.date.split("-")[1]}`,
+      value: d.value,
+    }))
+    .slice(-14);
 
   return (
     <div className="flex justify-center items-center ">
@@ -46,7 +40,7 @@ function Account() {
             <div className="rounded-2xl bg-white border-1 dark:border-none border-neutral-300 dark:bg-neutral-700/70 py-14 px-20 relative">
               <div className="flex gap-20 items-center">
                 <img
-                  src="https://avatar.iran.liara.run/public/9"
+                  src={`/avatars/AV${user.avatar}.png`}
                   className="w-30 h-30 rounded-full border-2 border-indigo-500"
                 />
                 <div>
@@ -67,7 +61,7 @@ function Account() {
             <div className="grid grid-cols-3 gap-6">
               <div className="p-10 bg-white border-1 dark:border-none border-neutral-300 dark:bg-neutral-700/70 rounded-2xl flex flex-col items-center justify-center gap-4">
                 <p>FINSHED LESSONS:</p>
-                <p className="text-7xl">4</p>
+                <p className="text-7xl">{user.finishedLessons.length}</p>
               </div>
               <div className="p-10 bg-white border-1 dark:border-none border-neutral-300 dark:bg-neutral-700/70 rounded-2xl flex flex-col items-center justify-center gap-4">
                 <p>WODS LEARNED:</p>
@@ -75,7 +69,7 @@ function Account() {
               </div>{" "}
               <div className="p-10 bg-white border-1 dark:border-none border-neutral-300 dark:bg-neutral-700/70 rounded-2xl flex flex-col items-center justify-center gap-4">
                 <p>STREAK:</p>
-                <p className="text-7xl">{user.streak.length} DAYS</p>
+                <p className="text-7xl">{streak} DAYS</p>
               </div>
             </div>
 
@@ -98,13 +92,37 @@ function Account() {
             </div>
 
             <div className="grid grid-cols-5 justify-center items-center gap-6">
-              <div className="flex flex-col gap-4 justify-center items-center px-7 py-5 bg-white border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-2xl h-[16rem] text-center relative">
+              {user.friends.map((friend) => (
+                <div
+                  key={friend.friendId}
+                  className="flex flex-col gap-4 justify-center items-center px-7 py-5 bg-white border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-2xl text-center h-[16rem] relative"
+                >
+                  <div className="flex absolute top-5 justify-between w-[14rem]">
+                    <TbHandFingerRight className="cursor-pointer" />
+                    <FiMinusCircle className="cursor-pointer" />
+                  </div>
+                  <Link to={`/profile/${friend.friendId}`}>
+                    <img
+                      src={`/avatars/AV${friend.avatar}.png`}
+                      alt="profile picture"
+                      className="w-24 h-24 border-2 border-indigo-500 rounded-full"
+                    />
+                  </Link>
+                  <Link
+                    to={`/profile/${friend.friendId}`}
+                    className="leading-9"
+                  >
+                    {friend.name}
+                  </Link>
+                </div>
+              ))}
+              {/* <div className="flex flex-col gap-4 justify-center items-center px-7 py-5 bg-white border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-2xl h-[16rem] text-center relative">
                 <div className="flex absolute top-5 justify-between w-[14rem]">
                   <TbHandFingerRight className="cursor-pointer" />
                   <FiMinusCircle className="cursor-pointer" />
                 </div>
                 <img
-                  src="https://avatar.iran.liara.run/public/64"
+                  src="/avatars/AV64.png"
                   alt="profile picture"
                   className="w-24 h-24 border-2 border-indigo-500 rounded-full"
                 />
@@ -116,7 +134,7 @@ function Account() {
                   <FiMinusCircle className="cursor-pointer" />
                 </div>
                 <img
-                  src="https://avatar.iran.liara.run/public/15"
+                  src="/avatars/AV15.png"
                   alt="profile picture"
                   className="w-24 h-24 border-2 border-indigo-500 rounded-full"
                 />
@@ -128,7 +146,7 @@ function Account() {
                   <FiMinusCircle className="cursor-pointer" />
                 </div>
                 <img
-                  src="https://avatar.iran.liara.run/public/52"
+                  src="/avatars/AV52.png"
                   alt="profile picture"
                   className="w-24 h-24 border-2 border-indigo-500 rounded-full"
                 />
@@ -140,16 +158,25 @@ function Account() {
                   <FiMinusCircle className="cursor-pointer" />
                 </div>
                 <img
-                  src="https://avatar.iran.liara.run/public/18"
+                  src="/avatars/AV18.png"
                   alt="profile picture"
                   className="w-24 h-24 border-2 border-indigo-500 rounded-full"
                 />
                 <p>Liam Anderson</p>
-              </div>
-              <div className="flex flex-col gap-4 justify-center items-center px-7 py-5 bg-white border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-2xl text-center h-[16rem]">
-                <CiCirclePlus className="w-24 h-24" />
-                <p>Add friend</p>
-              </div>
+              </div> */}
+              {Array.from({ length: 5 - user.friends.length }).map(
+                (_, index) => (
+                  <div
+                    onClick={() => setIsOpen(true)}
+                    key={index}
+                    className="flex flex-col gap-4 justify-center items-center px-7 py-5 bg-white border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-2xl text-center h-[16rem] cursor-pointer"
+                  >
+                    <CiCirclePlus className="w-24 h-24" />
+                    <p>Add friend</p>
+                  </div>
+                )
+              )}
+              {isOpen && <Modal setIsOpen={setIsOpen} />}
             </div>
           </>
         ) : (

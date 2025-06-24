@@ -10,8 +10,11 @@ import { useAddProgress, useProgress } from "../lib/queries/progressQueries";
 import Chart from "../components/Exercise/Chart";
 import Main from "../components/Exercise/Main";
 import { User } from "../types";
+import { useQueryClient } from "@tanstack/react-query";
 
 function Exercise({ initVerbs }: { initVerbs: string[][] }) {
+  const queryClient = useQueryClient();
+
   const { progress } = useProgress();
   const { addProgress } = useAddProgress();
   const { addActivity } = useActivity();
@@ -32,6 +35,7 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
   const verbs = [...initVerbs];
 
   const [selectedVerbs, setSelectedVerbs] = useState<string[][]>([]);
+
   const [correct, setCorrect] = useState([
     {
       name: "correct",
@@ -70,11 +74,15 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
   }, []);
 
   useEffect(() => {
+    if (!progress) return;
+
     if (
       user &&
       mode === "user" &&
       progress &&
-      !progress?.some((p) => p.moduleName === module)
+      !progress.some(
+        (p) => p.moduleName === module && p.userName === user?.email
+      )
     ) {
       const progressObj = {
         moduleName: module,
@@ -82,11 +90,15 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
         learned: [],
       };
 
-      addProgress(progressObj);
+      addProgress(progressObj, {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["progress"] });
+        },
+      });
     } else if (
       user &&
       mode === "user" &&
-      progress?.some((p) => p.moduleName === module)
+      progress.some((p) => p.moduleName === module)
     ) {
       console.log("Jest");
     }
@@ -119,14 +131,18 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
           user,
         }}
       >
-        <div className="grid  grid-cols-[2fr_1fr] lg:grid-cols-[4fr_7fr_3fr] gap-16 text-white">
+        <div className="grid  grid-cols-[2fr_1fr] lg:grid-cols-[4fr_7fr_3fr] gap-16 dark:text-white">
           <Sidebar setCorrect={setCorrect} />
           <Main
             account={account}
             setAccount={setAccount}
             setCorrect={setCorrect}
           />
-          <Chart correct={correct} activeProgress={activeProgress} />
+          <Chart
+            correct={correct}
+            activeProgress={activeProgress}
+            mode={mode}
+          />
         </div>
       </ExerciseContext.Provider>
     </>

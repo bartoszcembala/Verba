@@ -1,12 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-
-interface Module {
-  _id: string;
-  title: string;
-  displayName: string;
-  words: string[][];
-  __v: number;
-}
+import { Module } from "../../types";
 
 interface EditModuleInput {
   id: string;

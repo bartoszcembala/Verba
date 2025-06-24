@@ -80,7 +80,7 @@ function Main({ account, setAccount, setCorrect }) {
       handleUpdateDailyQuest
     );
   }
-
+  console.log(exercise);
   function handleKeyDown(e) {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -95,17 +95,17 @@ function Main({ account, setAccount, setCorrect }) {
   return (
     <div className="overflow-hidden h-[85vh] ">
       <div
-        className={`flex flex-col items-center justify-center border-3 border-solid border-neutral-300 rounded-2xl py-10 px-10 h-[60rem] transition-colors duration-300 ease-in-out  ${
-          isCorrect === "" && "bg-neutral-700"
+        className={`relative flex flex-col items-center rounded-2xl border-neutral-300  border-1  dark:border-none  py-24 px-10 h-[60rem] transition-colors duration-300 ease-in-out  ${
+          isCorrect === "" && "bg-white dark:bg-neutral-700/70"
         } ${isCorrect === "correct" && "bg-[#323a34]"} ${
           isCorrect === "wrong" && "bg-[#3a3232]"
         }`}
       >
         {selectedVerbs.length === 0 ? (
-          <p>Add words to start</p>
+          <p className="text-7xl mt-30 uppercase">Add words to start</p>
         ) : exercise.correctAnswer === "" ? (
           <button
-            className="btn"
+            className="cursor-pointer text-7xl mt-30 uppercase"
             onClick={() =>
               exerciseType === "translate"
                 ? getExerciseTranslate(
@@ -123,29 +123,29 @@ function Main({ account, setAccount, setCorrect }) {
                   )
             }
           >
-            Get an exercise
+            Start
           </button>
         ) : (
           <>
-            <h2>
+            <h2 className="text-5xl mb-26 mt-26">
               {exercise.question}{" "}
               <span onClick={() => setShowTranslation(!showTranslation)}>
                 TRANSLATE
               </span>
             </h2>
             <p className="translation">
-              {showTranslation && exercise.translation}
+              {showTranslation && exercise.correctAnswer}
             </p>
             {writing ? (
-              <div className="inputContainer">
+              <div className="text-5xl">
                 <button
-                  className="btn toggleBtn"
+                  className="cursor-pointer"
                   onClick={() => setWriting(false)}
                 >
                   🔠
                 </button>
                 <input
-                  className="input"
+                  className="dark:bg-neutral-600 bg-neutral-200  border-1 border-neutral-300 dark:border-none rounded-xl px-5 py-3 mx-3"
                   type="text"
                   ref={inputRef}
                   value={inputValue}
@@ -166,26 +166,23 @@ function Main({ account, setAccount, setCorrect }) {
                   </button>
                 ) : (
                   <button
-                    className="btn checkBtn"
+                    className="cursor-pointer"
                     onClick={() => handleAnswer(inputValue)}
                   >
-                    Check answer
+                    CHECK
                   </button>
                 )}
               </div>
             ) : (
-              <div className="answersContainer">
-                <button
-                  className="btn toggleBtn"
-                  onClick={() => setWriting(true)}
-                >
+              <div className="">
+                <button className="" onClick={() => setWriting(true)}>
                   ✍
                 </button>
                 {exercise.options.map((answer) => (
                   <div
                     onClick={() => handleAnswer(answer)}
                     key={answer}
-                    className="answer"
+                    className=""
                   >
                     {answer}
                   </div>
@@ -202,23 +199,29 @@ function Main({ account, setAccount, setCorrect }) {
         </button> */}
 
               <button
-                className="btn"
+                className="border-1 cursor-pointer border-neutral-300  transition-colors px-4 py-2 rounded-xl mt-10 hover:bg-neutral-200 dark:hover:bg-neutral-600"
                 onClick={() =>
                   exerciseType === "translate"
                     ? getExercise("translate")
                     : getExercise("fill")
                 }
               >
-                Get an exercise
+                Skip
               </button>
             </div>{" "}
           </>
         )}
-        <div className="mt-4">
-          <button onClick={() => setExerciseType("translate")} className="btn">
+        <div className="absolute bottom-6">
+          <button
+            onClick={() => setExerciseType("translate")}
+            className="border-1 cursor-pointer border-neutral-300  transition-colors px-4 py-2 rounded-xl mr-4  hover:bg-neutral-200 dark:hover:bg-neutral-600 "
+          >
             Translate the Word
           </button>
-          <button onClick={() => setExerciseType("fillblank")} className="btn">
+          <button
+            onClick={() => setExerciseType("fillblank")}
+            className="border-1 cursor-pointer border-neutral-300  transition-colors px-4 py-2 rounded-xl mr-4  hover:bg-neutral-200 dark:hover:bg-neutral-600"
+          >
             Fill the Blank
           </button>
         </div>

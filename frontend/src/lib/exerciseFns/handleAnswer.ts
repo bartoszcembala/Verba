@@ -158,7 +158,6 @@ export async function handleAnswer(
           {
             onSuccess: () => {
               queryClient.invalidateQueries({ queryKey: ["progress"] });
-              toast.success("Progress updated!");
             },
           }
         );
@@ -185,7 +184,6 @@ export async function handleAnswer(
         {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["progress"] });
-            toast.error("Progress updated!");
           },
         }
       );

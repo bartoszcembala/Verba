@@ -3,6 +3,12 @@ type timeSpentLearningType = {
   value: number;
 };
 
+type friendsType = {
+  name: string;
+  friendId: string;
+  avatar: string;
+};
+
 export interface User {
   _id: string;
   __v: number;
@@ -14,6 +20,9 @@ export interface User {
   timeSpentLearning: timeSpentLearningType[];
   premium: boolean;
   exp: number;
+  finishedLessons: string[];
+  friends: friendsType[];
+  avatar: string;
 }
 
 export interface Lesson {
@@ -29,6 +38,7 @@ export interface Module {
   title: string;
   displayName: string;
   words: string[][];
+  level: string;
   __v: number;
 }
 

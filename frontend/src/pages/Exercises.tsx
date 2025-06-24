@@ -12,6 +12,8 @@ import { useProgress } from "../lib/queries/progressQueries";
 import { FaChevronDown } from "react-icons/fa";
 import { FaChevronUp } from "react-icons/fa";
 import { HiOutlinePlay } from "react-icons/hi2";
+import { User } from "../types";
+import Spinner from "../components/Spinner";
 
 function Exercises() {
   const { account } = useContext(AccountCtx)!;
@@ -19,6 +21,8 @@ function Exercises() {
   const { modules, isLoadingModules } = useModules();
   const { progress, isLoadingProgress } = useProgress();
   const [show, setShow] = useState<string>("undefined");
+  const storedUser = localStorage.getItem("user");
+  const user: User | null = storedUser ? JSON.parse(storedUser) : null;
 
   const list = (
     <div className="mt-4">
@@ -27,29 +31,35 @@ function Exercises() {
         modules &&
         progress &&
         modules.map((mod) => {
-          if (!mod.title.includes(show)) return null;
-          const wordsNumber =
-            progress.find((m) => m.moduleName === mod.title)?.learned.length ||
-            0;
+          if (mod.title.includes(show)) {
+            const wordsNumber =
+              progress.find(
+                (m) => m.moduleName === mod.title && m.userName === user?.email
+              )?.learned.length || 0;
 
-          return (
-            <Link
-              key={mod._id}
-              to={`/${mod.title}`}
-              className="flex justify-between border-t-1  px-4 py-8 dark:hover:bg-neutral-700 hover:bg-neutral-200 transition-colors border-neutral-400"
-            >
-              <div className="flex gap-10 justify-center items-center">
-                <p className="text-2xl">
-                  {calculatePercent(wordsNumber, mod.words.length)}%
-                </p>
-                <p>{`${mod.title.slice(0, -2)} `}</p>
-                <p className="ml-2 bg-green-700 inline-block px-4  text-2xl rounded-lg">{`${mod.title
-                  .slice(-2)
-                  .toUpperCase()}`}</p>
-              </div>
-              <HiOutlinePlay className="text-indigo-500 w-10 h-10" />
-            </Link>
-          );
+            return (
+              <Link
+                key={mod._id}
+                to={`/${mod.title}`}
+                className="flex justify-between border-t-1  px-4 py-8 dark:hover:bg-neutral-700 hover:bg-neutral-200 transition-colors border-neutral-400"
+              >
+                <div className="flex gap-10 justify-center items-center">
+                  <p className="text-2xl">
+                    {calculatePercent(wordsNumber, mod.words.length)}%
+                  </p>
+                  <p>{`${mod.displayName}`}</p>
+                  <p
+                    className={`ml-2 ${
+                      mod.level.startsWith("A") && "bg-green-600/85"
+                    } ${mod.level.startsWith("B") && "bg-yellow-500/85"} ${
+                      mod.level.startsWith("C") && "bg-red-500/85"
+                    } inline-block px-4  text-2xl rounded-lg`}
+                  >{`${mod.level}`}</p>
+                </div>
+                <HiOutlinePlay className="text-indigo-500 w-10 h-10" />
+              </Link>
+            );
+          }
         })}
     </div>
   );

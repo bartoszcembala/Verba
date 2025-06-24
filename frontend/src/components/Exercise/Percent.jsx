@@ -9,7 +9,7 @@ import { ExerciseContext } from "../../lib/contexts";
 function Percent({ correct, activeProgress }) {
   const { mode, verbs } = useContext(ExerciseContext);
   return (
-    <p>
+    <p className="ml-25">
       {mode === "guest" &&
         calculatePercentContext(
           correct[0]?.value?.length,

@@ -19,6 +19,8 @@ import { useLessons } from "../lib/queries/lessonsQueries.js";
 import { useModules } from "../lib/queries/modulesQueries.js";
 import { useProgress } from "../lib/queries/progressQueries.js";
 import BuyPremium from "../pages/BuyPremium.js";
+import NotFound from "../pages/NotFound.js";
+import User from "../pages/User.js";
 
 function AppRoutes() {
   const { mode, authorized } = useContext(SettingsContext)!;
@@ -39,8 +41,9 @@ function AppRoutes() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/add-module" element={<AddModule />} />
           <Route path="/buy-premium" element={<BuyPremium />} />
+          <Route path="/profile/:userId" element={<User />} />
+          <Route path="*" element={<NotFound />} />
 
-          {/* User  mode routes */}
           {mode === "user" &&
             modules &&
             progress &&
@@ -64,7 +67,6 @@ function AppRoutes() {
               />
             ))}
 
-          {/* Guest mode routes */}
           {mode === "guest" &&
             Object.entries(DATA).map(([key, module]) => (
               <Route
