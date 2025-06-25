@@ -17,10 +17,13 @@ import {
 } from "recharts";
 import { useState } from "react";
 import Modal from "../components/Modal";
+import { useEditUser } from "../lib/queries/userQueries";
 
 function Account() {
   const storedUser = localStorage.getItem("user");
   const user: User | null = storedUser ? JSON.parse(storedUser) : null;
+
+  const { editUser } = useEditUser();
 
   const streak = user && calculateStreak(user.streak);
 
@@ -31,6 +34,25 @@ function Account() {
       value: d.value,
     }))
     .slice(-14);
+
+  function handleDelteFriend(friendId: string) {
+    const filteredFriends = user?.friends.filter(
+      (friend) => friend.friendId !== friendId
+    );
+    editUser({
+      id: user!._id,
+      data: {
+        friends: [...(filteredFriends || [])],
+      },
+    });
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        ...user,
+        friends: [...(filteredFriends || [])],
+      })
+    );
+  }
 
   return (
     <div className="flex justify-center items-center ">
@@ -98,8 +120,12 @@ function Account() {
                   className="flex flex-col gap-4 justify-center items-center px-7 py-5 bg-white border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-2xl text-center h-[16rem] relative"
                 >
                   <div className="flex absolute top-5 justify-between w-[14rem]">
-                    <TbHandFingerRight className="cursor-pointer" />
-                    <FiMinusCircle className="cursor-pointer" />
+                    {/* <TbHandFingerRight className="cursor-pointer" /> */}
+                    <span></span>
+                    <FiMinusCircle
+                      className="cursor-pointer"
+                      onClick={() => handleDelteFriend(friend.friendId)}
+                    />
                   </div>
                   <Link to={`/profile/${friend.friendId}`}>
                     <img
@@ -176,7 +202,7 @@ function Account() {
                   </div>
                 )
               )}
-              {isOpen && <Modal setIsOpen={setIsOpen} />}
+              {isOpen && <Modal setIsOpen={setIsOpen} isOpen={isOpen} />}
             </div>
           </>
         ) : (

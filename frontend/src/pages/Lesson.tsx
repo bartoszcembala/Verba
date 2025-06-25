@@ -9,7 +9,7 @@ interface Lesson {
   title: string;
   html: string;
   relatedExercises: string[];
-  __v: number;
+  __v: number; 
 }
 
 function Lesson({ lesson }: { lesson: Lesson }) {
