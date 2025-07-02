@@ -5,19 +5,19 @@ interface Progress {
   _id: string;
   userName: string;
   moduleName: string;
-  learned: string[];
+  learned: string[][];
   __v: number;
 }
 
 interface NewProgressInput {
   moduleName: string;
   userName: string;
-  learned: string[];
+  learned: string[][];
 }
 
 interface LearnedWordInput {
   id: string;
-  word: { learned: string[] };
+  word: { learned: string[][] };
 }
 
 interface EditProgressInput {

@@ -12,6 +12,7 @@ import Spinner from "../components/Spinner";
 import { useUpdateDailyQuests } from "../lib/useUpdateDailyQuests";
 import { LuCrown } from "react-icons/lu";
 import { useState } from "react";
+import DailyQuiz from "../components/DailyQuiz";
 
 function Home() {
   const levels = [
@@ -61,7 +62,7 @@ function Home() {
   const { handleUpdateDailyQuest, handleDeleteDailyQuest } =
     useUpdateDailyQuests();
   const { dailyQuests } = useGetDailyQuests();
-  const todayDailyQuests = dailyQuests && dailyQuests[0];
+
   const previousDates = getPreviousDates(7);
   const storedUser = localStorage.getItem("user");
   const user: User | null = storedUser ? JSON.parse(storedUser) : null;
@@ -75,6 +76,8 @@ function Home() {
     bulb: <IoBulbOutline className="h-16 w-16" />,
   };
   const [dailyQuizOpen, setDailyQuizOpen] = useState(false);
+  const todayDailyQuests =
+    dailyQuests && dailyQuests.find((item) => item.userId === user?._id);
 
   return (
     <div className="flex items-center justify-center ">
@@ -118,39 +121,44 @@ function Home() {
             <p className="text-5xl underline">{timeSpent} minutes!</p>{" "}
           </div>
           <div className="bg-white shadow-xs border-1 dark:border-none border-neutral-300  dark:bg-neutral-700/70 rounded-2xl px-5 text-center text-4xl py-5 font-semibold cursor-pointer dark:hover:bg-neutral-700 hover:bg-neutral-200 transition-colors">
-            <Link to="/buy-premium">
+            <Link to="/buy-premium" className="group relative">
               <p className="translate-y-2">
                 GET
-                <LuCrown className="inline-block mx-3 w-16 h-16 -translate-y-3 text-indigo-500" />
+                <LuCrown className="scale-100 group-hover:scale-110 transition inline-block mx-3 w-16 h-16 -translate-y-3 text-indigo-500" />
                 PREMIUM!
               </p>
             </Link>
           </div>
         </div>
-        <div className="flex  flex-col gap-18 ">
+        <div className="flex flex-col gap-18 ">
           <Link
             to={`/${user?.latestActivity[0]}`}
-            className="bg-white shadow-xs border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-12 flex justify-between dark:hover:bg-neutral-700 hover:bg-neutral-200 transition-colors"
+            className="group relative bg-white shadow-xs border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-12 flex justify-between dark:hover:bg-neutral-700 hover:bg-neutral-200 transition-colors"
           >
-            <div>
+            <div className="">
               <p className="text-5xl mb-4">Pick up where you left of: </p>
               <p className="text-4xl">{user?.latestActivity[0]}</p>{" "}
             </div>
-            <HiOutlinePlay className="hover:scale-130 transition text-8xl text-indigo-500" />
+            <HiOutlinePlay className="scale-100 group-hover:scale-110 transition text-8xl text-indigo-500" />
           </Link>
 
-          <div className="bg-white shadow-xs border-neutral-300 border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-8 h-[20rem] flex justify-center items-center gap-8">
-            <div
-              // onClick={() => handleUpdateDailyQuest("finish quiz")}
-              onClick={() => setDailyQuizOpen(true)}
-              className="self-center py-12 pl-12 text-9xl h-full w-[30%] border-r-2 border-neutral-400 cursor-pointer"
-            >
-              GO
+          {!dailyQuizOpen &&
+          user?.quiz.date !== new Date().toISOString().split("T")[0] ? (
+            <div className="bg-white shadow-xs border-neutral-300 border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-8 h-[20rem] flex justify-center items-center gap-8">
+              <div
+                // onClick={() => handleUpdateDailyQuest("finish quiz")}
+                onClick={() => setDailyQuizOpen(true)}
+                className="self-center py-12 pl-12 text-9xl h-full w-[30%] border-r-2 border-neutral-400 cursor-pointer"
+              >
+                GO
+              </div>
+              <div className="w-[70%] text-5xl">
+                Complete short daily quiz to get xp!
+              </div>
             </div>
-            <div className="w-[70%] text-5xl">
-              Complete short daily quiz to get xp!
-            </div>
-          </div>
+          ) : (
+            <DailyQuiz />
+          )}
 
           <div className="bg-white border-1 shadow-xs border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-8 h-[35rem] dark:border-2 dark:border-indigo-500">
             <h3 className="text-4xl mb-5 pb-5 text-center border-b-2 border-indigo-500 ">

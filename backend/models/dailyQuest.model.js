@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const dailyQuestSchema = new mongoose.Schema({
-  userId: { type: String, required: true },
+  userId: { type: String, required: true, unique: true },
   day: { type: String, required: true },
   quest1: {
     title: String,

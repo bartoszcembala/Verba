@@ -9,6 +9,11 @@ type friendsType = {
   avatar: string;
 };
 
+type quizType = {
+  finished: boolean;
+  date: string;
+};
+
 export interface User {
   _id: string;
   __v: number;
@@ -23,6 +28,7 @@ export interface User {
   finishedLessons: string[];
   friends: friendsType[];
   avatar: string;
+  quiz: quizType;
 }
 
 export interface Lesson {

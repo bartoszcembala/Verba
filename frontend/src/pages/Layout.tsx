@@ -16,6 +16,7 @@ import { FaRegMoon } from "react-icons/fa";
 import { FiSun } from "react-icons/fi";
 import { useGetDailyQuests } from "../lib/queries/dailyQuestsQueries";
 import { useUpdateDailyQuests } from "../lib/useUpdateDailyQuests";
+import axios from "axios";
 
 type User = {
   _id: string;
@@ -33,7 +34,7 @@ function Layout() {
   const { setAccount } = useContext(AccountCtx)!;
   const { logout } = useLogout();
   const { editUser } = useEditUser();
-  const { dailyQuests } = useGetDailyQuests();
+  const { dailyQuests, refetch } = useGetDailyQuests();
   const { handleDeleteDailyQuest } = useUpdateDailyQuests();
 
   useDailyStudyTimer();
@@ -48,6 +49,8 @@ function Layout() {
   const user: User | undefined = storedUser
     ? (JSON.parse(storedUser) as User)
     : undefined;
+  let userDailyQuest =
+    dailyQuests && dailyQuests.find((item) => item.userId === user?._id);
 
   useEffect(() => {
     const userDailyQuest =
@@ -88,6 +91,47 @@ function Layout() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (!userDailyQuest && user) {
+      const data = {
+        userId: user._id,
+        day: new Date().toISOString().split("T")[0],
+        quest1: {
+          title: "spend 10 minutes learning",
+          progress: 0,
+          toObtain: 10,
+          completed: false,
+          icon: "clock",
+        },
+        quest2: {
+          title: "learn words",
+          progress: 0,
+          toObtain: 5,
+          completed: false,
+          icon: "bulb",
+        },
+        quest3: {
+          title: "finish quiz",
+          progress: 0,
+          toObtain: 1,
+          completed: false,
+          icon: "flag",
+        },
+        quest4: {
+          title: "finish lesson",
+          progress: 0,
+          toObtain: 1,
+          completed: false,
+          icon: "flag",
+        },
+      };
+
+      axios.post("http://localhost:5000/api/daily-quests/", data);
+
+      refetch();
+    }
+  }, []);
+
   async function handleLogout() {
     logout();
     queryClient.clear();
@@ -109,24 +153,24 @@ function Layout() {
         <div className="flex text-3xl">
           <Link
             to="/"
-            className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
+            className="group relative dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
           >
             {/* <IoHomeOutline className="w-10 h-10 text-indigo-500" /> */}
-            <IoHome className="w-10 h-10 " />
+            <IoHome className="w-10 h-10 scale-100 group-hover:scale-110 transition" />
             <p className="translate-y-0.5">Home</p>
           </Link>
           <Link
             to="/lessons"
-            className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
+            className=" group relative dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
           >
-            <HiOutlineBookOpen className="w-10 h-10 " />
+            <HiOutlineBookOpen className="w-10 h-10 scale-100 group-hover:scale-110 transition" />
             <p className="translate-y-0.5">Lessons</p>
           </Link>{" "}
           <Link
             to="/exercises"
-            className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
+            className="group relative dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
           >
-            <GoPencil className="w-10 h-10 " />
+            <GoPencil className="w-10 h-10 scale-100 group-hover:scale-110 transition" />
             <p className="translate-y-0.5">Exercises</p>
           </Link>
           {/* <Link
@@ -136,29 +180,29 @@ function Layout() {
             <CiSquarePlus className="w-10 h-10 " />
             <p className="translate-y-0.5">Add Module</p>
           </Link> */}
-          <div className="relative group inline-block">
+          <div className="relative group inline-block ">
             {/* Główny przycisk */}
-            <button className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4 ">
+            <button className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4 cursor-pointer">
               MORE
             </button>
 
             {/* Menu rozwijane */}
-            <div className="absolute left-0 mt-2 w-65 bg-white rounded-md shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition duration-300 z-50 -translate-y-4">
+            <div className="absolute -left-8 mt-2 w-70 dark:bg-neutral-800 bg-white rounded-md shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition duration-300 z-50 -translate-y-4">
               <Link
                 to="/add-module"
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                className="block px-6 py-3 text-neutral-700 dark:text-white dark:hover:bg-neutral-700 hover:bg-gray-100"
               >
                 Leaderboard
               </Link>
               <Link
                 to=""
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                className="block px-6 py-3 dark:hover:bg-neutral-700 text-neutral-700 dark:text-white hover:bg-gray-100"
               >
                 XP Guide
               </Link>
               <Link
                 to=""
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                className="block px-6 py-3 dark:hover:bg-neutral-700 text-neutral-700 dark:text-white hover:bg-gray-100"
               >
                 Logout
               </Link>
@@ -171,7 +215,7 @@ function Layout() {
             onClick={() => setDarkMode((prev) => !prev)}
           >
             {darkMode ? (
-              <FiSun className=" w-10 h-10" />
+              <FiSun className=" w-10 h-10 " />
             ) : (
               <FaRegMoon className=" w-10 h-10" />
             )}
@@ -194,10 +238,10 @@ function Layout() {
           )}
           <Link
             to="/account"
-            className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
+            className="group relative dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
           >
             <p>{user ? user.name : "Guest"}</p>
-            <FaRegUser />
+            <FaRegUser className="scale-100 group-hover:scale-110 transition" />
           </Link>
         </div>
       </nav>

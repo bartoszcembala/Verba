@@ -18,6 +18,7 @@ import {
 import { useState } from "react";
 import Modal from "../components/Modal";
 import { useEditUser } from "../lib/queries/userQueries";
+import toast from "react-hot-toast";
 
 function Account() {
   const storedUser = localStorage.getItem("user");
@@ -39,12 +40,19 @@ function Account() {
     const filteredFriends = user?.friends.filter(
       (friend) => friend.friendId !== friendId
     );
-    editUser({
-      id: user!._id,
-      data: {
-        friends: [...(filteredFriends || [])],
+    editUser(
+      {
+        id: user!._id,
+        data: {
+          friends: [...(filteredFriends || [])],
+        },
       },
-    });
+      {
+        onSuccess: () => {
+          toast.success("Friend removed successfully!");
+        },
+      }
+    );
     localStorage.setItem(
       "user",
       JSON.stringify({
@@ -195,9 +203,9 @@ function Account() {
                   <div
                     onClick={() => setIsOpen(true)}
                     key={index}
-                    className="flex flex-col gap-4 justify-center items-center px-7 py-5 bg-white border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-2xl text-center h-[16rem] cursor-pointer"
+                    className="hover:bg-neutral-200 dark:hover:bg-neutral-700 group transition flex flex-col gap-4 justify-center items-center px-7 py-5 bg-white border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-2xl text-center h-[16rem] cursor-pointer"
                   >
-                    <CiCirclePlus className="w-24 h-24" />
+                    <CiCirclePlus className="text-neutral-600 dark:text-white transition w-24 h-24 scale-100 group-hover:scale-110" />
                     <p>Add friend</p>
                   </div>
                 )

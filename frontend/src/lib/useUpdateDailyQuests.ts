@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { User } from "../types";
 import {
   useEditDailyQuests,
@@ -6,22 +7,24 @@ import {
 import { useEditUser } from "./queries/userQueries";
 
 export function useUpdateDailyQuests() {
-  const { dailyQuests } = useGetDailyQuests();
+  const { dailyQuests, refetch } = useGetDailyQuests();
+  refetch();
   const { editDailyQuests } = useEditDailyQuests();
   const { editUser } = useEditUser();
   const userJson = localStorage.getItem("user");
   const user: User | null = userJson ? JSON.parse(userJson) : null;
-  const userDailyQuest =
+  let userDailyQuest =
     dailyQuests && dailyQuests.find((item) => item.userId === user?._id);
-
+ 
   function handleUpdateDailyQuest(questName: string) {
-    if (dailyQuests) {
+    if (dailyQuests && userDailyQuest) {
       //moze byc undefined
-      const hasTitle = Object.values(userDailyQuest!).some(
+      const hasTitle = Object.values(userDailyQuest).some(
         (value: any) => value?.title === questName && value?.completed === false
       );
 
       if (hasTitle && userDailyQuest) {
+        console.log(userDailyQuest);
         const updatedDailyQuests = { ...userDailyQuest };
         for (const [key, value] of Object.entries(updatedDailyQuests)) {
           if (key.startsWith("quest") && (value as any).title === questName) {
@@ -42,10 +45,10 @@ export function useUpdateDailyQuests() {
                 );
               }
             }
+            editDailyQuests({ updatedDailyQuests, id: user!._id });
           }
         }
-
-        editDailyQuests(updatedDailyQuests);
+        console.log("Updated Daily Quests:", updatedDailyQuests);
       }
     }
   }
@@ -63,7 +66,7 @@ export function useUpdateDailyQuests() {
         updatedDailyQuests.day = new Date().toISOString().split("T")[0];
       }
 
-      editDailyQuests(updatedDailyQuests);
+      editDailyQuests({ updatedDailyQuests, id: user!._id });
     }
   }
 

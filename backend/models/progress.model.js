@@ -10,7 +10,7 @@ const progressSchema = new mongoose.Schema({
     required: true,
   },
   learned: {
-    type: [String],
+    type: [[String]],
   },
 });
 

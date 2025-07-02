@@ -155,7 +155,7 @@ function Main({ account, setAccount, setCorrect }) {
                 />
                 {isCorrect === "correct" || isCorrect === "wrong" ? (
                   <button
-                    className="btn checkBtn"
+                    className=""
                     onClick={() =>
                       exerciseType === "translate"
                         ? getExercise("translate")

@@ -18,7 +18,7 @@ export async function getDailyQuests(req, res) {
 export async function getDailyQuest(req, res) {
   try {
     const dailyQuest = await DailyQuest.findOne({ userId: req.params.id });
-    
+
     res.status(200).json({
       success: true,
       data: dailyQuest,
@@ -38,7 +38,7 @@ export async function createDailyQuest(req, res) {
     res.status(201).json({
       success: true,
       data: {
-        module: newDailyQuest,
+        dailyQuest: newDailyQuest,
       },
     });
   } catch (error) {

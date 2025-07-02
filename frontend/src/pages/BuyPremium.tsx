@@ -28,14 +28,10 @@ function BuyPremium() {
     }
   }
 
-  function handleClick() {
-    if (dailyQuests) {
-      const hasTitle = Object.values(dailyQuests[0]).some(
-        (value: any) => value?.title === "finish quiz"
-      );
-      console.log(hasTitle);
-    }
-  }
+  //TIME SPENT DEVELOPING APP
+  // console.log(
+  //   user?.timeSpentLearning.reduce((acc, curr) => acc + curr.value, 0)
+  // );
 
   return (
     <div className="flex justify-center items-center">
@@ -63,7 +59,6 @@ function BuyPremium() {
           Join Now!
         </button>
       </div>
-      <button onClick={handleClick}>Get</button>
     </div>
   );
 }

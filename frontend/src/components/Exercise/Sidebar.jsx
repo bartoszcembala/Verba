@@ -52,7 +52,7 @@ function Sidebar({ setCorrect }) {
               ? setSelectedVerbs(account.notLearned[module])
               : setSelectedVerbs(
                   verbs.filter(
-                    (item) => !activeProgress?.learned.includes(item[0])
+                    (item) => !activeProgress?.learned.flat().includes(item[0])
                   )
                 );
           }}
@@ -99,7 +99,7 @@ function Sidebar({ setCorrect }) {
                       (p) =>
                         p.moduleName === module && p.userName === user.email
                     )
-                    ?.learned?.includes(verb[0])
+                    ?.learned?.flat().includes(verb[0])
                 ? "🟩"
                 : "🟥"}
             </span>

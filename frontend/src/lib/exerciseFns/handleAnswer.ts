@@ -9,6 +9,7 @@ import { DailyQuestsInterface } from "../../types";
 type Exercise = {
   correctAnswer: string;
   translation: string;
+  question: string;
 };
 
 type Account = {
@@ -21,13 +22,13 @@ type ProgressItem = {
   moduleName: string;
   userName: string;
   _id: string;
-  learned: string[];
+  learned: string[][];
 };
 
 type LearnedWordPayload = {
   id: string;
   word: {
-    learned: string[];
+    learned: string[][];
   };
 };
 
@@ -147,12 +148,12 @@ export async function handleAnswer(
     }
 
     if (answer === exercise.correctAnswer) {
-      if (!activeProgress.learned.includes(answer)) {
+      if (!activeProgress.learned.flat().includes(answer)) {
         addLearnedWord(
           {
             id: activeProgress._id,
             word: {
-              learned: [...activeProgress.learned, answer],
+              learned: [...activeProgress.learned, [answer, exercise.question]],
             },
           },
           {
@@ -172,7 +173,7 @@ export async function handleAnswer(
     } else {
       setIsCorrect("wrong");
       const filtered = activeProgress.learned.filter(
-        (x) => x !== exercise.correctAnswer
+        (x) => x[0] !== exercise.correctAnswer
       );
       addLearnedWord(
         {

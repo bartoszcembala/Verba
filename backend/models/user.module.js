@@ -79,7 +79,11 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     default: "1",
-  }
+  },
+  quiz: {
+    date: { type: String, required: true },
+    finished: { type: Boolean, required: true, default: false },
+  },
 });
 
 userSchema.pre("save", async function (next) {

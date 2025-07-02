@@ -51,6 +51,7 @@ function Modal({
       })
     );
     setIsOpen(false);
+    toast.success("Friend followed successfully!");
   }
 
   useEffect(() => {

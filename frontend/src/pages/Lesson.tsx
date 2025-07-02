@@ -3,13 +3,14 @@ import { useActivity, useEditUser } from "../lib/queries/userQueries";
 import { SettingsContext } from "../lib/contexts";
 import { Link, useLocation } from "react-router-dom";
 import { useUpdateDailyQuests } from "../lib/useUpdateDailyQuests";
+import toast from "react-hot-toast";
 
 interface Lesson {
   _id: string;
   title: string;
   html: string;
   relatedExercises: string[];
-  __v: number; 
+  __v: number;
 }
 
 function Lesson({ lesson }: { lesson: Lesson }) {
@@ -58,11 +59,23 @@ function Lesson({ lesson }: { lesson: Lesson }) {
         id: user._id,
         data: { finishedLessons: filteredLessons },
       });
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ ...user, finishedLessons: filteredLessons })
+      );
     } else {
       editUser({
         id: user._id,
         data: { finishedLessons: [...user.finishedLessons, lesson._id] },
       });
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          ...user,
+          finishedLessons: [...user.finishedLessons, lesson._id],
+        })
+      );
+      toast.success("Lesson Finished!");
       handleUpdateDailyQuest("finish lesson");
     }
   }
@@ -84,7 +97,9 @@ function Lesson({ lesson }: { lesson: Lesson }) {
         onClick={handleFinishLesson}
         className="bg-indigo-500 cursor-pointer rounded-xl px-4 py-2 absolute top-[3%] right-[10%]"
       >
-        Finish Lesson
+        {user.finishedLessons.includes(lesson._id)
+          ? "Mark as unfinished"
+          : "Finish Lesson"}
       </button>
     </div>
   );

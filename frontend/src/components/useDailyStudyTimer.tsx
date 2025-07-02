@@ -12,7 +12,6 @@ export const useDailyStudyTimer = (): number => {
   const updateRef = useRef<NodeJS.Timeout | null>(null);
   const { editUser } = useEditUser();
   const { dailyQuests } = useGetDailyQuests();
-  const { editDailyQuests } = useEditDailyQuests();
   const { handleUpdateDailyQuest } = useUpdateDailyQuests();
 
   useEffect(() => {
@@ -53,8 +52,6 @@ export const useDailyStudyTimer = (): number => {
         date: today,
         value: minutes,
       };
-
-      console.log("Record Added:", timeSpentLearningObj);
 
       // Zapis do backendu
       editUser({
