@@ -148,7 +148,7 @@ function Home() {
               <div
                 // onClick={() => handleUpdateDailyQuest("finish quiz")}
                 onClick={() => setDailyQuizOpen(true)}
-                className="self-center py-12 pl-12 text-9xl h-full w-[30%] border-r-2 border-neutral-400 cursor-pointer"
+                className="self-center py-12 pl-12 text-9xl h-full w-[30%] border-r-2 border-indigo-500 cursor-pointer"
               >
                 GO
               </div>
