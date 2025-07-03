@@ -1,12 +1,12 @@
 import axios from "axios";
-import Stripe from "stripe";
+// import Stripe from "stripe";
 import { User } from "../types";
 import { useGetDailyQuests } from "../lib/queries/dailyQuestsQueries";
 
 function BuyPremium() {
-  const stripe = new Stripe(
-    "pk_test_51RTgPpEJx6hC03kLGMknT3ZdbsKGAJMnorWceN3IznEW08U3UeqKmdZz8loyCxhFgH7WhapTyfhk3wi4TpiexxUn00dFtCGW8T"
-  );
+  // const stripe = new Stripe(
+  //   "pk_test_51RTgPpEJx6hC03kLGMknT3ZdbsKGAJMnorWceN3IznEW08U3UeqKmdZz8loyCxhFgH7WhapTyfhk3wi4TpiexxUn00dFtCGW8T"
+  // );
 
   const { dailyQuests } = useGetDailyQuests();
   const userJson = localStorage.getItem("user");
