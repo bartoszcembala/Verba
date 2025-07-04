@@ -9,7 +9,7 @@ import { protectedRoute } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-router.route("/").get(protectedRoute, getProgress).post(createProgress);
+router.route("/").get( getProgress).post(createProgress);
 router.route("/:id").patch(updateProgress).delete(deleteProgress);
 
 export default router;

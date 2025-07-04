@@ -9,11 +9,9 @@ import DATA from "../data/verbs";
 import { SettingsContext } from "../lib/contexts";
 import { useModules } from "../lib/queries/modulesQueries";
 import { useProgress } from "../lib/queries/progressQueries";
-import { FaChevronDown } from "react-icons/fa";
-import { FaChevronUp } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { HiOutlinePlay } from "react-icons/hi2";
 import { User } from "../types";
-import Spinner from "../components/Spinner";
 
 function Exercises() {
   const { account } = useContext(AccountCtx)!;
@@ -41,22 +39,26 @@ function Exercises() {
               <Link
                 key={mod._id}
                 to={`/${mod.title}`}
-                className="flex justify-between border-t-1  px-4 py-8 dark:hover:bg-neutral-700 hover:bg-neutral-200 transition-colors border-neutral-400"
+                className="flex justify-between border-t px-4 py-6 dark:hover:bg-neutral-700 hover:bg-neutral-200 transition-colors border-neutral-400"
               >
-                <div className="flex gap-10 justify-center items-center">
-                  <p className="text-2xl">
+                <div className="flex gap-4 sm:gap-8 items-center">
+                  <p className="text-3xl font-semibold">
                     {calculatePercent(wordsNumber, mod.words.length)}%
                   </p>
-                  <p>{`${mod.displayName}`}</p>
+                  <p className="text-3xl md:text-3xl">
+                    {mod.displayName}
+                  </p>
                   <p
-                    className={`ml-2 ${
+                    className={`ml-0 sm:ml-2 text-xl sm:text-2xl px-4 rounded-lg ${
                       mod.level.startsWith("A") && "bg-green-600/85"
                     } ${mod.level.startsWith("B") && "bg-yellow-500/85"} ${
                       mod.level.startsWith("C") && "bg-red-500/85"
-                    } inline-block px-4  text-2xl rounded-lg`}
-                  >{`${mod.level}`}</p>
+                    }`}
+                  >
+                    {mod.level}
+                  </p>
                 </div>
-                <HiOutlinePlay className="text-indigo-500 w-10 h-10" />
+                <HiOutlinePlay className="text-indigo-500 w-8 h-8 sm:w-10 sm:h-10 mt-4 sm:mt-0" />
               </Link>
             );
           }
@@ -66,8 +68,8 @@ function Exercises() {
 
   if (isLoadingModules || isLoadingProgress) {
     return (
-      <div className="flex items-center justify-center">
-        <div className="w-48 h-48 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
+      <div className="flex items-center justify-center min-h-[40vh]">
+        <div className="w-24 h-24 sm:w-36 sm:h-36 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -97,58 +99,38 @@ function Exercises() {
   }
 
   return (
-    <div className="flex items-center justify-center  ">
-      <div className="flex flex-col items-center justify-center w-[80rem] gap-10 ">
-        {/* verbs */}
-        <div className="w-[80rem] cursor-pointer dark:border-none bg-white border-1 border-neutral-300 dark:bg-neutral-700/70 rounded-2xl py-3 px-5">
+    <div className="flex items-center justify-center w-full px-2">
+      <div className="flex flex-col items-center justify-center w-full max-w-[80rem] gap-7">
+        {["verbs", "nouns", "hobbit", "dom"].map((category) => (
           <div
-            className="flex justify-between "
-            onClick={() => {
-              if (show === "verbs") {
-                setShow("undefined");
-              } else {
-                setShow("verbs");
-              }
-            }}
+            key={category}
+            className="w-full cursor-pointer dark:border-none bg-white border border-neutral-300 dark:bg-neutral-700/70 rounded-2xl py-4 px-5"
           >
-            <p>Verbs:</p>
-            {show === "verbs" ? (
-              <FaChevronUp className="text-indigo-500" />
-            ) : (
-              <FaChevronDown className="text-indigo-500" />
-            )}
-          </div>
-          {show === "verbs" && list}
-        </div>
-
-        {/* nouns */}
-        <div className="w-[80rem] cursor-pointer bg-white border-1 border-neutral-300 dark:bg-neutral-700/70 rounded-xl py-3 px-5 dark:border-none">
-          <div
-            className="flex justify-between"
-            onClick={() => {
-              if (show === "nouns") {
-                setShow("undefined");
-              } else {
-                setShow("nouns");
+            <div
+              className="flex justify-between items-center"
+              onClick={() =>
+                setShow(show === category ? "undefined" : category)
               }
-            }}
-          >
-            <p>Nouns:</p>
-            {show === "nouns" ? (
-              <FaChevronUp className="text-indigo-500" />
-            ) : (
-              <FaChevronDown className="text-indigo-500" />
-            )}
+            >
+              <p className="text-4xl capitalize">
+                {category}
+              </p>
+              {show === category ? (
+                <FaChevronUp className="text-indigo-500 w-10 h-10" />
+              ) : (
+                <FaChevronDown className="text-indigo-500 w-10 h-10" />
+              )}
+            </div>
+            {show === category && list}
           </div>
-          {show === "nouns" && list}
-        </div>
+        ))}
 
         {mode === "guest" &&
           Object.entries(DATA).map(([key, module]) => (
             <Link
               key={key}
               to={`/${module.name}`}
-              className="bg-neutral-900 w-full h-34 rounded-2xl flex items-center justify-center text-4xl text-white font-bold hover:bg-neutral-800 transition duration-200 border-1 border-solid border-neutral-400"
+              className="bg-neutral-900 w-full text-center py-8 rounded-2xl text-3xl sm:text-4xl text-white font-bold hover:bg-neutral-800 transition duration-200 border border-neutral-400"
             >
               {module.nameDisplay.toUpperCase()}{" "}
               {percentWEmojiContext(

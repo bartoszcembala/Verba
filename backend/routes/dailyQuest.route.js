@@ -12,10 +12,10 @@ const router = express.Router();
 
 router
   .route("/:id")
-  .get(protectedRoute, getDailyQuest)
+  .get(getDailyQuest)
   .patch(updateDailyQuest)
   .delete(deleteDailyQuest);
-  
-router.route("/").get(protectedRoute, getDailyQuests).post(createDailyQuest);
+
+router.route("/").get(getDailyQuests).post(createDailyQuest);
 
 export default router;

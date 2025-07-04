@@ -29,7 +29,7 @@ export function useProgress() {
   const { data, isLoading } = useQuery<Progress[]>({
     queryKey: ["progress"],
     queryFn: async () => {
-      const res = await fetch("http://localhost:5000/api/progress/", {
+      const res = await fetch("https://verba-production-3e8f.up.railway.app/api/progress/", {
         method: "GET",
         credentials: "include",
       });
@@ -47,7 +47,7 @@ export function useProgress() {
 export function useAddProgress() {
   const mutation = useMutation<Progress, Error, NewProgressInput>({
     mutationFn: async (progress) => {
-      const res = await fetch("http://localhost:5000/api/progress/", {
+      const res = await fetch("https://verba-production-3e8f.up.railway.app/api/progress/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -71,7 +71,7 @@ export function useAddProgress() {
 export function useAddLearnedWord() {
   const mutation = useMutation<Progress, Error, LearnedWordInput>({
     mutationFn: async ({ id, word }) => {
-      const res = await fetch(`http://localhost:5000/api/progress/${id}`, {
+      const res = await fetch(`https://verba-production-3e8f.up.railway.app/api/progress/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -97,7 +97,7 @@ export function useEditProgress() {
     mutationFn: async ({ id, data }) => {
       console.log("dat", id);
       const res = await axios.patch<Progress>(
-        `http://localhost:5000/api/progress/${id}`,
+        `https://verba-production-3e8f.up.railway.app/api/progress/${id}`,
         data,
         {
           withCredentials: true,

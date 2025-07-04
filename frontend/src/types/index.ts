@@ -52,7 +52,7 @@ export interface Progress {
   _id: string;
   userName: string;
   moduleName: string;
-  learned: string[];
+  learned: string[][];
   __v: number;
 }
 

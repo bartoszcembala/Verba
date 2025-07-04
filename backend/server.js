@@ -19,7 +19,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    //origin: "http://localhost:5173",
+    origin: "https://verba-ebon.vercel.app",
     credentials: true,
   })
 );
@@ -28,7 +29,7 @@ app.use("/api/modules", moduleRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/progress", progressRoutes);
 app.use("/api/lesson", lessonRoutes);
-app.use('/api/daily-quests', dailyQuestRoutes)
+app.use("/api/daily-quests", dailyQuestRoutes);
 app.use("/api/checkout", checkoutRouter);
 
 app.listen(PORT, () => {

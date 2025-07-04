@@ -81,7 +81,7 @@ function Home() {
 
   return (
     <div className="flex items-center justify-center ">
-      <div className="grid grid-cols-[2fr_5fr] w-[120rem] gap-20">
+      <div className="flex flex-col lg:grid lg:grid-cols-[2fr_5fr] lg:w-[120rem] gap-10 lg:gap-20">
         <div className="flex flex-col text-5xl gap-10">
           <div className="flex shadow-xs flex-col justify-center items-center border-neutral-300  bg-white border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-6 h-[30rem] relative">
             <img
@@ -130,7 +130,7 @@ function Home() {
             </Link>
           </div>
         </div>
-        <div className="flex flex-col gap-18 ">
+        <div className="flex flex-col gap-10 lg:gap-18 ">
           <Link
             to={`/${user?.latestActivity[0]}`}
             className="group relative bg-white shadow-xs border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-12 flex justify-between dark:hover:bg-neutral-700 hover:bg-neutral-200 transition-colors"

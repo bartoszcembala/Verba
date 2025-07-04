@@ -18,7 +18,7 @@ export function useLessons() {
   const { data, isLoading } = useQuery<Lesson[]>({
     queryKey: ["lessons"],
     queryFn: async () => {
-      const res = await fetch("http://localhost:5000/api/lesson/", {
+      const res = await fetch("https://verba-production-3e8f.up.railway.app/api/lesson/", {
         method: "GET",
         credentials: "include",
       });
@@ -33,7 +33,7 @@ export function useLessons() {
 export function useAddLesson() {
   const mutation = useMutation<Lesson, Error, NewLessonInput>({
     mutationFn: async ({ title, html }) => {
-      const res = await fetch("http://localhost:5000/api/lesson/", {
+      const res = await fetch("https://verba-production-3e8f.up.railway.app/api/lesson/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

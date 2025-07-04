@@ -12,7 +12,7 @@ export function useGetDailyQuests() {
     queryKey: ["dailyQuests"],
     queryFn: async () => {
       const dailyQuests = await axios.get(
-        "http://localhost:5000/api/daily-quests/",
+        "https://verba-production-3e8f.up.railway.app/api/daily-quests/",
         { withCredentials: true }
       );
       return dailyQuests.data.data as DailyQuestsInterface[];
@@ -30,7 +30,7 @@ export function useEditDailyQuests() {
   >({
     mutationFn: async ({ updatedDailyQuests, id }) => {
       const res = await axios.patch(
-        `http://localhost:5000/api/daily-quests/${id}`,
+        `https://verba-production-3e8f.up.railway.app/api/daily-quests/${id}`,
         updatedDailyQuests
       );
 
