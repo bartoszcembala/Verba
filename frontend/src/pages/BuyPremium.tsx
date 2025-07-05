@@ -17,7 +17,7 @@ function BuyPremium() {
       if (!user) return;
 
       const session = await axios(
-        `http://https://verba-production-3e8f.up.railway.app/api/checkout/${user._id}`,
+        `https://verba-production-3e8f.up.railway.app/api/checkout/${user._id}`,
         {
           withCredentials: true,
         }
