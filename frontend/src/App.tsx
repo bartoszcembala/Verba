@@ -33,7 +33,7 @@ function App() {
   useEffect(() => {
     async function checkAuth() {
       try {
-        const res = await fetch("http://localhost:5000/api/users/check", {
+        const res = await fetch("http://https://verba-production-3e8f.up.railway.app/api/users/check", {
           method: "GET",
           credentials: "include",
         });

@@ -1,9 +1,4 @@
-// async function getAllModules() {
-//   const data = await fetch("https://localhost:5000/api/modules");
-//   return data.json();
-// }
 
-// const DATA = await getAllModules();
 
 const DATA = {
   nounsa2: {

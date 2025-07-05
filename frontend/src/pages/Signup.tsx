@@ -14,14 +14,17 @@ function Signup() {
   const onSubmit: SubmitHandler<SignupFormInputs> = async (data) => {
     try {
       console.log("DATA: ", data);
-      await fetch("http://localhost:5000/api/users/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(data),
-      });
+      await fetch(
+        "http://https://verba-production-3e8f.up.railway.app/api/users/signup",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(data),
+        }
+      );
       console.log("Signed up");
     } catch (error) {
       console.log("not logged in: ", error);

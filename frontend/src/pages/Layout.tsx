@@ -126,7 +126,7 @@ function Layout() {
         },
       };
 
-      axios.post("http://localhost:5000/api/daily-quests/", data);
+      axios.post("http://https://verba-production-3e8f.up.railway.app/api/daily-quests/", data);
 
       refetch();
     }
