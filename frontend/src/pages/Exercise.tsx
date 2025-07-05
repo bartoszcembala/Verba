@@ -36,22 +36,33 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
 
   const [selectedVerbs, setSelectedVerbs] = useState<string[][]>([]);
 
-  const [correct, setCorrect] = useState([
-    {
-      name: "correct",
-      value:
-        JSON.parse(localStorage.getItem("account")!)?.modulesPercent[module] ||
-        account.modulesPercent[module],
-      color: "#34563c",
-    },
-    {
-      name: "wrong",
-      value:
-        JSON.parse(localStorage.getItem("account")!)?.notLearned[module] ||
-        account.notLearned[module],
-      color: "#563434",
-    },
-  ]);
+  const [correct, setCorrect] = useState(
+    account
+      ? [
+          {
+            name: "correct",
+            value: account?.modulesPercent[module] || {},
+            color: "#34563c",
+          },
+          {
+            name: "wrong",
+            value: account?.notLearned[module] || {},
+            color: "#563434",
+          },
+        ]
+      : [
+          {
+            name: "correct",
+            value: activeProgress?.learned.length,
+            color: "#34563c",
+          },
+          {
+            name: "wrong",
+            value: initVerbs.length - activeProgress?.learned.length!,
+            color: "#563434",
+          },
+        ]
+  );
 
   useEffect(() => {
     if (user) {
