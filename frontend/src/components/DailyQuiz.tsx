@@ -8,6 +8,7 @@ import { useEditUser } from "../lib/queries/userQueries";
 import { IoReload } from "react-icons/io5";
 import { CiLock } from "react-icons/ci";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
+import { MdOutlineCancel } from "react-icons/md";
 
 function DailyQuiz() {
   const { progress, isLoadingProgress } = useProgress();
@@ -116,7 +117,7 @@ function DailyQuiz() {
   }
 
   return (
-    <div className="bg-white shadow-xs border-neutral-300 border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-8 h-[20rem] flex flex-col justify-center items-center gap-8 relative">
+    <div className="bg-white shadow-xs border-neutral-300 border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10  h-[20rem] flex justify-center items-center gap-8 relative">
       {learnedWords && learnedWords?.length >= 10 ? (
         <div>
           {isLoadingProgress && <Spinner />}
@@ -143,9 +144,14 @@ function DailyQuiz() {
               </div>
             </>
           ) : (
-            <div className="flex justify-center items-center">
+            <div className="flex justify-center items-center ">
               <div className="">
-                <IoIosCheckmarkCircleOutline className="w-50 h-50 mr-10  pr-10 border-r-2 border-indigo-500" />
+                {" "}
+                {user.quiz.date === new Date().toISOString().split("T")[0] ? (
+                  <IoIosCheckmarkCircleOutline className="w-50 h-50 mr-10  pr-10 border-r-2 border-indigo-500" />
+                ) : (
+                  <MdOutlineCancel className="w-50 h-50 mr-50  pr-10 border-r-2 border-indigo-500" />
+                )}
               </div>
               <div className="text-5xl">
                 {user.quiz.date === new Date().toISOString().split("T")[0] ? (

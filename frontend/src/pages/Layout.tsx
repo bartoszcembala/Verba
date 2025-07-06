@@ -29,6 +29,8 @@ type User = {
 };
 
 function Layout() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   const queryClient = useQueryClient();
   const { authorized, setAuthorized, setMode } = useContext(SettingsContext)!;
   const { setAccount } = useContext(AccountCtx)!;
@@ -126,7 +128,10 @@ function Layout() {
         },
       };
 
-      axios.post("https://verba-production-3e8f.up.railway.app/api/daily-quests/", data);
+      axios.post(
+        "https://verba-production-3e8f.up.railway.app/api/daily-quests/",
+        data
+      );
 
       refetch();
     }
@@ -149,9 +154,31 @@ function Layout() {
   return (
     <>
       <Toaster />
-      <nav className="flex justify-between items-center  uppercase  px-6 mb-8 dark:border-b-2 dark:border-indigo-500 font-semibold tracking-wide bg-white dark:bg-[#171717]">
-        <div className="flex text-3xl">
-          <Link
+      <nav className="relative">
+        <div className="flex justify-between items-center uppercase px-6 mb-8 dark:border-b-2 dark:border-indigo-500 font-semibold tracking-wide bg-white dark:bg-[#171717]">
+          {/* Hamburger button */}
+          <button
+            className="lg:hidden py-6"
+            onClick={() => setMobileMenuOpen((prev) => !prev)}
+          >
+            <svg
+              className="w-8 h-8 text-gray-800 dark:text-white"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+
+          {/* Desktop nav */}
+          <div className="hidden lg:flex text-3xl">
+            <Link
             to="/"
             className="group relative dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
           >
@@ -208,9 +235,11 @@ function Layout() {
               </Link>
             </div>
           </div>
-        </div>
-        <div className="flex justify-center items-center">
-          <div
+          </div>
+
+          {/* Actions (darkmode, login/logout) */}
+          <div className="hidden lg:flex justify-center items-center">
+            <div
             className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 cursor-pointer  py-5 px-6 transition-colors rounded-full"
             onClick={() => setDarkMode((prev) => !prev)}
           >
@@ -243,7 +272,75 @@ function Layout() {
             <p>{user ? user.name : "Guest"}</p>
             <FaRegUser className="scale-100 group-hover:scale-110 transition" />
           </Link>
+          </div>
         </div>
+
+        {/* Mobile nav - dropdown */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden flex flex-col gap-1 px-6 pb-4">
+            <Link
+              to="/"
+              onClick={() => setMobileMenuOpen(false)}
+              className="py-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded"
+            >
+              Home
+            </Link>
+            <Link
+              to="/lessons"
+              onClick={() => setMobileMenuOpen(false)}
+              className="py-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded"
+            >
+              Lessons
+            </Link>
+            <Link
+              to="/exercises"
+              onClick={() => setMobileMenuOpen(false)}
+              className="py-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded"
+            >
+              Exercises
+            </Link>
+            <Link
+              to="/account"
+              onClick={() => setMobileMenuOpen(false)}
+              className="py-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded"
+            >
+              {user ? user.name : "Guest"}
+            </Link>
+            {authorized ? (
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  handleLogout();
+                }}
+                className="py-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded text-left"
+              >
+                Log out
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="py-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded"
+              >
+                Log in
+              </Link>
+            )}
+            <button
+              className="py-2 flex items-center gap-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded"
+              onClick={() => {
+                setDarkMode((prev) => !prev);
+                setMobileMenuOpen(false);
+              }}
+            >
+              {darkMode ? (
+                <FiSun className="w-6 h-6" />
+              ) : (
+                <FaRegMoon className="w-6 h-6" />
+              )}
+              {darkMode ? "Light mode" : "Dark mode"}
+            </button>
+          </div>
+        )}
       </nav>
       <Outlet />
     </>
