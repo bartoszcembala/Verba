@@ -148,9 +148,9 @@ function DailyQuiz() {
               <div className="">
                 {" "}
                 {user.quiz.date === new Date().toISOString().split("T")[0] ? (
-                  <IoIosCheckmarkCircleOutline className="w-50 h-50 mr-10  pr-10 border-r-2 border-indigo-500" />
+                  <IoIosCheckmarkCircleOutline className="w-50 h-50 mr-10 lg:mr-50  pr-10 border-r-2 border-indigo-500" />
                 ) : (
-                  <MdOutlineCancel className="w-50 h-50 mr-50  pr-10 border-r-2 border-indigo-500" />
+                  <MdOutlineCancel className="w-50 h-50 mr-10 lg:mr-50  pr-10 border-r-2 border-indigo-500" />
                 )}
               </div>
               <div className="text-5xl">

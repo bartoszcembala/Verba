@@ -2,7 +2,7 @@
 function Letters({ setInputValue, inputRef }) {
   const letters = ["á", "é", "í", "ó", "ú", "ñ"];
   return (
-    <div className="flex gap-3 text-4xl mt-10">
+    <div className="flex gap-3 text-4xl lg:mt-10 mt-4">
       {letters.map((letter) => (
         <span
           key={letter}

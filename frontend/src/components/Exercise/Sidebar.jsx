@@ -9,7 +9,7 @@ import {
 } from "../../lib/queries/progressQueries";
 import { useQueryClient } from "@tanstack/react-query";
 
-function Sidebar({ setCorrect }) {
+function Sidebar({ setCorrect, className = "" }) {
   const queryClient = useQueryClient();
   const { mode, verbs, selectedVerbs, setSelectedVerbs, module, user } =
     useContext(ExerciseContext);
@@ -32,10 +32,10 @@ function Sidebar({ setCorrect }) {
 
   return (
     <div
-      className="ml-4 px-12  hidden lg:block overflow-y-auto max-h-[90vh] relative dark:bg-neutral-700/70 rounded-3xl bg-white border-1 dark:border-none border-neutral-300 "
+      className={` ml-4 px-12 overflow-y-auto max-h-[90vh] relative dark:bg-neutral-700/70 rounded-3xl bg-white border-1 dark:border-none border-neutral-300 ${className}`}
       style={{
-        scrollbarWidth: "none", // Firefox
-        msOverflowStyle: "none", // IE i Edge
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
       }}
     >
       <div className="py-6 mb-6 flex gap-3 border-b-2">
@@ -99,7 +99,8 @@ function Sidebar({ setCorrect }) {
                       (p) =>
                         p.moduleName === module && p.userName === user.email
                     )
-                    ?.learned?.flat().includes(verb[0])
+                    ?.learned?.flat()
+                    .includes(verb[0])
                 ? "🟩"
                 : "🟥"}
             </span>

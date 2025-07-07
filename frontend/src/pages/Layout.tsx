@@ -158,7 +158,7 @@ function Layout() {
         <div className="flex justify-between items-center uppercase px-6 mb-8 dark:border-b-2 dark:border-indigo-500 font-semibold tracking-wide bg-white dark:bg-[#171717]">
           {/* Hamburger button */}
           <button
-            className="lg:hidden py-6"
+            className="lg:hidden py-6 cursor-pointer"
             onClick={() => setMobileMenuOpen((prev) => !prev)}
           >
             <svg
@@ -179,99 +179,99 @@ function Layout() {
           {/* Desktop nav */}
           <div className="hidden lg:flex text-3xl">
             <Link
-            to="/"
-            className="group relative dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
-          >
-            {/* <IoHomeOutline className="w-10 h-10 text-indigo-500" /> */}
-            <IoHome className="w-10 h-10 scale-100 group-hover:scale-110 transition" />
-            <p className="translate-y-0.5">Home</p>
-          </Link>
-          <Link
-            to="/lessons"
-            className=" group relative dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
-          >
-            <HiOutlineBookOpen className="w-10 h-10 scale-100 group-hover:scale-110 transition" />
-            <p className="translate-y-0.5">Lessons</p>
-          </Link>{" "}
-          <Link
-            to="/exercises"
-            className="group relative dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
-          >
-            <GoPencil className="w-10 h-10 scale-100 group-hover:scale-110 transition" />
-            <p className="translate-y-0.5">Exercises</p>
-          </Link>
-          {/* <Link
+              to="/"
+              className="group relative dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
+            >
+              {/* <IoHomeOutline className="w-10 h-10 text-indigo-500" /> */}
+              <IoHome className="w-10 h-10 scale-100 group-hover:scale-110 transition" />
+              <p className="translate-y-0.5">Home</p>
+            </Link>
+            <Link
+              to="/lessons"
+              className=" group relative dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
+            >
+              <HiOutlineBookOpen className="w-10 h-10 scale-100 group-hover:scale-110 transition" />
+              <p className="translate-y-0.5">Lessons</p>
+            </Link>{" "}
+            <Link
+              to="/exercises"
+              className="group relative dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
+            >
+              <GoPencil className="w-10 h-10 scale-100 group-hover:scale-110 transition" />
+              <p className="translate-y-0.5">Exercises</p>
+            </Link>
+            {/* <Link
             to="/add-module"
             className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
           >
             <CiSquarePlus className="w-10 h-10 " />
             <p className="translate-y-0.5">Add Module</p>
           </Link> */}
-          <div className="relative group inline-block ">
-            {/* Główny przycisk */}
-            <button className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4 cursor-pointer">
-              MORE
-            </button>
+            <div className="relative group inline-block ">
+              {/* Główny przycisk */}
+              <button className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4 cursor-pointer">
+                MORE
+              </button>
 
-            {/* Menu rozwijane */}
-            <div className="absolute -left-8 mt-2 w-70 dark:bg-neutral-800 bg-white rounded-md shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition duration-300 z-50 -translate-y-4">
-              <Link
-                to="/add-module"
-                className="block px-6 py-3 text-neutral-700 dark:text-white dark:hover:bg-neutral-700 hover:bg-gray-100"
-              >
-                Leaderboard
-              </Link>
-              <Link
-                to=""
-                className="block px-6 py-3 dark:hover:bg-neutral-700 text-neutral-700 dark:text-white hover:bg-gray-100"
-              >
-                XP Guide
-              </Link>
-              <Link
-                to=""
-                className="block px-6 py-3 dark:hover:bg-neutral-700 text-neutral-700 dark:text-white hover:bg-gray-100"
-              >
-                Logout
-              </Link>
+              {/* Menu rozwijane */}
+              <div className="absolute -left-8 mt-2 w-70 dark:bg-neutral-800 bg-white rounded-md shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition duration-300 z-50 -translate-y-4">
+                <Link
+                  to="/add-module"
+                  className="block px-6 py-3 text-neutral-700 dark:text-white dark:hover:bg-neutral-700 hover:bg-gray-100"
+                >
+                  Leaderboard
+                </Link>
+                <Link
+                  to=""
+                  className="block px-6 py-3 dark:hover:bg-neutral-700 text-neutral-700 dark:text-white hover:bg-gray-100"
+                >
+                  XP Guide
+                </Link>
+                <Link
+                  to=""
+                  className="block px-6 py-3 dark:hover:bg-neutral-700 text-neutral-700 dark:text-white hover:bg-gray-100"
+                >
+                  Logout
+                </Link>
+              </div>
             </div>
-          </div>
           </div>
 
           {/* Actions (darkmode, login/logout) */}
           <div className="hidden lg:flex justify-center items-center">
             <div
-            className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 cursor-pointer  py-5 px-6 transition-colors rounded-full"
-            onClick={() => setDarkMode((prev) => !prev)}
-          >
-            {darkMode ? (
-              <FiSun className=" w-10 h-10 " />
+              className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 cursor-pointer  py-5 px-6 transition-colors rounded-full"
+              onClick={() => setDarkMode((prev) => !prev)}
+            >
+              {darkMode ? (
+                <FiSun className=" w-10 h-10 " />
+              ) : (
+                <FaRegMoon className=" w-10 h-10" />
+              )}
+            </div>
+            {!authorized ? (
+              <Link
+                to="/login"
+                className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors"
+              >
+                Log in
+              </Link>
             ) : (
-              <FaRegMoon className=" w-10 h-10" />
+              <button
+                onClick={handleLogout}
+                className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors uppercase cursor-pointer flex justify-center items-center gap-4"
+              >
+                <p>Log out</p>
+                <FaArrowRightFromBracket />
+              </button>
             )}
-          </div>
-          {!authorized ? (
             <Link
-              to="/login"
-              className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors"
+              to="/account"
+              className="group relative dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
             >
-              Log in
+              <p>{user ? user.name : "Guest"}</p>
+              <FaRegUser className="scale-100 group-hover:scale-110 transition" />
             </Link>
-          ) : (
-            <button
-              onClick={handleLogout}
-              className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors uppercase cursor-pointer flex justify-center items-center gap-4"
-            >
-              <p>Log out</p>
-              <FaArrowRightFromBracket />
-            </button>
-          )}
-          <Link
-            to="/account"
-            className="group relative dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
-          >
-            <p>{user ? user.name : "Guest"}</p>
-            <FaRegUser className="scale-100 group-hover:scale-110 transition" />
-          </Link>
           </div>
         </div>
 
@@ -281,28 +281,28 @@ function Layout() {
             <Link
               to="/"
               onClick={() => setMobileMenuOpen(false)}
-              className="py-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded"
+              className="py-2 px-4 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-md"
             >
               Home
             </Link>
             <Link
               to="/lessons"
               onClick={() => setMobileMenuOpen(false)}
-              className="py-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded"
+              className="py-2 px-4 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-md"
             >
               Lessons
             </Link>
             <Link
               to="/exercises"
               onClick={() => setMobileMenuOpen(false)}
-              className="py-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded"
+              className="py-2 px-4 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-md"
             >
               Exercises
             </Link>
             <Link
               to="/account"
               onClick={() => setMobileMenuOpen(false)}
-              className="py-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded"
+              className="py-2 px-4 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-md"
             >
               {user ? user.name : "Guest"}
             </Link>
@@ -312,7 +312,7 @@ function Layout() {
                   setMobileMenuOpen(false);
                   handleLogout();
                 }}
-                className="py-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded text-left"
+                className="py-2 px-4 cursor-pointer hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-md text-left"
               >
                 Log out
               </button>
@@ -320,13 +320,13 @@ function Layout() {
               <Link
                 to="/login"
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded"
+                className="py-2 px-4 cursor-pointer hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-md"
               >
                 Log in
               </Link>
             )}
             <button
-              className="py-2 flex items-center gap-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded"
+              className="py-2 px-4 flex items-center gap-2 hover:bg-neutral-200 dark:hover:bg-neutral-800  cursor-pointer rounded-md"
               onClick={() => {
                 setDarkMode((prev) => !prev);
                 setMobileMenuOpen(false);

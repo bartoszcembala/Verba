@@ -35,6 +35,7 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
   const verbs = [...initVerbs];
 
   const [selectedVerbs, setSelectedVerbs] = useState<string[][]>([]);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false);
 
   const [correct, setCorrect] = useState(
     account
@@ -90,7 +91,6 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
     if (
       user &&
       mode === "user" &&
-      progress &&
       !progress.some(
         (p) => p.moduleName === module && p.userName === user?.email
       )
@@ -106,13 +106,8 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
           queryClient.invalidateQueries({ queryKey: ["progress"] });
         },
       });
-    } else if (
-      user &&
-      mode === "user" &&
-      progress.some((p) => p.moduleName === module)
-    ) {
-      console.log("Jest");
     }
+
     setCorrect([
       {
         name: "correct",
@@ -142,13 +137,33 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
           user,
         }}
       >
-        <div className="grid  grid-cols-[2fr_1fr] lg:grid-cols-[4fr_7fr_3fr] gap-16 dark:text-white">
-          <Sidebar setCorrect={setCorrect} />
+        <div className="lg:hidden flex justify-end mb-8">
+          <button
+            onClick={() => setIsSidebarVisible(!isSidebarVisible)}
+            className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 rounded-xl cursor-pointer w-full"
+          >
+            {isSidebarVisible ? "Close word list" : "Show word list"}
+          </button>
+        </div>
+
+        <div className="flex flex-col justify-center lg:items-stretch items-center lg:grid  lg:grid-cols-[4fr_8fr_3fr] gap-16 dark:text-white">
+          {/* Sidebar na małych ekranach */}
+          {isSidebarVisible && (
+            <Sidebar setCorrect={setCorrect} className="lg:hidden" />
+          )}
+
+          {/* Sidebar na dużych ekranach */}
+          <div className="hidden lg:block">
+            <Sidebar setCorrect={setCorrect} />
+          </div>
+
+          {/* Główna zawartość */}
           <Main
             account={account}
             setAccount={setAccount}
             setCorrect={setCorrect}
           />
+          {/* Wykres */}
           <Chart
             correct={correct}
             activeProgress={activeProgress}

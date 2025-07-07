@@ -81,9 +81,9 @@ function Home() {
 
   return (
     <div className="flex items-center justify-center ">
-      <div className="flex flex-col lg:grid lg:grid-cols-[2fr_5fr] lg:w-[120rem] gap-10 lg:gap-20">
+      <div className="w-[85%] flex flex-col lg:grid lg:grid-cols-[2fr_5fr] lg:w-[120rem] gap-10 lg:gap-20">
         <div className="flex flex-col text-5xl gap-10">
-          <div className="flex shadow-xs flex-col justify-center items-center border-neutral-300  bg-white border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-6 h-[30rem] relative">
+          <div className="flex shadow-xs flex-col justify-center items-center border-neutral-300  bg-white border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-6 h-[23rem] lg:h-[30rem] relative">
             <img
               src={`/avatars/AV${user?.avatar}.png`}
               className="w-34 h-34 rounded-full border-2 border-indigo-500 mb-4"
@@ -92,7 +92,7 @@ function Home() {
             <p className="text-neutral-500 dark:text-neutral-300 text-3xl mb-5">
               Welcome back!
             </p>
-            <p className="text-neutral-700 dark:text-neutral-200 text-3xl translate-y-9">
+            <p className="text-neutral-700 dark:text-neutral-200 text-3xl  lg:translate-y-10 -translate-y-2">
               level {userLevel.level}.{" "}
               <FaStar className="inline-block -translate-y-1 text-indigo-500" />{" "}
               {userLevel.levelName} ({userLevel.totalXP} exp)
@@ -144,11 +144,11 @@ function Home() {
 
           {!dailyQuizOpen &&
           user?.quiz.date !== new Date().toISOString().split("T")[0] ? (
-            <div className="bg-white shadow-xs border-neutral-300 border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-8 h-[20rem] flex justify-center items-center gap-8">
+            <div className="bg-white shadow-xs border-neutral-300 border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-8 lg:h-[20rem] flex justify-center items-center gap-8">
               <div
                 // onClick={() => handleUpdateDailyQuest("finish quiz")}
                 onClick={() => setDailyQuizOpen(true)}
-                className="self-center py-12 pl-12 text-9xl h-full w-[30%] border-r-2 border-indigo-500 cursor-pointer"
+                className="self-center py-20 lg:py-12 pl-12 text-7xl lg:text-9xl h-full w-[30%] border-r-2 border-indigo-500 cursor-pointer"
               >
                 GO
               </div>

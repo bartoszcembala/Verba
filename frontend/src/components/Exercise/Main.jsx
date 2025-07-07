@@ -93,9 +93,9 @@ function Main({ account, setAccount, setCorrect }) {
   }
 
   return (
-    <div className="overflow-hidden h-[85vh] ">
+    <div className="overflow-hidden w-[90%] h-[38rem] lg:h-[85vh] ">
       <div
-        className={`relative flex flex-col items-center rounded-2xl border-neutral-300  border-1  dark:border-none  py-24 px-10 h-[60rem] transition-colors duration-300 ease-in-out  ${
+        className={`relative flex flex-col items-center rounded-2xl border-neutral-300  border-1  dark:border-none  lg:py-24 py-14  px-10 lg:h-[60rem] transition-colors duration-300 ease-in-out  ${
           isCorrect === "" && "bg-white dark:bg-neutral-700/70"
         } ${isCorrect === "correct" && "bg-[#323a34]"} ${
           isCorrect === "wrong" && "bg-[#3a3232]"
@@ -127,7 +127,7 @@ function Main({ account, setAccount, setCorrect }) {
           </button>
         ) : (
           <>
-            <h2 className="text-5xl mb-26 mt-26">
+            <h2 className="text-5xl lg:mb-26 mb-10 lg:mt-26">
               {exercise.question}{" "}
               <span onClick={() => setShowTranslation(!showTranslation)}>
                 TRANSLATE
@@ -137,15 +137,15 @@ function Main({ account, setAccount, setCorrect }) {
               {showTranslation && exercise.correctAnswer}
             </p>
             {writing ? (
-              <div className="text-5xl">
+              <div className="text-5xl flex">
                 <button
-                  className="cursor-pointer"
+                  className="cursor-pointer w-[10%]"
                   onClick={() => setWriting(false)}
                 >
                   🔠
                 </button>
                 <input
-                  className="dark:bg-neutral-600 bg-neutral-200  border-1 border-neutral-300 dark:border-none rounded-xl px-5 py-3 mx-3"
+                  className="w-[70%] dark:bg-neutral-600 bg-neutral-200  border-1 border-neutral-300 dark:border-none rounded-xl px-5 py-3 mx-3"
                   type="text"
                   ref={inputRef}
                   value={inputValue}
@@ -155,7 +155,7 @@ function Main({ account, setAccount, setCorrect }) {
                 />
                 {isCorrect === "correct" || isCorrect === "wrong" ? (
                   <button
-                    className=""
+                    className="w-[20%]"
                     onClick={() =>
                       exerciseType === "translate"
                         ? getExercise("translate")
@@ -211,7 +211,7 @@ function Main({ account, setAccount, setCorrect }) {
             </div>{" "}
           </>
         )}
-        <div className="absolute bottom-6">
+        <div className="absolute -bottom-24 lg:bottom-6">
           <button
             onClick={() => setExerciseType("translate")}
             className="border-1 cursor-pointer border-neutral-300  transition-colors px-4 py-2 rounded-xl mr-4  hover:bg-neutral-200 dark:hover:bg-neutral-600 "
