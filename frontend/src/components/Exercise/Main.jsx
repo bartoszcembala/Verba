@@ -80,7 +80,7 @@ function Main({ account, setAccount, setCorrect }) {
       handleUpdateDailyQuest
     );
   }
-  console.log(exercise);
+
   function handleKeyDown(e) {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -93,9 +93,9 @@ function Main({ account, setAccount, setCorrect }) {
   }
 
   return (
-    <div className="overflow-hidden w-[90%] h-[38rem] lg:h-[85vh] ">
+    <div className="overflow-hidden w-[90%] h-[44rem] lg:h-[85vh] ">
       <div
-        className={`relative flex flex-col items-center rounded-2xl border-neutral-300  border-1  dark:border-none  lg:py-24 py-14  px-10 lg:h-[60rem] transition-colors duration-300 ease-in-out  ${
+        className={`relative flex flex-col items-center rounded-2xl border-neutral-300  border-1  dark:border-none  lg:py-24 py-19  px-10 h-[38rem] lg:h-[60rem] transition-colors duration-300 ease-in-out  ${
           isCorrect === "" && "bg-white dark:bg-neutral-700/70"
         } ${isCorrect === "correct" && "bg-[#323a34]"} ${
           isCorrect === "wrong" && "bg-[#3a3232]"
@@ -127,7 +127,7 @@ function Main({ account, setAccount, setCorrect }) {
           </button>
         ) : (
           <>
-            <h2 className="text-5xl lg:mb-26 mb-10 lg:mt-26">
+            <h2 className="text-5xl lg:mb-26 mb-20 lg:mt-26">
               {exercise.question}{" "}
               <span onClick={() => setShowTranslation(!showTranslation)}>
                 TRANSLATE
@@ -199,7 +199,7 @@ function Main({ account, setAccount, setCorrect }) {
         </button> */}
 
               <button
-                className="border-1 cursor-pointer border-neutral-300  transition-colors px-4 py-2 rounded-xl mt-10 hover:bg-neutral-200 dark:hover:bg-neutral-600"
+                className="border-1 cursor-pointer border-neutral-300  transition-colors px-4 py-2 rounded-xl mt-30 hover:bg-neutral-200 dark:hover:bg-neutral-600"
                 onClick={() =>
                   exerciseType === "translate"
                     ? getExercise("translate")

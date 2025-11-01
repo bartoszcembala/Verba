@@ -52,18 +52,23 @@ function Layout() {
     ? (JSON.parse(storedUser) as User)
     : undefined;
   let userDailyQuest =
-    dailyQuests && dailyQuests.find((item) => item.userId === user?._id);
+    dailyQuests &&
+    dailyQuests.find(
+      (item) =>
+        item.userId === user?._id &&
+        item.day === new Date().toISOString().split("T")[0]
+    );
 
-  useEffect(() => {
-    const userDailyQuest =
-      dailyQuests && dailyQuests.find((item) => item.userId === user?._id);
+  // useEffect(() => {
+  //   const userDailyQuest =
+  //     dailyQuests && dailyQuests.find((item) => item.userId === user?._id);
 
-    if (!userDailyQuest) return;
+  //   if (!userDailyQuest) return;
 
-    if (userDailyQuest.day !== new Date().toISOString().split("T")[0]) {
-      handleDeleteDailyQuest(true);
-    }
-  }, [user]);
+  //   if (userDailyQuest.day !== new Date().toISOString().split("T")[0]) {
+  //     handleDeleteDailyQuest(true);
+  //   }
+  // }, [user]);
 
   useEffect(() => {
     if (user) {

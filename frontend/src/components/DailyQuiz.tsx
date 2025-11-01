@@ -131,11 +131,11 @@ function DailyQuiz() {
               <div className="text-5xl text-center mb-10">
                 {quizData[currQuestion]?.translation}
               </div>
-              <div className="flex gap-5 w-[60%]">
+              <div className="flex gap-5 w-full">
                 {quizData[currQuestion].answers.map((answer, i) => (
                   <div
                     onClick={() => handleSelect(answer)}
-                    className="border-1 cursor-pointer px-2 py-1 rounded-lg w-full dark:hover:bg-neutral-700 hover:bg-neutral-200 transition border-neutral-400"
+                    className="border-1 cursor-pointer px-3 py-2 rounded-lg  dark:hover:bg-neutral-700 hover:bg-neutral-200 transition border-neutral-400 text-center"
                     key={i}
                   >
                     {answer[0]}
@@ -148,12 +148,12 @@ function DailyQuiz() {
               <div className="">
                 {" "}
                 {user.quiz.date === new Date().toISOString().split("T")[0] ? (
-                  <IoIosCheckmarkCircleOutline className="w-50 h-50 mr-10 lg:mr-50  pr-10 border-r-2 border-indigo-500" />
+                  <IoIosCheckmarkCircleOutline className="w-50 h-50 mr-10 lg:mr-0  pr-10 text-indigo-500" />
                 ) : (
-                  <MdOutlineCancel className="w-50 h-50 mr-10 lg:mr-50  pr-10 border-r-2 border-indigo-500" />
+                  <MdOutlineCancel className="w-50 h-50 mr-10  lg:mr-0 pr-10 text-indigo-500" />
                 )}
               </div>
-              <div className="text-5xl">
+              <div className="text-6xl uppercase">
                 {user.quiz.date === new Date().toISOString().split("T")[0] ? (
                   <span>Daily Quiz completed!</span>
                 ) : (

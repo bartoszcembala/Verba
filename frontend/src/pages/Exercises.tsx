@@ -45,9 +45,7 @@ function Exercises() {
                   <p className="text-3xl font-semibold">
                     {calculatePercent(wordsNumber, mod.words.length)}%
                   </p>
-                  <p className="text-3xl md:text-3xl">
-                    {mod.displayName}
-                  </p>
+                  <p className="text-3xl md:text-3xl">{mod.displayName}</p>
                   <p
                     className={`ml-0 sm:ml-2 text-xl sm:text-2xl px-4 rounded-lg ${
                       mod.level.startsWith("A") && "bg-green-600/85"
@@ -101,7 +99,7 @@ function Exercises() {
   return (
     <div className="flex items-center justify-center w-full px-2">
       <div className="flex flex-col items-center justify-center w-full max-w-[80rem] gap-7">
-        {["verbs", "nouns", "hobbit", "dom"].map((category) => (
+        {["verbs", "nouns", "hobbit", "dom", "jedzenie", "rodzina"].map((category) => (
           <div
             key={category}
             className="w-full cursor-pointer dark:border-none bg-white border border-neutral-300 dark:bg-neutral-700/70 rounded-2xl py-4 px-5"
@@ -112,9 +110,7 @@ function Exercises() {
                 setShow(show === category ? "undefined" : category)
               }
             >
-              <p className="text-4xl capitalize">
-                {category}
-              </p>
+              <p className="text-4xl capitalize">{category}</p>
               {show === category ? (
                 <FaChevronUp className="text-indigo-500 w-10 h-10" />
               ) : (

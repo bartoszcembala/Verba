@@ -59,8 +59,7 @@ function Home() {
     };
   }
 
-  const { handleUpdateDailyQuest, handleDeleteDailyQuest } =
-    useUpdateDailyQuests();
+  const { handleDeleteDailyQuest } = useUpdateDailyQuests();
   const { dailyQuests } = useGetDailyQuests();
 
   const previousDates = getPreviousDates(7);
@@ -81,9 +80,9 @@ function Home() {
 
   return (
     <div className="flex items-center justify-center ">
-      <div className="w-[85%] flex flex-col lg:grid lg:grid-cols-[2fr_5fr] lg:w-[120rem] gap-10 lg:gap-20">
-        <div className="flex flex-col text-5xl gap-10">
-          <div className="flex shadow-xs flex-col justify-center items-center border-neutral-300  bg-white border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-6 h-[23rem] lg:h-[30rem] relative">
+      <div className="w-[95%] flex flex-col lg:grid lg:grid-cols-[2fr_5fr] lg:w-[120rem] gap-6 lg:gap-20">
+        <div className="flex flex-col text-5xl gap-6 lg:gap-10">
+          <div className="flex shadow-xs flex-col justify-center items-center border-neutral-300  bg-white border-1 dark:border-none dark:bg-gradient-to-br dark:from-neutral-900/80 dark:via-neutral-900/87 dark:to-neutral-900/92 rounded-3xl px-10 py-6 h-[23rem] lg:h-[30rem] relative">
             <img
               src={`/avatars/AV${user?.avatar}.png`}
               className="w-34 h-34 rounded-full border-2 border-indigo-500 mb-4"
@@ -101,7 +100,7 @@ function Home() {
               Next level in: {userLevel.xpToNextLevel}XP
             </p>
           </div>
-          <div className="flex items-center justify-center gap-2 shadow-xs border-neutral-300  bg-white border-1 dark:border-none dark:bg-neutral-700/70 rounded-2xl px-5 py-9">
+          <div className="flex items-center justify-center gap-2 shadow-xs border-neutral-300  bg-white border-1 dark:border-none  dark:bg-neutral-700/70 rounded-2xl px-5 py-9">
             {previousDates.map((date) => (
               <span key={date} className="h-20 w-20 text-center rounded-2xl">
                 <span className="block text-4xl pb-4">
@@ -130,7 +129,7 @@ function Home() {
             </Link>
           </div>
         </div>
-        <div className="flex flex-col gap-10 lg:gap-18 ">
+        <div className="flex flex-col  gap-6 lg:gap-12 ">
           <Link
             to={`/${user?.latestActivity[0]}`}
             className="group relative bg-white shadow-xs border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-12 flex justify-between dark:hover:bg-neutral-700 hover:bg-neutral-200 transition-colors"
@@ -160,7 +159,7 @@ function Home() {
             <DailyQuiz />
           )}
 
-          <div className="bg-white border-1 shadow-xs border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-8 h-[35rem] dark:border-2 dark:border-indigo-500">
+          <div className="bg-white border-1 shadow-xs border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-8 h-[35rem] dark:border-2 dark:border-indigo-500 mb-10">
             <h3 className="text-4xl mb-5 pb-5 text-center border-b-2 border-indigo-500 ">
               Daily Quests:{" "}
               <button onClick={() => handleDeleteDailyQuest()}>delete</button>

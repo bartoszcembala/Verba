@@ -40,13 +40,13 @@ function Sidebar({ setCorrect, className = "" }) {
     >
       <div className="py-6 mb-6 flex gap-3 border-b-2">
         <button
-          className="border-1 cursor-pointer border-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors px-4 py-2 rounded-xl"
+          className="border-1 cursor-pointer border-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors px-3 py-3 rounded-xl leading-9"
           onClick={() => setSelectedVerbs(verbs)}
         >
           Add all
         </button>
         <button
-          className="border-1 cursor-pointer border-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors px-4 py-2 rounded-xl"
+          className="border-1 cursor-pointer border-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors px-3 py-3 rounded-xl leading-9"
           onClick={() => {
             mode === "guest"
               ? setSelectedVerbs(account.notLearned[module])
@@ -60,7 +60,7 @@ function Sidebar({ setCorrect, className = "" }) {
           Add not learned
         </button>
         <button
-          className="border-1 cursor-pointer border-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors px-4 py-2 rounded-xl"
+          className="border-1 cursor-pointer border-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors px-3 py-3 rounded-xl leading-9"
           onClick={() => {
             editProgress({ id: activeProgress._id, data: { learned: [] } });
             queryClient.invalidateQueries({ queryKey: ["progress"] });

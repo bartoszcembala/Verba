@@ -18,7 +18,7 @@ function Lessons() {
 
   return (
     <div className="flex items-center justify-center ">
-      <div className="sm:flex sm:flex-col  lg:grid lg:grid-cols-3 w-[110rem] gap-10">
+      <div className="flex flex-col  lg:grid lg:grid-cols-3 w-[95%] lg:w-[110rem] gap-4 lg:gap-10">
         {lessons &&
           lessons.map((les: Lesson, i: number) => (
             <Link

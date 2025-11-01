@@ -18,7 +18,6 @@ export function useUpdateDailyQuests() {
  
   function handleUpdateDailyQuest(questName: string) {
     if (dailyQuests && userDailyQuest) {
-      //moze byc undefined
       const hasTitle = Object.values(userDailyQuest).some(
         (value: any) => value?.title === questName && value?.completed === false
       );

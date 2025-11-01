@@ -64,17 +64,17 @@ function Account() {
 
   return (
     <div className="flex justify-center items-center ">
-      <div className="w-[90rem] flex flex-col gap-8">
+      <div className="w-[95%] lg:w-[90rem] flex flex-col  gap-6 lg:gap-8">
         {user ? (
           <>
-            <div className="rounded-2xl bg-white border-1 dark:border-none border-neutral-300 dark:bg-neutral-700/70 py-14 px-20 relative">
+            <div className="rounded-2xl bg-white border-1 dark:border-none border-neutral-300 dark:bg-gradient-to-br dark:from-neutral-900/80 dark:via-neutral-900/86 dark:to-neutral-900/92 py-10 px-12 lg:py-14  lg:px-20 relative">
               <div className="flex gap-20 items-center">
                 <img
                   src={`/avatars/AV${user.avatar}.png`}
                   className="w-30 h-30 rounded-full border-2 border-indigo-500"
                 />
                 <div>
-                  <h1 className="text-8xl  pb-3">{user.name} </h1>{" "}
+                  <h1 className="text-7xl lg:text-8xl  pb-3">{user.name} </h1>{" "}
                   <Link
                     to="/buy-premium"
                     className="text-neutral-400 cursor-pointer"
@@ -85,25 +85,33 @@ function Account() {
                     <LuCrown className="inline-block text-indigo-500 -translate-y-0.5 ml-1" />
                   </Link>
                 </div>
-                <IoSettingsOutline className="absolute right-10 top-10 h-12 w-12 cursor-pointer" />
+                <IoSettingsOutline className="absolute right-10 top-10 h-12 w-12 cursor-pointer hover:rotate-45 transition duration-280" />
               </div>
             </div>
             <div className="grid grid-cols-3 gap-6">
-              <div className="p-10 bg-white border-1 dark:border-none border-neutral-300 dark:bg-neutral-700/70 rounded-2xl flex flex-col items-center justify-center gap-4">
-                <p>FINSHED LESSONS:</p>
-                <p className="text-7xl">{user.finishedLessons.length}</p>
+              <div className="px-2 py-4 lg:p-10 bg-white border-1 dark:border-none border-neutral-300 dark:bg-neutral-700/70 rounded-2xl flex flex-col items-center justify-center gap-4">
+                <p className="text-center leading-9 text-3xl lg:text-4xl">
+                  FINSHED LESSONS:
+                </p>
+                <p className="text-5xl lg:text-7xl">
+                  {user.finishedLessons.length}
+                </p>
               </div>
-              <div className="p-10 bg-white border-1 dark:border-none border-neutral-300 dark:bg-neutral-700/70 rounded-2xl flex flex-col items-center justify-center gap-4">
-                <p>WODS LEARNED:</p>
-                <p className="text-7xl">238</p>
+              <div className="px-2 py-4 lg:p-10 bg-white border-1 dark:border-none border-neutral-300 dark:bg-neutral-700/70 rounded-2xl flex flex-col items-center justify-center gap-4">
+                <p className="text-center leading-9 text-3xl lg:text-4xl">
+                  WODS LEARNED:
+                </p>
+                <p className="text-5xl lg:text-7xl">238</p>
               </div>{" "}
-              <div className="p-10 bg-white border-1 dark:border-none border-neutral-300 dark:bg-neutral-700/70 rounded-2xl flex flex-col items-center justify-center gap-4">
-                <p>STREAK:</p>
-                <p className="text-7xl">{streak} DAYS</p>
+              <div className="px-2 py-4 lg:p-10 bg-white border-1 dark:border-none border-neutral-300 dark:bg-neutral-700/70 rounded-2xl flex flex-col items-center justify-center gap-4">
+                <p className="text-center leading-9 text-3xl lg:text-4xl">
+                  STREAK:
+                </p>
+                <p className="text-5xl lg:text-7xl">{streak} DAYS</p>
               </div>
             </div>
 
-            <div className="w-full h-[26rem] flex items-center justify-center p-10 mx-auto bg-white border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-2xl">
+            <div className="w-full h-[26rem] flex items-center justify-center pt-12 pb-4 pr-14 mx-auto bg-white border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-2xl">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart width={730} height={250} data={dates}>
                   <XAxis dataKey="date" />
@@ -121,7 +129,7 @@ function Account() {
               </ResponsiveContainer>
             </div>
 
-            <div className="grid grid-cols-5 justify-center items-center gap-6">
+            <div className="grid-cols-3  grid lg:grid-cols-5  justify-center items-center gap-6 ">
               {user.friends.map((friend) => (
                 <div
                   key={friend.friendId}

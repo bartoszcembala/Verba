@@ -1,7 +1,7 @@
 {
   "name": "verba",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "backend/server.js",
   "scripts": {
     "start": "nodemon ./backend/server.js"
   },

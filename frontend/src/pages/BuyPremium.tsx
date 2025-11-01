@@ -8,7 +8,6 @@ function BuyPremium() {
   //   "pk_test_51RTgPpEJx6hC03kLGMknT3ZdbsKGAJMnorWceN3IznEW08U3UeqKmdZz8loyCxhFgH7WhapTyfhk3wi4TpiexxUn00dFtCGW8T"
   // );
 
-  const { dailyQuests } = useGetDailyQuests();
   const userJson = localStorage.getItem("user");
   const user: User | null = userJson ? JSON.parse(userJson) : null;
 
