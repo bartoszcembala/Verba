@@ -1,12 +1,8 @@
 import axios from "axios";
-// import Stripe from "stripe";
 import { User } from "../types";
-import { useGetDailyQuests } from "../lib/queries/dailyQuestsQueries";
+
 
 function BuyPremium() {
-  // const stripe = new Stripe(
-  //   "pk_test_51RTgPpEJx6hC03kLGMknT3ZdbsKGAJMnorWceN3IznEW08U3UeqKmdZz8loyCxhFgH7WhapTyfhk3wi4TpiexxUn00dFtCGW8T"
-  // );
 
   const userJson = localStorage.getItem("user");
   const user: User | null = userJson ? JSON.parse(userJson) : null;
@@ -16,7 +12,7 @@ function BuyPremium() {
       if (!user) return;
 
       const session = await axios(
-        `https://verba-production-3e8f.up.railway.app/api/checkout/${user._id}`,
+        `http://localhost:5000/api/checkout/${user._id}`,
         {
           withCredentials: true,
         }

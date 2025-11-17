@@ -2,19 +2,12 @@ import { useContext, useEffect } from "react";
 import { useActivity, useEditUser } from "../lib/queries/userQueries";
 import { SettingsContext } from "../lib/contexts";
 import { Link, useLocation } from "react-router-dom";
-import { useUpdateDailyQuests } from "../lib/useUpdateDailyQuests";
 import toast from "react-hot-toast";
+import axios from "axios";
+import { LessonInterface } from "../types";
 
-interface Lesson {
-  _id: string;
-  title: string;
-  html: string;
-  relatedExercises: string[];
-  __v: number;
-}
 
-function Lesson({ lesson }: { lesson: Lesson }) {
-  const { handleUpdateDailyQuest } = useUpdateDailyQuests();
+function Lesson({ lesson }: { lesson: LessonInterface }) {
   const { addActivity } = useActivity();
   const { editUser } = useEditUser();
 
@@ -76,7 +69,19 @@ function Lesson({ lesson }: { lesson: Lesson }) {
         })
       );
       toast.success("Lesson Finished!");
-      handleUpdateDailyQuest("finish lesson");
+      async function handleAnswerC(index: number) {
+        try {
+          const res = await axios.patch(
+            "http://localhost:5000/api/daily-quests/increment",
+            { index },
+            { withCredentials: true }
+          );
+          console.log(res.data);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      handleAnswerC(3);
     }
   }
 
@@ -93,7 +98,10 @@ function Lesson({ lesson }: { lesson: Lesson }) {
           ))}
       </div>
 
-      <div className="order-1 lg:order-2" dangerouslySetInnerHTML={{ __html: lesson.html }} />
+      <div
+        className="order-1 lg:order-2"
+        dangerouslySetInnerHTML={{ __html: lesson.html }}
+      />
 
       <button
         onClick={handleFinishLesson}

@@ -19,7 +19,6 @@ function Dashboard() {
   function handleModuleSelection(moduleId: string) {
     const module = modules?.find((mod: Module) => mod._id === moduleId);
     if (module) {
-      console.log(module.words);
       setSelectedModule(module);
       setInput(module.words.flat().join(" * "));
     }

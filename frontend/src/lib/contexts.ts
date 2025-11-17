@@ -9,7 +9,6 @@ export type SettingsContextType = {
 };
 
 export type ExerciseContextType = {
-  mode: "guest" | "user";
   verbs: string[][];
   selectedVerbs: string[][];
   setSelectedVerbs: (v: string[][]) => void;

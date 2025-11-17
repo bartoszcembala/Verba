@@ -31,11 +31,12 @@ export interface User {
   quiz: quizType;
 }
 
-export interface Lesson {
+export interface LessonInterface {
   _id: string;
   title: string;
   html: string;
   relatedExercises: string[];
+  type: string;
   __v: number;
 }
 
@@ -68,8 +69,5 @@ export interface DailyQuestsInterface {
   __v: number;
   userId: string;
   day: string;
-  quest1: dailyQuestType;
-  quest2: dailyQuestType;
-  quest3: dailyQuestType;
-  quest4: dailyQuestType;
+  quests: dailyQuestType[];
 }

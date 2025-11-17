@@ -13,9 +13,8 @@ import {
   useEditDailyQuests,
   useGetDailyQuests,
 } from "../../lib/queries/dailyQuestsQueries";
-import { useUpdateDailyQuests } from "../../lib/useUpdateDailyQuests";
 
-function Main({ account, setAccount, setCorrect }) {
+function Main({  setCorrect }) {
   const {
     mode,
     selectedVerbs,
@@ -29,7 +28,6 @@ function Main({ account, setAccount, setCorrect }) {
   const { dailyQuests } = useGetDailyQuests();
   const { editDailyQuests } = useEditDailyQuests();
   const { addLearnedWord } = useAddLearnedWord();
-  const { handleUpdateDailyQuest } = useUpdateDailyQuests();
   const queryClient = useQueryClient();
   const [exercise, setExercise] = useState({
     question: "",
@@ -70,14 +68,12 @@ function Main({ account, setAccount, setCorrect }) {
       user,
       exercise,
       setIsCorrect,
-      account,
-      setAccount,
+
       setCorrect,
       setSelectedVerbs,
       queryClient,
       dailyQuests,
       editDailyQuests,
-      handleUpdateDailyQuest
     );
   }
 
@@ -191,13 +187,6 @@ function Main({ account, setAccount, setCorrect }) {
             )}
             <Letters inputRef={inputRef} setInputValue={setInputValue} />
             <div className="buttons">
-              {/* <button
-          className="btn"
-          onClick={() => setShowTranslation(!showTranslation)}
-        >
-          Translation {exercise.answer}
-        </button> */}
-
               <button
                 className="border-1 cursor-pointer border-neutral-300  transition-colors px-4 py-2 rounded-xl mt-30 hover:bg-neutral-200 dark:hover:bg-neutral-600"
                 onClick={() =>

@@ -1,19 +1,18 @@
 import { useEffect, useState } from "react";
-import { useProgress } from "../lib/queries/progressQueries";
-import { shuffleArray } from "../lib/shuffle";
-import Spinner from "./Spinner";
+import { useProgress } from "../../lib/queries/progressQueries";
+import { shuffleArray } from "../../lib/shuffle";
+import Spinner from "../Spinner";
 import toast from "react-hot-toast";
-import { useUpdateDailyQuests } from "../lib/useUpdateDailyQuests";
-import { useEditUser } from "../lib/queries/userQueries";
+import { useEditUser } from "../../lib/queries/userQueries";
 import { IoReload } from "react-icons/io5";
 import { CiLock } from "react-icons/ci";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { MdOutlineCancel } from "react-icons/md";
+import axios from "axios";
 
 function DailyQuiz() {
   const { progress, isLoadingProgress } = useProgress();
   const { editUser } = useEditUser();
-  const { handleUpdateDailyQuest } = useUpdateDailyQuests();
   const userStr = localStorage.getItem("user");
   const user = userStr ? JSON.parse(userStr) : null;
   const userProgress = progress?.filter(
@@ -92,7 +91,22 @@ function DailyQuiz() {
     if (currQuestion + 1 === 5) {
       if (correct >= 4) {
         toast.success("quiz completed");
-        handleUpdateDailyQuest("finish quiz");
+
+        //Daily Quest logic
+        async function handleAnswerC(index: number) {
+          try {
+            const res = await axios.patch(
+              "http://localhost:5000/api/daily-quests/increment",
+              { index },
+              { withCredentials: true }
+            );
+            console.log(res.data);
+          } catch (error) {
+            console.error(error);
+          }
+        }
+        handleAnswerC(2);
+
         editUser({
           id: user._id,
           data: {

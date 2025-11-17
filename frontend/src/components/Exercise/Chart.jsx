@@ -2,17 +2,21 @@
 import { Cell, Legend, Pie, PieChart, Tooltip } from "recharts";
 import Percent from "./Percent";
 
-function Chart({ correct, activeProgress, mode }) {
+function Chart({ correct, activeProgress }) {
   return (
     <div>
       {correct[0].value !== 0 || correct[1].value !== 0 ? (
         <div className=" w-[20rem] ">
-          <Percent correct={correct} activeProgress={activeProgress} />
+          <p>
+            {correct[0].value}/{correct[1].value}
+            <Percent correct={correct} activeProgress={activeProgress} />
+          </p>
+
           <PieChart width={210} height={240}>
             <Pie
               data={correct}
               name="name"
-              dataKey={mode === "guest" ? "value.length" : "value"}
+              dataKey={"value"}
               innerRadius={25}
               animationDuration={1000}
               animationBegin={0}

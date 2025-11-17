@@ -9,6 +9,8 @@ import dailyQuestRoutes from "./routes/dailyQuest.route.js";
 import checkoutRouter from "./routes/checkout.route.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import nodeCron from "node-cron";
+import { DailyQuest } from "./models/dailyQuest.model.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -30,6 +32,14 @@ app.use("/api/progress", progressRoutes);
 app.use("/api/lesson", lessonRoutes);
 app.use("/api/daily-quests", dailyQuestRoutes);
 app.use("/api/checkout", checkoutRouter);
+
+nodeCron.schedule("0 0 * * *", async () => {
+  console.log("RESET DAILY QUESTS");
+  await DailyQuest.updateMany(
+    {},
+    { $set: { "quests.$[].progress": 0, "quests.$[].completed": false } }
+  );
+});
 
 app.listen(PORT, () => {
   connectDB();

@@ -1,10 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useEditUser } from "../lib/queries/userQueries";
-import {
-  useEditDailyQuests,
-  useGetDailyQuests,
-} from "../lib/queries/dailyQuestsQueries";
-import { useUpdateDailyQuests } from "../lib/useUpdateDailyQuests";
+import { useGetDailyQuests } from "../lib/queries/dailyQuestsQueries";
+import axios from "axios";
 
 export const useDailyStudyTimer = (): number => {
   const [secondsToday, setSecondsToday] = useState<number>(0);
@@ -12,7 +9,6 @@ export const useDailyStudyTimer = (): number => {
   const updateRef = useRef<NodeJS.Timeout | null>(null);
   const { editUser } = useEditUser();
   const { dailyQuests } = useGetDailyQuests();
-  const { handleUpdateDailyQuest } = useUpdateDailyQuests();
 
   useEffect(() => {
     const today = new Date().toISOString().split("T")[0];
@@ -68,7 +64,19 @@ export const useDailyStudyTimer = (): number => {
       });
 
       //Daily Quest logic
-      handleUpdateDailyQuest("spend 10 minutes learning");
+      async function handleAnswerC(index: number) {
+        try {
+          const res = await axios.patch(
+            "http://localhost:5000/api/daily-quests/increment",
+            { index },
+            { withCredentials: true }
+          );
+          console.log(res.data);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      handleAnswerC(0);
 
       // Aktualizacja usera w localStorage
       localStorage.setItem(

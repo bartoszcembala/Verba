@@ -14,6 +14,9 @@ const lessonSchema = mongoose.Schema({
     type: [String],
     default: [],
   },
+  type: {
+    type: String,
+  },
 });
 
 export const Lesson = mongoose.model("Lesson", lessonSchema);

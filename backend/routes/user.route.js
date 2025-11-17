@@ -19,9 +19,16 @@ const router = express.Router();
 router.post("/signup", signup);
 router.post("/login", login);
 router.post("/logout", logout);
-router.get("/check", checkAuth);
+router.get("/check", protectedRoute, checkAuth);
 
-router.route("/").get(getUsers).post(createUser);
-router.route("/:id").patch(updateUser).delete(deleteUser).get(getUser);
+router
+  .route("/")
+  .get(protectedRoute, getUsers)
+  .post(protectedRoute, createUser);
+router
+  .route("/:id")
+  .patch(protectedRoute, updateUser)
+  .delete(protectedRoute, deleteUser)
+  .get(protectedRoute, getUser);
 
 export default router;

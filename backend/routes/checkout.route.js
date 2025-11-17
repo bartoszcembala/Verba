@@ -4,6 +4,6 @@ import { getCheckoutSession } from "../controllers/checkout.controller.js";
 
 const router = express.Router();
 
-router.route("/:id").get( getCheckoutSession);
+router.route("/:id").get(protectedRoute, getCheckoutSession);
 
 export default router;

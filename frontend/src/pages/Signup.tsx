@@ -13,8 +13,8 @@ function Signup() {
 
   const onSubmit: SubmitHandler<SignupFormInputs> = async (data) => {
     try {
-      console.log("DATA: ", data);
-      await fetch("https://verba-production-3e8f.up.railway.app/api/users/signup", {
+
+      await fetch(`http://localhost:5000/api/users/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

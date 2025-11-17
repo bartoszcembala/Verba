@@ -13,7 +13,7 @@ export function getExerciseTranslate(
   setInputValue("");
   setIsCorrect("");
 
-  console.log(selectedVerbs);
+
   const pickedVerb =
     selectedVerbs[Math.floor(Math.random() * selectedVerbs.length)];
   const array = [pickedVerb[0]];

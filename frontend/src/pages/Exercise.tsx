@@ -2,7 +2,6 @@ import "../index.css";
 import { useContext, useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { useLocation } from "react-router-dom";
-import { AccountCtx } from "../lib/AccountContext";
 import { ExerciseContext, SettingsContext } from "../lib/contexts";
 import Sidebar from "../components/Exercise/Sidebar";
 import { useActivity } from "../lib/queries/userQueries";
@@ -19,7 +18,6 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
   const { addProgress } = useAddProgress();
   const { addActivity } = useActivity();
 
-  const { account, setAccount } = useContext(AccountCtx)!;
   const { mode } = useContext(SettingsContext)!;
 
   const module = useLocation().pathname.slice(1);
@@ -37,33 +35,18 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
   const [selectedVerbs, setSelectedVerbs] = useState<string[][]>([]);
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
 
-  const [correct, setCorrect] = useState(
-    account
-      ? [
-          {
-            name: "correct",
-            value: account?.modulesPercent[module] || {},
-            color: "#34563c",
-          },
-          {
-            name: "wrong",
-            value: account?.notLearned[module] || {},
-            color: "#563434",
-          },
-        ]
-      : [
-          {
-            name: "correct",
-            value: activeProgress?.learned.length,
-            color: "#34563c",
-          },
-          {
-            name: "wrong",
-            value: initVerbs.length - activeProgress?.learned.length!,
-            color: "#563434",
-          },
-        ]
-  );
+  const [correct, setCorrect] = useState([
+    {
+      name: "correct",
+      value: activeProgress?.learned.length,
+      color: "#34563c",
+    },
+    {
+      name: "wrong",
+      value: initVerbs.length - activeProgress?.learned.length!,
+      color: "#563434",
+    },
+  ]);
 
   useEffect(() => {
     if (user) {
@@ -128,7 +111,6 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
       <Toaster />
       <ExerciseContext.Provider
         value={{
-          mode,
           verbs,
           selectedVerbs,
           setSelectedVerbs,
@@ -158,17 +140,9 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
           </div>
 
           {/* Główna zawartość */}
-          <Main
-            account={account}
-            setAccount={setAccount}
-            setCorrect={setCorrect}
-          />
+          <Main setCorrect={setCorrect} />
           {/* Wykres */}
-          <Chart
-            correct={correct}
-            activeProgress={activeProgress}
-            mode={mode}
-          />
+          <Chart correct={correct} activeProgress={activeProgress} />
         </div>
       </ExerciseContext.Provider>
     </>

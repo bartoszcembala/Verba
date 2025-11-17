@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Module } from "../../types";
 
+
 interface EditModuleInput {
   id: string;
   change: { words: string[][] };
@@ -10,7 +11,7 @@ export function useModules() {
   const { data, isLoading } = useQuery<Module[]>({
     queryKey: ["modules"],
     queryFn: async () => {
-      const res = await fetch("https://verba-production-3e8f.up.railway.app/api/modules/", {
+      const res = await fetch(`http://localhost:5000/api/modules/`, {
         method: "GET",
         credentials: "include",
       });
@@ -25,7 +26,7 @@ export function useModules() {
 export function useEditModules() {
   const mutation = useMutation<Module, Error, EditModuleInput>({
     mutationFn: async ({ id, change }) => {
-      const res = await fetch(`https://verba-production-3e8f.up.railway.app/api/modules/${id}`, {
+      const res = await fetch(`http://localhost:5000/api/modules/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 import toast from "react-hot-toast";
 import { useContext } from "react";
-import { AccountCtx } from "../../lib/AccountContext";
 import { ExerciseContext } from "../../lib/contexts";
 import {
   useEditProgress,
@@ -11,9 +10,8 @@ import { useQueryClient } from "@tanstack/react-query";
 
 function Sidebar({ setCorrect, className = "" }) {
   const queryClient = useQueryClient();
-  const { mode, verbs, selectedVerbs, setSelectedVerbs, module, user } =
+  const {  verbs, selectedVerbs, setSelectedVerbs, module, user } =
     useContext(ExerciseContext);
-  const { account, setAccount } = useContext(AccountCtx);
   const { progress } = useProgress();
   const { editProgress } = useEditProgress();
   const activeProgress = progress?.find(
@@ -48,13 +46,11 @@ function Sidebar({ setCorrect, className = "" }) {
         <button
           className="border-1 cursor-pointer border-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors px-3 py-3 rounded-xl leading-9"
           onClick={() => {
-            mode === "guest"
-              ? setSelectedVerbs(account.notLearned[module])
-              : setSelectedVerbs(
-                  verbs.filter(
-                    (item) => !activeProgress?.learned.flat().includes(item[0])
-                  )
-                );
+            setSelectedVerbs(
+              verbs.filter(
+                (item) => !activeProgress?.learned.flat().includes(item[0])
+              )
+            );
           }}
         >
           Add not learned
@@ -64,23 +60,11 @@ function Sidebar({ setCorrect, className = "" }) {
           onClick={() => {
             editProgress({ id: activeProgress._id, data: { learned: [] } });
             queryClient.invalidateQueries({ queryKey: ["progress"] });
-            const acc = {
-              ...account,
-              modulesPercent: {
-                ...account.modulesPercent,
-                [module]: [],
-              },
-              notLearned: {
-                ...account.notLearned,
-                [module]: [...verbs],
-              },
-            };
+
             setCorrect((prev) => [
               { ...prev[0], value: [] },
               { ...prev[1], value: [...verbs] },
             ]);
-            setAccount(acc);
-            localStorage.setItem("account", JSON.stringify(acc));
           }}
         >
           Reset progress
@@ -90,17 +74,12 @@ function Sidebar({ setCorrect, className = "" }) {
         verbs.map((verb) => (
           <div key={verb[0]} className="flex items-center gap-4 pb-2 ">
             <span>
-              {mode === "guest"
-                ? account.modulesPercent[module].includes(verb[0])
-                  ? "🟩"
-                  : "🟥"
-                : progress
-                    ?.find(
-                      (p) =>
-                        p.moduleName === module && p.userName === user.email
-                    )
-                    ?.learned?.flat()
-                    .includes(verb[0])
+              {progress
+                ?.find(
+                  (p) => p.moduleName === module && p.userName === user.email
+                )
+                ?.learned?.flat()
+                .includes(verb[0])
                 ? "🟩"
                 : "🟥"}
             </span>

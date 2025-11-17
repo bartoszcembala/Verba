@@ -1,9 +1,7 @@
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import { AccountCtx } from "../lib/AccountContext";
 import {
   calculatePercent,
-  calculatePercentContext,
 } from "../lib/calculatePercent";
 import DATA from "../data/verbs";
 import { SettingsContext } from "../lib/contexts";
@@ -14,7 +12,6 @@ import { HiOutlinePlay } from "react-icons/hi2";
 import { User } from "../types";
 
 function Exercises() {
-  const { account } = useContext(AccountCtx)!;
   const { mode, authorized } = useContext(SettingsContext)!;
   const { modules, isLoadingModules } = useModules();
   const { progress, isLoadingProgress } = useProgress();
@@ -24,9 +21,7 @@ function Exercises() {
 
   const list = (
     <div className="mt-4">
-      {mode === "user" &&
-        authorized &&
-        modules &&
+      {modules &&
         progress &&
         modules.map((mod) => {
           if (mod.title.includes(show)) {
@@ -72,70 +67,61 @@ function Exercises() {
     );
   }
 
-  function percentWEmoji(val1: number, val2: number) {
-    const percent = calculatePercent(val1, val2);
-    let emoji = "";
+  // function percentWEmoji(val1: number, val2: number) {
+  //   const percent = calculatePercent(val1, val2);
+  //   let emoji = "";
 
-    if (percent >= 80) emoji = "🟩";
-    else if (percent >= 50) emoji = "🟨";
-    else if (percent >= 25) emoji = "🟧";
-    else emoji = "🟥";
+  //   if (percent >= 80) emoji = "🟩";
+  //   else if (percent >= 50) emoji = "🟨";
+  //   else if (percent >= 25) emoji = "🟧";
+  //   else emoji = "🟥";
 
-    return `${emoji} ${percent}`;
-  }
+  //   return `${emoji} ${percent}`;
+  // }
 
-  function percentWEmojiContext(val1: number, val2: number) {
-    const percent = calculatePercentContext(val1, val2);
-    let emoji = "";
+  function exercisesCount(category: string) {
+    let count = 0;
+    modules!.map((mod) => {
+      if (mod.title.includes(category)) {
+        count++;
+      }
+    });
 
-    if (percent >= 80) emoji = "🟩";
-    else if (percent >= 50) emoji = "🟨";
-    else if (percent >= 25) emoji = "🟧";
-    else emoji = "🟥";
-
-    return `${emoji} ${percent}`;
+    return count;
   }
 
   return (
     <div className="flex items-center justify-center w-full px-2">
       <div className="flex flex-col items-center justify-center w-full max-w-[80rem] gap-7">
-        {["verbs", "nouns", "hobbit", "dom", "jedzenie", "rodzina"].map((category) => (
-          <div
-            key={category}
-            className="w-full cursor-pointer dark:border-none bg-white border border-neutral-300 dark:bg-neutral-700/70 rounded-2xl py-4 px-5"
-          >
+        {["verbs", "nouns", "hobbit", "dom", "jedzenie", "rodzina"].map(
+          (category) => (
             <div
-              className="flex justify-between items-center"
-              onClick={() =>
-                setShow(show === category ? "undefined" : category)
-              }
+              key={category}
+              className="w-full cursor-pointer dark:border-none bg-white border border-neutral-300 dark:bg-neutral-700/70 rounded-2xl py-6 px-5"
             >
-              <p className="text-4xl capitalize">{category}</p>
-              {show === category ? (
-                <FaChevronUp className="text-indigo-500 w-10 h-10" />
-              ) : (
-                <FaChevronDown className="text-indigo-500 w-10 h-10" />
-              )}
-            </div>
-            {show === category && list}
-          </div>
-        ))}
+              <div
+                className="flex justify-between items-center"
+                onClick={() =>
+                  setShow(show === category ? "undefined" : category)
+                }
+              >
+                <p className="text-4xl capitalize">{category}</p>
 
-        {mode === "guest" &&
-          Object.entries(DATA).map(([key, module]) => (
-            <Link
-              key={key}
-              to={`/${module.name}`}
-              className="bg-neutral-900 w-full text-center py-8 rounded-2xl text-3xl sm:text-4xl text-white font-bold hover:bg-neutral-800 transition duration-200 border border-neutral-400"
-            >
-              {module.nameDisplay.toUpperCase()}{" "}
-              {percentWEmojiContext(
-                account.modulesPercent[module.name]?.length || 0,
-                account.notLearned[module.name]?.length || 1
-              )}
-              %
-            </Link>
-          ))}
+                <div className="flex justify-center items-center">
+                  <span className="mr-10 tracking-wide text-3xl text-neutral-400">
+                    {exercisesCount(category)} exercises
+                  </span>
+                  {show === category ? (
+                    <FaChevronUp className="text-indigo-500 w-10 h-10" />
+                  ) : (
+                    <FaChevronDown className="text-indigo-500 w-10 h-10" />
+                  )}
+                </div>
+              </div>
+              {show === category && list}
+            </div>
+          )
+        )}
       </div>
     </div>
   );

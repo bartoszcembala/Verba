@@ -23,7 +23,6 @@ import NotFound from "../pages/NotFound.js";
 import User from "../pages/User.js";
 
 function AppRoutes() {
-  const { mode, authorized } = useContext(SettingsContext)!;
   const { progress } = useProgress();
   const { modules } = useModules();
   const { lessons } = useLessons();
@@ -44,10 +43,8 @@ function AppRoutes() {
           <Route path="/profile/:userId" element={<User />} />
           <Route path="*" element={<NotFound />} />
 
-          {mode === "user" &&
-            modules &&
+          {modules &&
             progress &&
-            authorized &&
             modules.map((module) => (
               <Route
                 key={module._id}
@@ -56,23 +53,12 @@ function AppRoutes() {
               />
             ))}
 
-          {mode === "user" &&
-            lessons &&
-            authorized &&
+          {lessons &&
             lessons.map((lesson) => (
               <Route
                 key={lesson._id}
                 path={`/${lesson.title}`}
                 element={<Lesson lesson={lesson} />}
-              />
-            ))}
-
-          {mode === "guest" &&
-            Object.entries(DATA).map(([key, module]) => (
-              <Route
-                key={key}
-                path={`/${module.name}`}
-                element={<Exercise initVerbs={module.words} />}
               />
             ))}
         </Route>

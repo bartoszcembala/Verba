@@ -51,6 +51,7 @@ export async function createDailyQuest(req, res) {
 
 export async function updateDailyQuest(req, res) {
   try {
+    console.log(req.params)
     const editedDailyQuest = await DailyQuest.findOneAndUpdate(
       { userId: req.params.id },
       { $set: req.body },
@@ -61,7 +62,7 @@ export async function updateDailyQuest(req, res) {
     if (!editedDailyQuest) {
       return res.status(404).json({
         success: false,
-        message: "Wrong id",
+        message: "Wrong idddd",
       });
     }
     //

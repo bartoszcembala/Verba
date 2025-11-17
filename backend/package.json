@@ -1,9 +1,9 @@
 {
   "name": "verba",
   "version": "1.0.0",
-  "main": "backend/server.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node ./backend/server.js"
+    "start": "nodemon ./server.js"
   },
   "type": "module",
   "author": "",
@@ -21,6 +21,7 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.14.3",
+    "node-cron": "^4.2.1",
     "stripe": "^18.1.1"
   }
 }

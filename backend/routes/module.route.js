@@ -9,7 +9,13 @@ import { protectedRoute } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-router.route("/").get( getModules).post(createModule);
-router.route("/:id").patch(updateModule).delete(deleteModule);
+router
+  .route("/")
+  .get(protectedRoute, getModules)
+  .post(protectedRoute, createModule);
+router
+  .route("/:id")
+  .patch(protectedRoute, updateModule)
+  .delete(protectedRoute, deleteModule);
 
 export default router;

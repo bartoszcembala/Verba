@@ -11,9 +11,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { TbHandFingerRight } from "react-icons/tb";
-import { FiMinusCircle } from "react-icons/fi";
-import { CiCirclePlus } from "react-icons/ci";
 import { calculateStreak } from "../lib/calculateStreak";
 import { RxAvatar } from "react-icons/rx";
 

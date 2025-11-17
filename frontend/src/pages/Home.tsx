@@ -2,17 +2,11 @@ import { Link } from "react-router-dom";
 import { User } from "../types";
 import { getPreviousDates } from "../lib/getPreviousDates";
 import { HiOutlinePlay } from "react-icons/hi2";
-import { FaFlagCheckered } from "react-icons/fa6";
-import { IoMdTime } from "react-icons/io";
-import { IoBulbOutline } from "react-icons/io5";
 import { FaStar } from "react-icons/fa";
-import { useGetDailyQuests } from "../lib/queries/dailyQuestsQueries";
-import { calculatePercent } from "../lib/calculatePercent";
-import Spinner from "../components/Spinner";
-import { useUpdateDailyQuests } from "../lib/useUpdateDailyQuests";
 import { LuCrown } from "react-icons/lu";
 import { useState } from "react";
-import DailyQuiz from "../components/DailyQuiz";
+import DailyQuiz from "../components/Home/DailyQuiz";
+import DailyQuests from "../components/Home/DailyQuests";
 
 function Home() {
   const levels = [
@@ -59,9 +53,6 @@ function Home() {
     };
   }
 
-  const { handleDeleteDailyQuest } = useUpdateDailyQuests();
-  const { dailyQuests } = useGetDailyQuests();
-
   const previousDates = getPreviousDates(7);
   const storedUser = localStorage.getItem("user");
   const user: User | null = storedUser ? JSON.parse(storedUser) : null;
@@ -69,14 +60,7 @@ function Home() {
     .slice(-7)
     .reduce((sum, curr) => sum + curr.value, 0);
   const userLevel = getUserLevel(user?.exp ? Math.floor(user.exp) : 0);
-  const iconStore: Record<string, JSX.Element> = {
-    flag: <FaFlagCheckered className="h-16 w-16" />,
-    clock: <IoMdTime className="h-16 w-16" />,
-    bulb: <IoBulbOutline className="h-16 w-16" />,
-  };
   const [dailyQuizOpen, setDailyQuizOpen] = useState(false);
-  const todayDailyQuests =
-    dailyQuests && dailyQuests.find((item) => item.userId === user?._id);
 
   return (
     <div className="flex items-center justify-center ">
@@ -145,7 +129,6 @@ function Home() {
           user?.quiz.date !== new Date().toISOString().split("T")[0] ? (
             <div className="bg-white shadow-xs border-neutral-300 border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-8 lg:h-[20rem] flex justify-center items-center gap-8">
               <div
-                // onClick={() => handleUpdateDailyQuest("finish quiz")}
                 onClick={() => setDailyQuizOpen(true)}
                 className="self-center py-20 lg:py-12 pl-12 text-7xl lg:text-9xl h-full w-[30%] border-r-2 border-indigo-500 cursor-pointer"
               >
@@ -159,92 +142,7 @@ function Home() {
             <DailyQuiz />
           )}
 
-          <div className="bg-white border-1 shadow-xs border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-8 h-[35rem] dark:border-2 dark:border-indigo-500 mb-10">
-            <h3 className="text-4xl mb-5 pb-5 text-center border-b-2 border-indigo-500 ">
-              Daily Quests:{" "}
-              <button onClick={() => handleDeleteDailyQuest()}>delete</button>
-            </h3>
-            {todayDailyQuests ? (
-              <div className=" grid grid-cols-2 gap-y-10">
-                <div className="flex flex-col justify-center items-center gap-3 relative">
-                  <p>{todayDailyQuests.quest1.title}</p>
-                  {iconStore[todayDailyQuests.quest1.icon]}
-                  <p>
-                    {todayDailyQuests.quest1.progress}/
-                    {todayDailyQuests.quest1.toObtain} (
-                    {calculatePercent(
-                      todayDailyQuests.quest1.progress,
-                      todayDailyQuests.quest1.toObtain
-                    )}
-                    %)
-                  </p>
-                  {todayDailyQuests.quest1.completed && (
-                    <span className="absolute rotate-14  bg-indigo-500/90 px-4 top-20 rounded-lg">
-                      COMPLETED
-                    </span>
-                  )}
-                </div>
-                <div className="flex flex-col justify-center items-center gap-3 relative">
-                  <p>{todayDailyQuests.quest2.title}</p>
-                  {iconStore[todayDailyQuests.quest2.icon]}
-                  <p>
-                    {todayDailyQuests.quest2.progress}/
-                    {todayDailyQuests.quest2.toObtain} (
-                    {calculatePercent(
-                      todayDailyQuests.quest2.progress,
-                      todayDailyQuests.quest2.toObtain
-                    )}
-                    %)
-                  </p>
-                  {todayDailyQuests.quest2.completed && (
-                    <span className="absolute rotate-14  bg-indigo-500/90 px-4 top-20 rounded-lg">
-                      COMPLETED
-                    </span>
-                  )}
-                </div>
-                <div className="flex flex-col justify-center items-center gap-3 relative">
-                  <p>{todayDailyQuests.quest3.title}</p>
-                  {iconStore[todayDailyQuests.quest3.icon]}
-
-                  <p>
-                    {todayDailyQuests.quest3.progress}/
-                    {todayDailyQuests.quest3.toObtain} (
-                    {calculatePercent(
-                      todayDailyQuests.quest3.progress,
-                      todayDailyQuests.quest3.toObtain
-                    )}
-                    %)
-                  </p>
-                  {todayDailyQuests.quest3.completed && (
-                    <span className="absolute rotate-14  bg-indigo-500/90 px-4 top-20 rounded-lg">
-                      COMPLETED
-                    </span>
-                  )}
-                </div>
-                <div className="flex flex-col justify-center items-center gap-3 relative">
-                  <p>{todayDailyQuests.quest4.title}</p>
-                  {iconStore[todayDailyQuests.quest4.icon]}
-
-                  <p>
-                    {todayDailyQuests.quest4.progress}/
-                    {todayDailyQuests.quest4.toObtain} (
-                    {calculatePercent(
-                      todayDailyQuests.quest4.progress,
-                      todayDailyQuests.quest4.toObtain
-                    )}
-                    %)
-                  </p>
-                  {todayDailyQuests.quest4.completed && (
-                    <span className="absolute rotate-14  bg-indigo-500/90 px-4 top-20 rounded-lg">
-                      COMPLETED
-                    </span>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <Spinner />
-            )}
-          </div>
+          <DailyQuests />
         </div>
       </div>
     </div>
