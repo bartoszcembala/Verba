@@ -34,9 +34,11 @@ export interface User {
 export interface LessonInterface {
   _id: string;
   title: string;
+  displayTitle: string;
   html: string;
   relatedExercises: string[];
   type: string;
+  level: string;
   __v: number;
 }
 

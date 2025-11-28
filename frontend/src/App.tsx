@@ -12,7 +12,7 @@ interface User {
   name: string;
   email: string;
   password: string;
-  latestActivity: string[];
+  latestActivity: string[][];
   streak: string[];
 }
 
@@ -20,6 +20,7 @@ function App() {
   const [user, setUser] = useState<User | null>(null);
   const [authorized, setAuthorized] = useState<boolean>(false);
   const [mode, setMode] = useState<"guest" | "user">("guest");
+  const [id, setId] = useState<string | null>(null);
 
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -59,7 +60,7 @@ function App() {
       <Toaster />
 
       <SettingsContext.Provider
-        value={{ mode, setMode, authorized, setAuthorized }}
+        value={{ mode, setMode, authorized, setAuthorized, id, setId }}
       >
         <div className="text-neutral-800/90 bg-neutral-200 dark:bg-[#171717] dark:text-white  min-h-screen transition-colors">
           <AppRoutes />

@@ -10,7 +10,7 @@ function Letters({ setInputValue, inputRef }) {
             setInputValue((prev) => prev + letter);
             inputRef.current.focus();
           }}
-          className="hover:bg-neutral-200 dark:hover:bg-neutral-600 border-1 cursor-pointer border-neutral-300  transition-colors px-4 py-2 rounded-xl"
+          className="   cursor-pointer   px-4 py-2 rounded-2xl bg-indigo-500 shadow-[0_0_20px_rgba(34,0,120,0.9)] border-indigo-700 border-1 hover:scale-102 hover:bg-indigo-600 transition"
         >
           {letter}
         </span>

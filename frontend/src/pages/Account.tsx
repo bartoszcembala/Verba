@@ -19,6 +19,11 @@ import Modal from "../components/Modal";
 import { useEditUser } from "../lib/queries/userQueries";
 import toast from "react-hot-toast";
 import { getLastDates } from "../lib/getLastDates";
+import { IoBookOutline } from "react-icons/io5";
+import { LuBrain } from "react-icons/lu";
+import { SlFire } from "react-icons/sl";
+import ModalReusable from "../components/ModalReusable";
+import axios from "axios";
 
 function Account() {
   const storedUser = localStorage.getItem("user");
@@ -26,6 +31,8 @@ function Account() {
   const { editUser } = useEditUser();
   const streak = user && calculateStreak(user.streak);
   const [isOpen, setIsOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [userName, setUserName] = useState(user?.name || "");
   const dates = user?.timeSpentLearning
     .map((d) => ({
       date: `${d.date.split("-")[2]}-${d.date.split("-")[1]}`,
@@ -62,16 +69,29 @@ function Account() {
 
   const lastDates = getLastDates(dates || []);
 
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    console.log(user!._id);
+    try {
+      axios.patch(`http://localhost:5000/api/users/${user?._id}`, {
+        name: userName,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <div className="flex justify-center items-center ">
       <div className="w-[95%] lg:w-[90rem] flex flex-col  gap-6 lg:gap-8">
         <>
           {/* Profile */}
-          <div className="rounded-2xl bg-white border-1 dark:border-none border-neutral-300 dark:bg-gradient-to-br dark:from-neutral-900/80 dark:via-neutral-900/86 dark:to-neutral-900/92 py-10 px-12 lg:py-14  lg:px-20 relative">
+          <div className="rounded-3xl bg-white border-1 dark:border-none border-neutral-300 dark:bg-gradient-to-br dark:from-neutral-900/80 dark:via-neutral-900/86 dark:to-neutral-900/92 py-10 px-12 lg:py-14  lg:px-20 relative">
             <div className="flex gap-20 items-center">
               <img
                 src={`/avatars/AV${user!.avatar}.png`}
-                className="w-30 h-30 rounded-full border-2 border-indigo-500"
+                className="w-46 h-46 rounded-full border-2 border-indigo-500"
               />
               <div>
                 <h1 className="text-7xl lg:text-8xl  pb-3">{user!.name} </h1>{" "}
@@ -83,36 +103,46 @@ function Account() {
                   <LuCrown className="inline-block text-indigo-500 -translate-y-0.5 ml-1" />
                 </Link>
               </div>
-              <IoSettingsOutline className="absolute right-10 top-10 h-12 w-12 cursor-pointer hover:rotate-45 transition duration-280" />
+              <IoSettingsOutline
+                className="absolute right-10 top-10 h-12 w-12 cursor-pointer hover:rotate-45 transition duration-280"
+                onClick={() => setSettingsOpen(true)}
+              />
             </div>
           </div>
 
           {/* Stats */}
           <div className="grid grid-cols-3 gap-6">
-            <div className="px-2 py-4 lg:p-10 bg-white border-1 dark:border-none border-neutral-300 dark:bg-neutral-700/70 rounded-2xl flex flex-col items-center justify-center gap-4">
+            <div className="border-1 border-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.3)] px-2 py-4 lg:p-10 bg-white   dark:bg-neutral-700/70 rounded-3xl flex flex-col items-center justify-center gap-4">
               <p className="text-center leading-9 text-3xl lg:text-4xl">
                 FINSHED LESSONS:
               </p>
-              <p className="text-5xl lg:text-7xl">
-                {user!.finishedLessons.length}
-              </p>
+              <div className="text-5xl lg:text-7xl flex items-center gap-4">
+                <p>{user!.finishedLessons.length}</p>
+                <IoBookOutline className="translate-y-1" />
+              </div>
             </div>
-            <div className="px-2 py-4 lg:p-10 bg-white border-1 dark:border-none border-neutral-300 dark:bg-neutral-700/70 rounded-2xl flex flex-col items-center justify-center gap-4">
+            <div className="border-1 border-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.3)] px-2 py-4 lg:p-10 bg-white  dark:bg-neutral-700/70 rounded-3xl flex flex-col items-center justify-center gap-4">
               <p className="text-center leading-9 text-3xl lg:text-4xl">
                 WODS LEARNED:
               </p>
-              <p className="text-5xl lg:text-7xl">238</p>
+              <div className="text-5xl lg:text-7xl flex items-center gap-4">
+                <p>238</p>
+                <LuBrain />
+              </div>
             </div>{" "}
-            <div className="px-2 py-4 lg:p-10 bg-white border-1 dark:border-none border-neutral-300 dark:bg-neutral-700/70 rounded-2xl flex flex-col items-center justify-center gap-4">
+            <div className="border-1 border-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.3)] px-2 py-4 lg:p-10 bg-white  dark:bg-neutral-700/70 rounded-3xl flex flex-col items-center justify-center gap-4">
               <p className="text-center leading-9 text-3xl lg:text-4xl">
                 STREAK:
               </p>
-              <p className="text-5xl lg:text-7xl">{streak} DAYS</p>
+              <div className="text-5xl lg:text-7xl flex items-center gap-4">
+                <p>{streak} DAYS</p>
+                <SlFire />
+              </div>
             </div>
           </div>
 
           {/* Graph */}
-          <div className="w-full h-[26rem] flex items-center justify-center pt-12 pb-4 pr-14 mx-auto bg-white border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-2xl">
+          <div className="w-full h-[26rem] flex items-center justify-center pt-12 pb-4 pr-14 mx-auto bg-white border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-3xl">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart width={730} height={250} data={lastDates}>
                 <XAxis dataKey="date" />
@@ -135,7 +165,7 @@ function Account() {
             {user!.friends.map((friend) => (
               <div
                 key={friend.friendId}
-                className="flex flex-col gap-4 justify-center items-center px-7 py-5 bg-white border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-2xl text-center h-[16rem] relative"
+                className="flex flex-col gap-4 justify-center items-center px-7 py-5 bg-white border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-3xl text-center h-[16rem] relative"
               >
                 <div className="flex absolute top-5 justify-between w-[14rem]">
                   {/* <TbHandFingerRight className="cursor-pointer" /> */}
@@ -163,7 +193,7 @@ function Account() {
                 <div
                   onClick={() => setIsOpen(true)}
                   key={index}
-                  className="hover:bg-neutral-200 dark:hover:bg-neutral-700 group transition flex flex-col gap-4 justify-center items-center px-7 py-5 bg-white border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-2xl text-center h-[16rem] cursor-pointer"
+                  className="hover:bg-neutral-200 dark:hover:bg-neutral-700 group transition flex flex-col gap-4 justify-center items-center px-7 py-5 bg-white border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-3xl text-center h-[16rem] cursor-pointer"
                 >
                   <CiCirclePlus className="text-neutral-600 dark:text-white transition w-24 h-24 scale-100 group-hover:scale-110" />
                   <p>Add friend</p>
@@ -173,6 +203,37 @@ function Account() {
 
             {/* Modal */}
             {isOpen && <Modal setIsOpen={setIsOpen} isOpen={isOpen} />}
+            <ModalReusable
+              isOpen={settingsOpen}
+              onClose={() => setSettingsOpen(false)}
+              children={
+                <div>
+                  <h1 className="text-6xl font-bold">Settings</h1>
+                  <form className="px-6 my-20">
+                    <p>Name</p>
+                    <input
+                      className="w-full border-1 border-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.3)] bg-neutral-700 px-4 py-2 rounded-2xl mb-5"
+                      type="text"
+                      value={userName}
+                      onChange={(e) => setUserName(e.currentTarget.value)}
+                    />
+                    <p>Email</p>
+                    <input
+                      className="border-1 w-full border-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.3)] bg-neutral-700 px-4 py-2 rounded-2xl mb-10 cursor-not-allowed"
+                      type="text"
+                      value={user?.email}
+                      disabled={true}
+                    />
+                    <button
+                      onClick={handleSubmit}
+                      className="border-1 border-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.3)]  w-full cursor-pointer px-4 py-2 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 hover:scale-103 transition"
+                    >
+                      Submit
+                    </button>
+                  </form>
+                </div>
+              }
+            />
           </div>
         </>
       </div>

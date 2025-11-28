@@ -6,7 +6,6 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { LessonInterface } from "../types";
 
-
 function Lesson({ lesson }: { lesson: LessonInterface }) {
   const { addActivity } = useActivity();
   const { editUser } = useEditUser();
@@ -14,12 +13,12 @@ function Lesson({ lesson }: { lesson: LessonInterface }) {
   const { authorized } = useContext(SettingsContext)!;
   const user = JSON.parse(localStorage.getItem("user")!);
   const lessonName = useLocation().pathname.slice(1);
-
+  console.log(lesson);
   useEffect(() => {
     const arrWithout = user.latestActivity.filter(
-      (item: string) => item !== lessonName
+      (item: string) => item[0] !== lessonName
     );
-    const readyArr = [...arrWithout, lessonName];
+    const readyArr = [...arrWithout, [lessonName, lesson?.displayTitle]];
 
     while (readyArr.length > 3) {
       readyArr.shift();

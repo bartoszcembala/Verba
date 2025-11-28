@@ -10,7 +10,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 function Sidebar({ setCorrect, className = "" }) {
   const queryClient = useQueryClient();
-  const {  verbs, selectedVerbs, setSelectedVerbs, module, user } =
+  const { verbs, selectedVerbs, setSelectedVerbs, module, user } =
     useContext(ExerciseContext);
   const { progress } = useProgress();
   const { editProgress } = useEditProgress();
@@ -30,15 +30,15 @@ function Sidebar({ setCorrect, className = "" }) {
 
   return (
     <div
-      className={` ml-4 px-12 overflow-y-auto max-h-[90vh] relative dark:bg-neutral-700/70 rounded-3xl bg-white border-1 dark:border-none border-neutral-300 ${className}`}
+      className={` border-indigo-700 border-1 ml-4 px-12 overflow-y-auto max-h-[90vh] relative dark:bg-neutral-800 shadow-[0_0_20px_rgba(44,44,44,0.9)]  rounded-3xl bg-white  ${className}`}
       style={{
         scrollbarWidth: "none",
         msOverflowStyle: "none",
       }}
     >
-      <div className="py-6 mb-6 flex gap-3 border-b-2">
+      <div className="font-semibold py-6 mb-6 flex gap-3 border-b-2">
         <button
-          className="border-1 cursor-pointer border-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors px-3 py-3 rounded-xl leading-9"
+          className=" border-1 cursor-pointer border-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors px-3 py-3 rounded-xl leading-9"
           onClick={() => setSelectedVerbs(verbs)}
         >
           Add all
@@ -72,21 +72,25 @@ function Sidebar({ setCorrect, className = "" }) {
       </div>
       {verbs.length >= 1 ? (
         verbs.map((verb) => (
-          <div key={verb[0]} className="flex items-center gap-4 pb-2 ">
-            <span>
-              {progress
-                ?.find(
-                  (p) => p.moduleName === module && p.userName === user.email
-                )
-                ?.learned?.flat()
-                .includes(verb[0])
-                ? "🟩"
-                : "🟥"}
-            </span>
+          <div key={verb[0]} className="flex  items-center gap-4 pb-2 ">
+            {progress
+              ?.find(
+                (p) => p.moduleName === module && p.userName === user.email
+              )
+              ?.learned?.flat()
+              .includes(verb[0]) ? (
+              <span className="w-8 h-8  rounded-md bg-[#3c6847]" />
+            ) : (
+              <span className="w-8 h-8  rounded-md bg-[#6f4242]" />
+            )}
+
             <span className="cursor-pointer">🔈</span>
             <p>{verb[0] + ` (${verb[1]})`}</p>
             <button
-              className="border-1 cursor-pointer uppercase text-3xl border-neutral-300 rounded-xl px-3 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors"
+              className={`${
+                selectedVerbs.some(([element]) => element === verb[0]) &&
+                "bg-neutral-600"
+              } border-1 cursor-pointer uppercase text-3xl border-neutral-300 rounded-xl px-3 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors`}
               onClick={() => addVerb(verb)}
             >
               {selectedVerbs.some(([element]) => element === verb[0])

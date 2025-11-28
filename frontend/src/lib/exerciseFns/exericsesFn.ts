@@ -4,7 +4,6 @@ import { shuffleArray } from "../shuffle";
 
 export function getExerciseTranslate(
   setInputValue: (v: string) => void,
-  //v:any do zmiany
   setIsCorrect: (v: any) => void,
   setExercise: (v: any) => void,
   verbs: string[],
@@ -33,7 +32,6 @@ export function getExerciseTranslate(
 
 export function getExerciseFill(
   setInputValue: (v: string) => void,
-  //v:any do zmiany
   setIsCorrect: (v: any) => void,
   setExercise: (v: any) => void,
   selectedVerbs: string[][]

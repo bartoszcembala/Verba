@@ -49,7 +49,7 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
   latestActivity: {
-    type: [String],
+    type: [[String]],
     required: false,
     unique: false,
   },
@@ -81,7 +81,7 @@ const userSchema = new mongoose.Schema({
     default: "1",
   },
   quiz: {
-    date: { type: String, required: true },
+    date: { type: String },
     finished: { type: Boolean, required: true, default: false },
   },
 });

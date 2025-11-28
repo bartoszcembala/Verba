@@ -22,7 +22,7 @@ export default function DailyQuests() {
   };
 
   return (
-    <div className="bg-white border-1 shadow-xs border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-8 h-[35rem] dark:border-2 dark:border-indigo-500 mb-10">
+    <div className="border-1 border-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.3)] bg-white   dark:bg-neutral-700/70 rounded-3xl px-10 py-8 h-[35rem]  dark:border-indigo-500 mb-10">
       <h3 className="text-4xl mb-5 pb-5 text-center border-b-2 border-indigo-500 ">
         Daily Quests:{" "}
       </h3>

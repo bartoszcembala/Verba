@@ -6,6 +6,10 @@ const lessonSchema = mongoose.Schema({
     required: true,
     unique: true,
   },
+  displayTitle: {
+    type: String,
+    required: true,
+  },
   html: {
     type: String,
     required: true,
@@ -15,6 +19,9 @@ const lessonSchema = mongoose.Schema({
     default: [],
   },
   type: {
+    type: String,
+  },
+  level: {
     type: String,
   },
 });

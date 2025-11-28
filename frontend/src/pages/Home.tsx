@@ -7,6 +7,7 @@ import { LuCrown } from "react-icons/lu";
 import { useState } from "react";
 import DailyQuiz from "../components/Home/DailyQuiz";
 import DailyQuests from "../components/Home/DailyQuests";
+import { useUser } from "../lib/queries/userQueries";
 
 function Home() {
   const levels = [
@@ -78,7 +79,7 @@ function Home() {
             <p className="text-neutral-700 dark:text-neutral-200 text-3xl  lg:translate-y-10 -translate-y-2">
               level {userLevel.level}.{" "}
               <FaStar className="inline-block -translate-y-1 text-indigo-500" />{" "}
-              {userLevel.levelName} ({userLevel.totalXP} exp)
+              {userLevel.levelName} ({Math.round(user!.exp)} exp)
             </p>
             <p className="absolute bottom-1 text-2xl text-neutral-400">
               Next level in: {userLevel.xpToNextLevel}XP
@@ -115,12 +116,20 @@ function Home() {
         </div>
         <div className="flex flex-col  gap-6 lg:gap-12 ">
           <Link
-            to={`/${user?.latestActivity[0]}`}
+            to={
+              user?.latestActivity[0]
+                ? `/${user?.latestActivity[0][0]}`
+                : "/lessons"
+            }
             className="group relative bg-white shadow-xs border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-12 flex justify-between dark:hover:bg-neutral-700 hover:bg-neutral-200 transition-colors"
           >
             <div className="">
               <p className="text-5xl mb-4">Pick up where you left of: </p>
-              <p className="text-4xl">{user?.latestActivity[0]}</p>{" "}
+              <p className="text-4xl">
+                {user?.latestActivity[0]
+                  ? user?.latestActivity[0][1]
+                  : "Start your first lesson"}
+              </p>{" "}
             </div>
             <HiOutlinePlay className="scale-100 group-hover:scale-110 transition text-8xl text-indigo-500" />
           </Link>

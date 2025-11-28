@@ -6,6 +6,8 @@ export type SettingsContextType = {
   setMode: (v: "guest" | "user") => void;
   authorized: boolean;
   setAuthorized: (v: boolean) => void;
+  id: string | null;
+  setId: (v: string | null) => void;
 };
 
 export type ExerciseContextType = {

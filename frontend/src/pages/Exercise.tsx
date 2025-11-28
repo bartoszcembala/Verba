@@ -10,6 +10,7 @@ import Chart from "../components/Exercise/Chart";
 import Main from "../components/Exercise/Main";
 import { User } from "../types";
 import { useQueryClient } from "@tanstack/react-query";
+import { useModules } from "../lib/queries/modulesQueries";
 
 function Exercise({ initVerbs }: { initVerbs: string[][] }) {
   const queryClient = useQueryClient();
@@ -27,6 +28,10 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
     ? (JSON.parse(storedUser) as User)
     : null;
 
+  const { modules } = useModules();
+  const moduleDisplayName = modules?.find(
+    (m) => m.title === module
+  )?.displayName;
   const activeProgress = progress?.find(
     (p) => p.moduleName === module && p.userName === user?.email
   );
@@ -50,8 +55,10 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
 
   useEffect(() => {
     if (user) {
-      const arrWithout = user.latestActivity.filter((item) => item !== module);
-      const readyArr = [...arrWithout, module];
+      const arrWithout = user.latestActivity.filter(
+        (item) => item[0] !== module
+      );
+      const readyArr = [...arrWithout, [module, moduleDisplayName]];
 
       while (readyArr.length > 3) {
         readyArr.shift();
@@ -141,6 +148,7 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
 
           {/* Główna zawartość */}
           <Main setCorrect={setCorrect} />
+
           {/* Wykres */}
           <Chart correct={correct} activeProgress={activeProgress} />
         </div>

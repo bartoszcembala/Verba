@@ -7,7 +7,7 @@ function Chart({ correct, activeProgress }) {
     <div>
       {correct[0].value !== 0 || correct[1].value !== 0 ? (
         <div className=" w-[20rem] ">
-          <p>
+          <p className="border-1 rounded-xl border-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.3)] flex justify-center">
             {correct[0].value}/{correct[1].value}
             <Percent correct={correct} activeProgress={activeProgress} />
           </p>

@@ -2,6 +2,7 @@ import toast from "react-hot-toast";
 import { QueryClient } from "@tanstack/react-query";
 import { DailyQuestsInterface } from "../../types";
 import axios from "axios";
+import { useEditUser } from "../queries/userQueries";
 
 //////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////
@@ -35,12 +36,14 @@ type AddLearnedWordFunction = (
 type SetState<T> = (value: T | ((prev: T) => T)) => void;
 
 export async function handleAnswer(
+  editUser,
   answer: string,
   addLearnedWord: AddLearnedWordFunction,
-  mode: "guest" | "user",
+  setExercise,
+  selectedVerbs,
   progress: ProgressItem[],
   module: string,
-  user: { email: string },
+  user,
   exercise: Exercise,
   setIsCorrect: SetState<"correct" | "wrong" | "">,
   setCorrect: SetState<[{ value: string[] }, { value: [string, string][] }]>,
@@ -94,6 +97,19 @@ export async function handleAnswer(
     setSelectedVerbs((prev) => prev.filter((v) => v[0] !== answer));
     toast.success("Brawo! Poprawna odpowiedź!");
     setIsCorrect("correct");
+    editUser({
+      id: user._id,
+      data: { exp: user.exp + 10 },
+    });
+    if (selectedVerbs.length === 1) {
+      setExercise({
+        question: "",
+        translation: "Tłumaczenie pytania",
+        correctAnswer: "",
+        options: ["opcja1", "opcja2", "opcja3", "opcja4"],
+      });
+      setIsCorrect("");
+    }
   } else {
     setIsCorrect("wrong");
     const filtered = activeProgress.learned.filter(

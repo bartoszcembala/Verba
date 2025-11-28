@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { User } from "../models/user.module.js";
+import { DailyQuest } from "../models/dailyQuest.model.js";
 
 function signToken(id) {
   const token = jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -15,6 +16,45 @@ export async function signup(req, res, next) {
 
     const token = signToken(newUser._id);
 
+    const today = new Date().toISOString().split("T")[0]; // np. "2025-11-23"
+
+    const defaultQuests = [
+      {
+        title: "spend 10 minutes learning",
+        progress: 0,
+        toObtain: 10,
+        completed: false,
+        icon: "clock",
+      },
+      {
+        title: "learn words",
+        progress: 0,
+        toObtain: 5,
+        completed: false,
+        icon: "bulb",
+      },
+      {
+        title: "finish quiz",
+        progress: 0,
+        toObtain: 1,
+        completed: false,
+        icon: "flag",
+      },
+      {
+        title: "finish lesson",
+        progress: 0,
+        toObtain: 1,
+        completed: false,
+        icon: "flag",
+      },
+    ];
+
+    await DailyQuest.create({
+      userId: newUser._id.toString(),
+      day: today,
+      quests: defaultQuests,
+    });
+
     res.cookie("jwt", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
@@ -29,6 +69,7 @@ export async function signup(req, res, next) {
       },
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       success: false,
       message: "Error while signing: " + error,

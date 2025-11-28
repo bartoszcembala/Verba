@@ -21,6 +21,7 @@ import { useProgress } from "../lib/queries/progressQueries.js";
 import BuyPremium from "../pages/BuyPremium.js";
 import NotFound from "../pages/NotFound.js";
 import User from "../pages/User.js";
+import Leaderboard from "../pages/Leaderboard.js";
 
 function AppRoutes() {
   const { progress } = useProgress();
@@ -38,7 +39,7 @@ function AppRoutes() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/add-module" element={<AddModule />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/buy-premium" element={<BuyPremium />} />
           <Route path="/profile/:userId" element={<User />} />
           <Route path="*" element={<NotFound />} />

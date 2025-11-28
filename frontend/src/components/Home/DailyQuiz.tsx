@@ -91,7 +91,10 @@ function DailyQuiz() {
     if (currQuestion + 1 === 5) {
       if (correct >= 4) {
         toast.success("quiz completed");
-
+        editUser({
+          id: user._id,
+          data: { exp: user.exp + 20 },
+        });
         //Daily Quest logic
         async function handleAnswerC(index: number) {
           try {

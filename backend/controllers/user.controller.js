@@ -39,21 +39,11 @@ export async function updateUser(req, res) {
       new: true,
     });
 
-    // not working
-    if (!editedUser) {
-      return res.status(500).json({
-        success: false,
-        message: "Wrong id",
-      });
-    }
-    //
-
     res.status(200).json({
       success: true,
       data: editedUser,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
       message: "Server Error",
@@ -85,7 +75,7 @@ export async function getUser(req, res) {
         message: "User not found",
       });
     }
-    
+
     res.status(200).json({
       success: true,
       data: user,

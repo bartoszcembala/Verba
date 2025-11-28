@@ -21,7 +21,7 @@ type User = {
   name: string;
   email: string;
   password: string;
-  latestActivity: string[];
+  latestActivity: string[][];
   streak: string[];
 };
 
@@ -74,7 +74,6 @@ function Layout() {
       }
     }
   }, [editUser]);
-
 
   // Logout handler
   async function handleLogout() {
@@ -139,13 +138,6 @@ function Layout() {
                 <GoPencil className="w-10 h-10 scale-100 group-hover:scale-110 transition" />
                 <p className="translate-y-0.5">Exercises</p>
               </Link>
-              {/* <Link
-            to="/add-module"
-            className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
-          >
-            <CiSquarePlus className="w-10 h-10 " />
-            <p className="translate-y-0.5">Add Module</p>
-          </Link> */}
               <div className="relative group inline-block ">
                 {/* Główny przycisk */}
                 <button className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4 cursor-pointer">
@@ -156,22 +148,22 @@ function Layout() {
                 {/* Menu rozwijane */}
                 <div className="absolute -left-8 mt-2 w-70 dark:bg-neutral-800 bg-white rounded-md shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition duration-300 z-50 -translate-y-4">
                   <Link
-                    to="/add-module"
+                    to="/leaderboard"
                     className="block px-6 py-3 text-neutral-700 dark:text-white dark:hover:bg-neutral-700 hover:bg-gray-100"
                   >
                     Leaderboard
                   </Link>
                   <Link
-                    to=""
+                    to="/xp-guide"
                     className="block px-6 py-3 dark:hover:bg-neutral-700 text-neutral-700 dark:text-white hover:bg-gray-100"
                   >
                     XP Guide
                   </Link>
                   <Link
-                    to=""
+                    to="/buy-premium"
                     className="block px-6 py-3 dark:hover:bg-neutral-700 text-neutral-700 dark:text-white hover:bg-gray-100"
                   >
-                    Logout
+                    Buy Premium
                   </Link>
                 </div>
               </div>
@@ -201,7 +193,7 @@ function Layout() {
                   onClick={handleLogout}
                   className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors uppercase cursor-pointer flex justify-center items-center gap-4"
                 >
-                  <p>Log out</p>
+                  {/* <p>Log out</p> */}
                   <FaArrowRightFromBracket />
                 </button>
               )}
@@ -209,8 +201,8 @@ function Layout() {
                 to="/account"
                 className="group relative dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
               >
-                <p>{user ? user.name : "Guest"}</p>
-                <FaRegUser className="scale-100 group-hover:scale-110 transition" />
+                {/* <p>{user ? user.name : "Guest"}</p> */}
+                <FaRegUser className="scale-100 w-12 h-12 text-indigo-500 group-hover:scale-110 transition" />
               </Link>
             </div>
           </div>

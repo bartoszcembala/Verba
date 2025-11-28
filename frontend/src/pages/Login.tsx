@@ -13,7 +13,7 @@ interface LoginFormInputs {
 
 function Login() {
   const { setAuthorized, setMode } = useContext(SettingsContext)!;
-
+  const { setId } = useContext(SettingsContext)!;
   const { register, handleSubmit, reset } = useForm<LoginFormInputs>();
   const { login } = useLogin();
   const navigate = useNavigate();
@@ -26,6 +26,7 @@ function Login() {
         setAuthorized(true);
         navigate("/");
         reset();
+        setId(user._id);
         toast.success("Logged in successfully!");
       },
       onError() {

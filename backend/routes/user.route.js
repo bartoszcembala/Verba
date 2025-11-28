@@ -27,7 +27,7 @@ router
   .post(protectedRoute, createUser);
 router
   .route("/:id")
-  .patch(protectedRoute, updateUser)
+  .patch(updateUser)
   .delete(protectedRoute, deleteUser)
   .get(protectedRoute, getUser);
 
