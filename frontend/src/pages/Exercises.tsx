@@ -1,8 +1,6 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { calculatePercent } from "../lib/calculatePercent";
-import DATA from "../data/verbs";
-import { SettingsContext } from "../lib/contexts";
 import { useModules } from "../lib/queries/modulesQueries";
 import { useProgress } from "../lib/queries/progressQueries";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
@@ -87,17 +85,17 @@ function Exercises() {
   return (
     <div className="flex items-center justify-center w-full px-2">
       <div className="flex flex-col items-center justify-center w-full max-w-[80rem] gap-7">
-        <div className="flex gap-5 justify-around items-center w-full bg-gradient-to-b from-indigo-500/30  dark:to-[#171717] to-neutral-200 px-5 py-6 rounded-2xl mb-10 h-[8rem]">
+        <div className="flex gap-5 justify-around items-center w-full bg-gradient-to-b from-indigo-500/30  dark:to-[#171717] to-neutral-200 px-5 py-6 rounded-2xl mb-8 h-[8rem]">
           <FaMagnifyingGlass className="w-8 h-8" />
           <input
             placeholder="Search for an exercise..."
             value={searchTerm}
             type="text"
-            className="focus:border-2 focus:border-indigo-400 hover:border-2 hover:border-indigo-200 h-[3.5rem] text-neutral-900 px-5 py-1 bg-neutral-200/80 w-[80%] rounded-2xl"
+            className="focus:border-2 focus:border-indigo-400 hover:border-2 hover:border-indigo-200 h-[3.5rem] text-neutral-900 px-5 py-1 bg-neutral-300 w-[80%] rounded-2xl"
             onChange={(e) => setSearchTerm(e.currentTarget.value)}
           />
           <div
-            className="uppercase  hover:border-indigo-200 h-[3.5rem] text-neutral-900 px-3 py-1 bg-neutral-200/80 rounded-2xl cursor-pointer"
+            className="uppercase  hover:border-indigo-200 h-[3.5rem] text-neutral-900 px-5 py-1 bg-neutral-300 rounded-2xl cursor-pointer"
             onClick={handleShowAll}
           >
             all

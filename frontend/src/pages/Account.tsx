@@ -24,6 +24,7 @@ import { LuBrain } from "react-icons/lu";
 import { SlFire } from "react-icons/sl";
 import ModalReusable from "../components/ModalReusable";
 import axios from "axios";
+import AvatarSelector from "../components/Account/AvatarSelector";
 
 function Account() {
   const storedUser = localStorage.getItem("user");
@@ -68,15 +69,29 @@ function Account() {
   }
 
   const lastDates = getLastDates(dates || []);
+  const [selectedAvatar, setSelectedAvatar] = useState<number | null>(
+    +user!.avatar || null
+  );
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    console.log(user!._id);
     try {
       axios.patch(`http://localhost:5000/api/users/${user?._id}`, {
         name: userName,
+        ...(Number.isFinite(selectedAvatar) && { avatar: selectedAvatar }),
       });
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          ...user,
+          name: userName,
+          ...(Number.isFinite(selectedAvatar) && { avatar: selectedAvatar }),
+        })
+      );
+      setSettingsOpen(false);
+      toast.success("Profile updated successfully!");
     } catch (error) {
       console.error(error);
     }
@@ -206,34 +221,41 @@ function Account() {
             <ModalReusable
               isOpen={settingsOpen}
               onClose={() => setSettingsOpen(false)}
-              children={
-                <div>
-                  <h1 className="text-6xl font-bold">Settings</h1>
-                  <form className="px-6 my-20">
-                    <p>Name</p>
-                    <input
-                      className="w-full border-1 border-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.3)] bg-neutral-700 px-4 py-2 rounded-2xl mb-5"
-                      type="text"
-                      value={userName}
-                      onChange={(e) => setUserName(e.currentTarget.value)}
-                    />
-                    <p>Email</p>
-                    <input
-                      className="border-1 w-full border-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.3)] bg-neutral-700 px-4 py-2 rounded-2xl mb-10 cursor-not-allowed"
-                      type="text"
-                      value={user?.email}
-                      disabled={true}
-                    />
-                    <button
-                      onClick={handleSubmit}
-                      className="border-1 border-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.3)]  w-full cursor-pointer px-4 py-2 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 hover:scale-103 transition"
-                    >
-                      Submit
-                    </button>
-                  </form>
-                </div>
-              }
-            />
+            >
+              <div>
+                <h1 className="text-6xl font-bold">Settings</h1>
+                <form className="px-6 my-20">
+                  <p>Name</p>
+                  <input
+                    className="w-full  shadow-[0_0_10px_rgba(93,93,93,0.3)] bg-neutral-700 px-4 py-2 rounded-2xl mb-5"
+                    type="text"
+                    value={userName}
+                    onChange={(e) => setUserName(e.currentTarget.value)}
+                  />
+
+                  <p>Email</p>
+                  <input
+                    className=" w-full  shadow-[0_0_10px_rgba(93,93,93,0.3)] bg-neutral-700 px-4 py-2 rounded-2xl cursor-not-allowed mb-5"
+                    type="text"
+                    value={user?.email}
+                    disabled={true}
+                  />
+
+                  <p>Avatar</p>
+                  <AvatarSelector
+                    selectedAvatar={selectedAvatar}
+                    setSelectedAvatar={setSelectedAvatar}
+                  />
+
+                  <button
+                    onClick={handleSubmit}
+                    className="border-1 border-indigo-500 h-20 shadow-[0_0_10px_rgba(99,102,241,0.3)]  w-full cursor-pointer px-4 py-2 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 hover:scale-102 transition"
+                  >
+                    Submit
+                  </button>
+                </form>
+              </div>
+            </ModalReusable>
           </div>
         </>
       </div>

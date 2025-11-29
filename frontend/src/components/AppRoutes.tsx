@@ -22,6 +22,7 @@ import BuyPremium from "../pages/BuyPremium.js";
 import NotFound from "../pages/NotFound.js";
 import User from "../pages/User.js";
 import Leaderboard from "../pages/Leaderboard.js";
+import XpGuide from "../pages/XpGuide.js";
 
 function AppRoutes() {
   const { progress } = useProgress();
@@ -41,6 +42,7 @@ function AppRoutes() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/buy-premium" element={<BuyPremium />} />
+          <Route path="/xp-guide" element={<XpGuide />} />
           <Route path="/profile/:userId" element={<User />} />
           <Route path="*" element={<NotFound />} />
 
