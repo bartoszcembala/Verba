@@ -49,11 +49,18 @@ function Lesson({ lesson }: { lesson: LessonInterface }) {
       );
       editUser({
         id: user._id,
-        data: { finishedLessons: filteredLessons },
+        data: {
+          finishedLessons: filteredLessons,
+          exp: user.exp + 30 * (user.streak.length / 100 + 1),
+        },
       });
       localStorage.setItem(
         "user",
-        JSON.stringify({ ...user, finishedLessons: filteredLessons })
+        JSON.stringify({
+          ...user,
+          finishedLessons: filteredLessons,
+          exp: user.exp + 30 * (user.streak.length / 100 + 1),
+        })
       );
     } else {
       editUser({
@@ -71,7 +78,7 @@ function Lesson({ lesson }: { lesson: LessonInterface }) {
       async function handleAnswerC(index: number) {
         try {
           const res = await axios.patch(
-            "http://localhost:5000/api/daily-quests/increment",
+            "https://verba-ywgu.onrender.com/api/daily-quests/increment",
             { index },
             { withCredentials: true }
           );
@@ -86,7 +93,7 @@ function Lesson({ lesson }: { lesson: LessonInterface }) {
 
   return (
     <div className="lg:grid lg:grid-cols-[1fr_3fr_1fr] p-4 flex flex-col gap-20 text-white relative">
-      <div className="order-3 lg:order-2">
+      <div className="order-3 lg:order-2 ml-10">
         Exercises for this topic:
         {lesson.relatedExercises &&
           authorized &&
@@ -98,7 +105,7 @@ function Lesson({ lesson }: { lesson: LessonInterface }) {
       </div>
 
       <div
-        className="order-1 lg:order-2"
+        className="order-1 lg:order-2 border-2 border-indigo-500 rounded-2xl px-20 py-10"
         dangerouslySetInnerHTML={{ __html: lesson.html }}
       />
 

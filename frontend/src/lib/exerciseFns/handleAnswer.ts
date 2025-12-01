@@ -82,7 +82,7 @@ export async function handleAnswer(
       async function handleAnswerC(index: number) {
         try {
           const res = await axios.patch(
-            "http://localhost:5000/api/daily-quests/increment",
+            "https://verba-ywgu.onrender.com/api/daily-quests/increment",
             { index },
             { withCredentials: true }
           );
@@ -99,8 +99,15 @@ export async function handleAnswer(
     setIsCorrect("correct");
     editUser({
       id: user._id,
-      data: { exp: user.exp + 10 },
+      data: { exp: user.exp + 10 * (user.streak.length / 100 + 1) },
     });
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        ...user,
+        exp: user.exp + 10 * (user.streak.length / 100 + 1),
+      })
+    );
     if (selectedVerbs.length === 1) {
       setExercise({
         question: "",

@@ -67,7 +67,7 @@ export const useDailyStudyTimer = (): number => {
       async function handleAnswerC(index: number) {
         try {
           const res = await axios.patch(
-            "http://localhost:5000/api/daily-quests/increment",
+            "https://verba-ywgu.onrender.com/api/daily-quests/increment",
             { index },
             { withCredentials: true }
           );

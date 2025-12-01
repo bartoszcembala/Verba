@@ -7,10 +7,9 @@ export default function Leaderboard() {
   const top3 = sortedUsers?.slice(0, 3);
   const rest = sortedUsers?.slice(3);
 
-  console.log(sortedUsers);
   return (
     <div className="flex items-center justify-center">
-      <div className="w-[50%] border-1 mt-18 border-indigo-500 shadow-[0_0_100px_rgba(99,102,241,0.2)] rounded-3xl px-10 pt-58 pb-10">
+      <div className="w-[50%] border-1 mt-10 border-indigo-500 shadow-[0_0_100px_rgba(99,102,241,0.2)] rounded-3xl px-10 pt-58 pb-10">
         <div className="grid  grid-cols-3 gap-10 ">
           {top3?.map((user, index) => (
             <div

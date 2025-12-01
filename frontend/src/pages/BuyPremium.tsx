@@ -1,9 +1,7 @@
 import axios from "axios";
 import { User } from "../types";
 
-
 function BuyPremium() {
-
   const userJson = localStorage.getItem("user");
   const user: User | null = userJson ? JSON.parse(userJson) : null;
 
@@ -12,7 +10,7 @@ function BuyPremium() {
       if (!user) return;
 
       const session = await axios(
-        `http://localhost:5000/api/checkout/${user._id}`,
+        `https://verba-ywgu.onrender.com/api/checkout/${user._id}`,
         {
           withCredentials: true,
         }

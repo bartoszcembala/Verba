@@ -3,6 +3,7 @@ import { useEditUser, useUsers } from "../lib/queries/userQueries";
 import { User } from "../types";
 import { CiCirclePlus } from "react-icons/ci";
 import toast from "react-hot-toast";
+import { IoCloseCircleOutline } from "react-icons/io5";
 
 function Modal({
   setIsOpen,
@@ -79,13 +80,13 @@ function Modal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div
         ref={modalRef}
-        className="bg-white dark:bg-neutral-800 p-6 rounded-2xl shadow-xl  w-[40%] h-[50%] relative text-5xl"
+        className="bg-white dark:bg-neutral-800 px-14 py-10 rounded-2xl shadow-xl  w-[40%] h-[50%] relative text-5xl"
       >
         <button
+          className="absolute cursor-pointer top-4 right-6  "
           onClick={() => setIsOpen(false)}
-          className="absolute top-4 right-4 text-6xl font-bold text-neutral-500 dark:text-gray-300 cursor-pointer bg-neutral-200 dark:bg-neutral-600 rounded-full w-16 h-16 flex items-center justify-center hover:bg-neutral-300 dark:hover:bg-neutral-700 transition-colors duration-200 "
         >
-          &times;
+          <IoCloseCircleOutline className="w-18 h-18 transition hover:text-indigo-400 text-indigo-300" />
         </button>
         <h2 className="text-5xl font-bold mb-14">Find a Friend: </h2>
         <input

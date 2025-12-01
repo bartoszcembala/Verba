@@ -25,10 +25,13 @@ import { SlFire } from "react-icons/sl";
 import ModalReusable from "../components/ModalReusable";
 import axios from "axios";
 import AvatarSelector from "../components/Account/AvatarSelector";
+import { useProgress } from "../lib/queries/progressQueries";
 
 function Account() {
+  const { progress } = useProgress();
   const storedUser = localStorage.getItem("user");
   const user: User | null = storedUser ? JSON.parse(storedUser) : null;
+  const filtered = progress?.filter((item) => item.userName === user?.email);
   const { editUser } = useEditUser();
   const streak = user && calculateStreak(user.streak);
   const [isOpen, setIsOpen] = useState(false);
@@ -67,6 +70,9 @@ function Account() {
       })
     );
   }
+  const wordsLearned = filtered?.reduce((acc, curr) => {
+    return acc + curr.learned.length;
+  }, 0);
 
   const lastDates = getLastDates(dates || []);
   const [selectedAvatar, setSelectedAvatar] = useState<number | null>(
@@ -77,7 +83,7 @@ function Account() {
     e.preventDefault();
 
     try {
-      axios.patch(`http://localhost:5000/api/users/${user?._id}`, {
+      axios.patch(`https://verba-ywgu.onrender.com/api/users/${user?._id}`, {
         name: userName,
         ...(Number.isFinite(selectedAvatar) && { avatar: selectedAvatar }),
       });
@@ -141,7 +147,7 @@ function Account() {
                 WODS LEARNED:
               </p>
               <div className="text-5xl lg:text-7xl flex items-center gap-4">
-                <p>238</p>
+                <p>{wordsLearned}</p>
                 <LuBrain />
               </div>
             </div>{" "}

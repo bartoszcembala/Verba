@@ -35,10 +35,13 @@ function App() {
   useEffect(() => {
     async function checkAuth() {
       try {
-        const user = await fetch(`http://localhost:5000/api/users/check`, {
-          method: "GET",
-          credentials: "include",
-        });
+        const user = await fetch(
+          `https://verba-ywgu.onrender.com/api/users/check`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
       } catch (error) {
         console.log("Not authorized");
       }

@@ -13,8 +13,7 @@ function Signup() {
 
   const onSubmit: SubmitHandler<SignupFormInputs> = async (data) => {
     try {
-
-      await fetch(`http://localhost:5000/api/users/signup`, {
+      await fetch(`https://verba-ywgu.onrender.com/api/users/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

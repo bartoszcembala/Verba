@@ -29,7 +29,7 @@ export function useProgress() {
   const { data, isLoading } = useQuery<Progress[]>({
     queryKey: ["progress"],
     queryFn: async () => {
-      const res = await fetch(`http://localhost:5000/api/progress/`, {
+      const res = await fetch(`https://verba-ywgu.onrender.com/api/progress/`, {
         method: "GET",
         credentials: "include",
       });
@@ -47,7 +47,7 @@ export function useProgress() {
 export function useAddProgress() {
   const mutation = useMutation<Progress, Error, NewProgressInput>({
     mutationFn: async (progress) => {
-      const res = await fetch(`http://localhost:5000/api/progress/`, {
+      const res = await fetch(`https://verba-ywgu.onrender.com/api/progress/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -71,12 +71,15 @@ export function useAddProgress() {
 export function useAddLearnedWord() {
   const mutation = useMutation<Progress, Error, LearnedWordInput>({
     mutationFn: async ({ id, word }) => {
-      const res = await fetch(`http://localhost:5000/api/progress/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(word),
-      });
+      const res = await fetch(
+        `https://verba-ywgu.onrender.com/api/progress/${id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(word),
+        }
+      );
 
       const json = await res.json();
       if (json.success === false) {
@@ -95,9 +98,8 @@ export function useAddLearnedWord() {
 export function useEditProgress() {
   const mutation = useMutation<Progress, Error, EditProgressInput>({
     mutationFn: async ({ id, data }) => {
-      
       const res = await axios.patch<Progress>(
-        `http://localhost:5000/api/progress/${id}`,
+        `https://verba-ywgu.onrender.com/api/progress/${id}`,
         data,
         {
           withCredentials: true,

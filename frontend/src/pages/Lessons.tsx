@@ -1,9 +1,7 @@
 import { Link } from "react-router-dom";
 import { useLessons } from "../lib/queries/lessonsQueries";
 import { HiOutlinePlay } from "react-icons/hi2";
-import { LessonInterface } from "../types";
 import { useState } from "react";
-import Spinner from "../components/Spinner";
 
 function Lessons() {
   const userStr = localStorage.getItem("user");
@@ -70,7 +68,7 @@ function Lessons() {
                     </p>
                     <div className="w-full">
                       <p className="text-4xl pb-1">
-                        {lesson.title}{" "}
+                        {lesson.displayTitle}{" "}
                         <span className="ml-2 bg-green-700 inline-block px-4  text-2xl rounded-lg">
                           {lesson.level}
                         </span>

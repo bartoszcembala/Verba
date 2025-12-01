@@ -14,20 +14,28 @@ export default function XpGuide() {
   console.log(percent);
   return (
     <div className="flex items-center justify-center">
-      <div className="w-[50%] border-1 mt-12 border-indigo-500 shadow-[0_0_100px_rgba(99,102,241,0.2)] rounded-3xl px-10  py-20">
+      <div className="w-[50%] border-1 mb-10 border-indigo-500 shadow-[0_0_100px_rgba(99,102,241,0.2)] rounded-3xl px-10  py-20">
         <h2 className="text-center font-bold text-5xl pb-8">
           {userLevel.levelName}
         </h2>
-        <div className="flex gap-4 mb-20">
+        <div className="flex gap-4">
           <p>{userLevel.totalXP}XP</p>
-          <div className="bg-indigo-200 text-center mb-10 rounded-xl w-full">
-            <span className="fixed">{percent}%</span>
+          <div className="bg-indigo-200 text-center mb-10  rounded-xl w-full">
+            <span className="absolute">{percent}%</span>
             <div
               className="bg-indigo-500 h-12 rounded-xl"
               style={{ width: `${percent}%` }}
             />
           </div>
           <p>{userLevel.nextLevelXP}XP</p>
+        </div>
+        <div className="text-center py-6 mb-10  rounded-3xl">
+          <h2 className="font-semibold">
+            For each day of study you get a multiplier of 1% extra
+          </h2>
+          <p className="font-bold uppercase text-4xl text-indigo-500">
+            Current multiplier: {user?.streak.length}%
+          </p>
         </div>
         <div className="bg-neutral-800 rounded-3xl text-center py-10 tracking-wide w-[80%] mx-auto mb-10">
           <h2 className="font-bold text-4xl mb-8">

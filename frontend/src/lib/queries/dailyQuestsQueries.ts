@@ -2,7 +2,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { DailyQuestsInterface } from "../../types";
 
-
 interface DailyQuestsInput {
   updatedDailyQuests: DailyQuestsInterface;
   id: string;
@@ -13,7 +12,7 @@ export function useGetDailyQuests() {
     queryKey: ["dailyQuests"],
     queryFn: async () => {
       const dailyQuests = await axios.get(
-        `http://localhost:5000/api/daily-quests/`,
+        `https://verba-ywgu.onrender.com/api/daily-quests/`,
         { withCredentials: true }
       );
       return dailyQuests.data.data as DailyQuestsInterface[];
@@ -31,10 +30,10 @@ export function useEditDailyQuests() {
   >({
     mutationFn: async ({ updatedDailyQuests, id }) => {
       const res = await axios.patch(
-        `http://localhost:5000/api/daily-quests/${id}`,
+        `https://verba-ywgu.onrender.com/api/daily-quests/${id}`,
         updatedDailyQuests
       );
-      
+
       return res.data;
     },
     onSuccess: () => {

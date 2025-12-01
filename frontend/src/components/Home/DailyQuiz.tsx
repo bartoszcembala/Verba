@@ -90,16 +90,23 @@ function DailyQuiz() {
     setCurrQuestion(currQuestion + 1);
     if (currQuestion + 1 === 5) {
       if (correct >= 4) {
-        toast.success("quiz completed");
+        toast.success("Quiz completed! You earned 30 EXP.");
         editUser({
           id: user._id,
-          data: { exp: user.exp + 20 },
+          data: { exp: user.exp + 30 * (user.streak.length / 100 + 1) },
         });
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            ...user,
+            exp: user.exp + 30 * (user.streak.length / 100 + 1),
+          })
+        );
         //Daily Quest logic
         async function handleAnswerC(index: number) {
           try {
             const res = await axios.patch(
-              "http://localhost:5000/api/daily-quests/increment",
+              "https://verba-ywgu.onrender.com/api/daily-quests/increment",
               { index },
               { withCredentials: true }
             );
@@ -145,14 +152,14 @@ function DailyQuiz() {
                 <span className="text-green-300">{correct}</span> |{" "}
                 <span className="text-red-300">{wrong}</span>
               </div>{" "}
-              <div className="text-5xl text-center mb-10">
+              <div className="text-5xl text-center mb-10 font-semibold">
                 {quizData[currQuestion]?.translation}
               </div>
               <div className="flex gap-5 w-full">
                 {quizData[currQuestion].answers.map((answer, i) => (
                   <div
                     onClick={() => handleSelect(answer)}
-                    className="border-1 cursor-pointer px-3 py-2 rounded-lg  dark:hover:bg-neutral-700 hover:bg-neutral-200 transition border-neutral-400 text-center"
+                    className="border-2 border-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.2)] cursor-pointer px-5 py-3 rounded-2xl  dark:hover:bg-neutral-700 hover:bg-neutral-200 transition  text-center bg-neutral-800/40"
                     key={i}
                   >
                     {answer[0]}

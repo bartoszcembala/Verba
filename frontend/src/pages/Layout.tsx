@@ -14,6 +14,9 @@ import { FaRegMoon } from "react-icons/fa";
 import { FiSun } from "react-icons/fi";
 import { IoArrowUpCircleOutline } from "react-icons/io5";
 import { useNavigate } from "react-router";
+import { FaRegClipboard } from "react-icons/fa6";
+import { LuBook } from "react-icons/lu";
+import { LuCrown } from "react-icons/lu";
 
 type User = {
   _id: string;
@@ -146,64 +149,73 @@ function Layout() {
                 </button>
 
                 {/* Menu rozwijane */}
-                <div className="absolute -left-8 mt-2 w-70 dark:bg-neutral-800 bg-white rounded-md shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition duration-300 z-50 -translate-y-4">
+                <div className="absolute -left-8 mt-2 w-80 dark:bg-neutral-700 bg-white rounded-md shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition duration-300 z-50 -translate-y-4 py-4">
                   <Link
                     to="/leaderboard"
-                    className="block px-6 py-3 text-neutral-700 dark:text-white dark:hover:bg-neutral-700 hover:bg-gray-100"
+                    className="dark:hover:bg-neutral-600 hover:bg-neutral-200/70 cursor-pointer  transition-colors justify-center items-center flex py-3 gap-4 px-3"
                   >
-                    Leaderboard
+                    <FaRegClipboard className=" w-10 h-10" />
+                    <p>Leaderboard</p>
                   </Link>
                   <Link
                     to="/xp-guide"
-                    className="block px-6 py-3 dark:hover:bg-neutral-700 text-neutral-700 dark:text-white hover:bg-gray-100"
+                    className="dark:hover:bg-neutral-600 hover:bg-neutral-200/70 cursor-pointer  transition-colors justify-center items-center flex py-3 gap-4 px-3"
                   >
-                    XP Guide
+                    <LuBook className=" w-10 h-10" />
+                    <p>XP Guide</p>
                   </Link>
                   <Link
                     to="/buy-premium"
-                    className="block px-6 py-3 dark:hover:bg-neutral-700 text-neutral-700 dark:text-white hover:bg-gray-100"
+                    className="dark:hover:bg-neutral-600 hover:bg-neutral-200/70 cursor-pointer  transition-colors justify-center items-center flex py-3 gap-4 px-3"
                   >
-                    Buy Premium
+                    <LuCrown className=" w-10 h-10" />
+                    <p>Buy Premium</p>
                   </Link>
                 </div>
               </div>
             </div>
 
             {/* Actions (darkmode, login/logout) */}
-            <div className="hidden lg:flex justify-center items-center">
-              <div
-                className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 cursor-pointer  py-5 px-6 transition-colors rounded-full"
-                onClick={() => setDarkMode((prev) => !prev)}
-              >
-                {darkMode ? (
-                  <FiSun className=" w-10 h-10 " />
-                ) : (
-                  <FaRegMoon className=" w-10 h-10" />
-                )}
-              </div>
-              {!user ? (
-                <Link
-                  to="/login"
-                  className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors"
-                >
-                  Log in
-                </Link>
-              ) : (
-                <button
-                  onClick={handleLogout}
-                  className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors uppercase cursor-pointer flex justify-center items-center gap-4"
-                >
-                  {/* <p>Log out</p> */}
-                  <FaArrowRightFromBracket />
-                </button>
-              )}
-              <Link
-                to="/account"
-                className="group relative dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
-              >
-                {/* <p>{user ? user.name : "Guest"}</p> */}
+            <div className="relative group inline-block ">
+              {/* Główny przycisk */}
+              <button className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4 cursor-pointer">
                 <FaRegUser className="scale-100 w-12 h-12 text-indigo-500 group-hover:scale-110 transition" />
-              </Link>
+              </button>
+
+              {/* Menu rozwijane */}
+              <div className="absolute -left-50 mt-2 w-80 dark:bg-neutral-700 bg-white rounded-md shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto py-4 transition duration-300 z-50 -translate-y-4">
+                <Link
+                  to="/account"
+                  className="dark:hover:bg-neutral-600 hover:bg-neutral-200/70 cursor-pointer  transition-colors justify-center items-center flex py-2 gap-4 px-3"
+                >
+                  <FaRegUser />
+                  <p>Account</p>
+                </Link>
+
+                <div
+                  className="dark:hover:bg-neutral-600 hover:bg-neutral-200/70 cursor-pointer  transition-colors justify-center items-center flex py-2 gap-4 px-3"
+                  onClick={() => setDarkMode((prev) => !prev)}
+                >
+                  {darkMode ? (
+                    <>
+                      <FiSun className=" w-10 h-10 " />
+                      <p>Light Mode</p>
+                    </>
+                  ) : (
+                    <>
+                      <FaRegMoon className=" w-10 h-10" />
+                      <p>Dark Mode</p>
+                    </>
+                  )}
+                </div>
+                <div
+                  className="dark:hover:bg-neutral-600 hover:bg-neutral-200/70 cursor-pointer  transition-colors justify-center items-center gap-4 flex py-2 "
+                  onClick={handleLogout}
+                >
+                  <FaArrowRightFromBracket />
+                  <p>Log out</p>
+                </div>
+              </div>
             </div>
           </div>
 

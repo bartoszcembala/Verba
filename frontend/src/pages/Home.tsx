@@ -93,14 +93,14 @@ function Home() {
 
           {!dailyQuizOpen &&
           user?.quiz.date !== new Date().toISOString().split("T")[0] ? (
-            <div className="bg-white shadow-xs border-neutral-300 border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-8 lg:h-[20rem] flex justify-center items-center gap-8">
+            <div className="bg-white shadow-xs border-neutral-300 border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-6 py-8 lg:h-[20rem] flex justify-center items-center gap-8">
               <div
                 onClick={() => setDailyQuizOpen(true)}
                 className="self-center py-20 lg:py-12 pl-12 text-7xl lg:text-9xl h-full w-[30%] border-r-2 border-indigo-500 cursor-pointer"
               >
                 GO
               </div>
-              <div className="w-[70%] text-5xl">
+              <div className="w-[70%] text-5xl font-semibold">
                 Complete short daily quiz to get xp!
               </div>
             </div>

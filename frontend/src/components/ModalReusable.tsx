@@ -14,9 +14,15 @@ export default function ModalReusable({
   if (!isOpen) return null; // nie renderuj nic, jeśli modal zamknięty
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+    >
       {/* kontener modala */}
-      <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-lg  w-300 h-230 px-14 py-10 relative ">
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-white dark:bg-neutral-800 rounded-xl shadow-lg  w-300 h-230 px-14 py-10 relative "
+      >
         {/* przycisk zamknięcia */}
         <button
           className="absolute cursor-pointer top-4 right-6  "
