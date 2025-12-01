@@ -11,11 +11,11 @@ const router = express.Router();
 
 router
   .route("/")
-  .get(protectedRoute, getModules)
-  .post(protectedRoute, createModule);
+  .get( getModules)
+  .post( createModule);
 router
   .route("/:id")
-  .patch(protectedRoute, updateModule)
-  .delete(protectedRoute, deleteModule);
+  .patch( updateModule)
+  .delete( deleteModule);
 
 export default router;

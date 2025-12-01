@@ -11,11 +11,11 @@ const router = express.Router();
 
 router
   .route("/")
-  .get(protectedRoute, getProgress)
-  .post(protectedRoute, createProgress);
+  .get( getProgress)
+  .post( createProgress);
 router
   .route("/:id")
-  .patch(protectedRoute, updateProgress)
-  .delete(protectedRoute, deleteProgress);
+  .patch( updateProgress)
+  .delete( deleteProgress);
 
 export default router;

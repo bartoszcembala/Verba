@@ -4,6 +4,6 @@ import { protectedRoute } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-router.route("/").get(protectedRoute,getLessons).post(protectedRoute,addLesson);
+router.route("/").get(getLessons).post(addLesson);
 
 export default router;
