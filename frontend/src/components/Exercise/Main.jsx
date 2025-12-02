@@ -207,12 +207,12 @@ function Main({ setCorrect }) {
       </div>
       {/* Exercise types */}
       <div className="flex justify-center">
-        <div className="mt-10 bg-neutral-800  rounded-full px-2 gap-3 py-2  flex justify-center ">
+        <div className="mt-10 dark:bg-neutral-800 bg-neutral-300 rounded-full px-2 gap-3 py-2  flex justify-center ">
           <button
             onClick={() => setExerciseType("translate")}
             className={` ${
               exerciseType === "translate" &&
-              "[0_0_20px_rgba(34,0,120,0.9)] border-indigo-600 border-1 bg-gradient-to-r from-indigo-500 to-indigo-600"
+              "[0_0_20px_rgba(34,0,120,0.9)] border-indigo-600 border-1 dark:bg-gradient-to-r dark:from-indigo-500 dark:to-indigo-600 bg-gradient-to-r from-indigo-400 to-indigo-500"
             } cursor-pointer   transition-colors  px-4 py-2 rounded-full  hover:bg-neutral-200 dark:hover:bg-neutral-600 `}
           >
             Translate the Word
@@ -221,7 +221,7 @@ function Main({ setCorrect }) {
             onClick={() => setExerciseType("fillblank")}
             className={`${
               exerciseType === "fillblank" &&
-              "[0_0_20px_rgba(34,0,120,0.9)] border-indigo-600 border-1 bg-gradient-to-l from-indigo-500 to-indigo-600"
+              "[0_0_20px_rgba(34,0,120,0.9)] border-1 dark:bg-gradient-to-r dark:from-indigo-500 dark:to-indigo-600 bg-gradient-to-l from-indigo-400 to-indigo-500"
             } cursor-pointer   transition-colors px-4 py-2 rounded-full   hover:bg-neutral-200 dark:hover:bg-neutral-600`}
           >
             Fill the Blank

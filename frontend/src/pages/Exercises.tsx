@@ -91,11 +91,11 @@ function Exercises() {
             placeholder="Search for an exercise..."
             value={searchTerm}
             type="text"
-            className="focus:border-2 focus:border-indigo-400 hover:border-2 hover:border-indigo-200 h-[3.5rem] text-neutral-900 px-5 py-1 bg-neutral-300 w-[80%] rounded-2xl"
+            className="focus:border-2 focus:border-indigo-400 hover:border-2 hover:border-indigo-200 h-[3.5rem] text-neutral-900 px-5 py-1 bg-neutral-100 dark:bg-neutral-300 w-[80%] rounded-2xl"
             onChange={(e) => setSearchTerm(e.currentTarget.value)}
           />
           <div
-            className="uppercase  hover:border-indigo-200 h-[3.5rem] text-neutral-900 px-5 py-1 bg-neutral-300 rounded-2xl cursor-pointer"
+            className="uppercase bg-neutral-100  hover:border-indigo-200 h-[3.5rem] text-neutral-900 px-5 py-1 dark:bg-neutral-300 rounded-2xl cursor-pointer"
             onClick={handleShowAll}
           >
             all

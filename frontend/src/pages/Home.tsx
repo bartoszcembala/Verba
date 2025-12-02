@@ -48,7 +48,7 @@ function Home() {
                 <span className="block text-4xl pb-4">
                   {user?.streak.includes(date) ? "🔥" : "⚫"}
                 </span>
-                <span className="block text-neutral-600 dark:text-neutral-300 text-4xl">
+                <span className="block text-neutral-600 font-semibold dark:text-neutral-300 text-4xl">
                   {date.split("-")[2]}
                 </span>
               </span>

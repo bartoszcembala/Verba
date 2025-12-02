@@ -92,7 +92,7 @@ function Lesson({ lesson }: { lesson: LessonInterface }) {
   }
 
   return (
-    <div className="lg:grid lg:grid-cols-[1fr_3fr_1fr] p-4 flex flex-col gap-20 text-white relative">
+    <div className="lg:grid lg:grid-cols-[1fr_3fr_1fr] p-4 flex flex-col gap-20  relative">
       <div className="order-3 lg:order-2 ml-10">
         Exercises for this topic:
         {lesson.relatedExercises &&

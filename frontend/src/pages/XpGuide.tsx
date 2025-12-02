@@ -37,21 +37,21 @@ export default function XpGuide() {
             Current multiplier: {user?.streak.length}%
           </p>
         </div>
-        <div className="bg-neutral-800 rounded-3xl text-center py-10 tracking-wide w-[80%] mx-auto mb-10">
+        <div className="dark:bg-neutral-800 border-1 border-neutral-400 bg-neutral-300 rounded-3xl text-center py-10 tracking-wide w-[80%] mx-auto mb-10">
           <h2 className="font-bold text-4xl mb-8">
             📘 New Word Learned — +1 XP
           </h2>
           <p>Every time you learn a new word, you gain experience points.</p>
           <p>This rewards consistency and vocabulary growth.</p>
         </div>
-        <div className="bg-neutral-800 rounded-3xl text-center py-10  tracking-wide w-[80%] mx-auto mb-10">
+        <div className="dark:bg-neutral-800 border-1 border-neutral-400 bg-neutral-300 rounded-3xl text-center py-10  tracking-wide w-[80%] mx-auto mb-10">
           <h2 className="font-bold text-4xl mb-8">
             📝 Daily Quiz Completed — +3 XP
           </h2>
           <p>Finishing the daily quiz gives you a solid XP boost.</p>
           <p>Quizzes help reinforce learning and test your memory.</p>
         </div>
-        <div className="bg-neutral-800 rounded-3xl text-center py-10  tracking-wide w-[80%] mx-auto mb-10">
+        <div className="dark:bg-neutral-800 border-1 border-neutral-400 bg-neutral-300 rounded-3xl text-center py-10  tracking-wide w-[80%] mx-auto mb-10">
           <h2 className="font-bold text-4xl mb-8">
             🏆 Quest Completed — +5 XP
           </h2>
