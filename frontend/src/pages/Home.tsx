@@ -7,14 +7,14 @@ import { LuCrown } from "react-icons/lu";
 import { useState } from "react";
 import DailyQuiz from "../components/Home/DailyQuiz";
 import DailyQuests from "../components/Home/DailyQuests";
-import {getUserLevel} from "../lib/getExpLevels";
-
+import { getUserLevel } from "../lib/getExpLevels";
 
 function Home() {
   const previousDates = getPreviousDates(7);
   const storedUser = localStorage.getItem("user");
   const user: User | null = storedUser ? JSON.parse(storedUser) : null;
   const userLevel = getUserLevel(user?.exp ? Math.floor(user.exp) : 0);
+  console.log(user?.timeSpentLearning);
   const timeSpent = user?.timeSpentLearning
     .slice(-7)
     .reduce((sum, curr) => sum + curr.value, 0);
@@ -36,7 +36,7 @@ function Home() {
             <p className="text-neutral-700 dark:text-neutral-200 text-3xl  lg:translate-y-10 -translate-y-2">
               level {userLevel.level}.{" "}
               <FaStar className="inline-block -translate-y-1 text-indigo-500" />{" "}
-              {userLevel.levelName} ({Math.round(user!.exp)} exp)
+              {userLevel.levelName} ({user?.exp && Math.round(user!.exp)} exp)
             </p>
             <p className="absolute bottom-1 text-2xl text-neutral-400">
               Next level in: {userLevel.xpToNextLevel}XP
