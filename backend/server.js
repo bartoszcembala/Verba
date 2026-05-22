@@ -37,7 +37,7 @@ app.use("/api/lesson", lessonRoutes);
 app.use("/api/daily-quests", dailyQuestRoutes);
 app.use("/api/checkout", checkoutRouter);
 
-nodeCron.schedule("* * * * *", async () => {
+nodeCron.schedule("0 0 * * *", async () => {
   console.log("RESET DAILY QUESTS");
   await DailyQuest.updateMany(
     {},
