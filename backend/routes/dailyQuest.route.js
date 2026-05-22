@@ -15,7 +15,7 @@ router.route("/:id").get(getDailyQuest).delete(deleteDailyQuest);
 
 router.route("/").get(getDailyQuests).post(createDailyQuest);
 
-router.route("/increment").patch(protectedRoute, async (req, res) => {
+router.route("/increment").patch( async (req, res) => {
   console.log("Incrementing daily quest progress...");
   const { index } = req.body;
   const userId = req.user._id.toString();

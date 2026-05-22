@@ -16,12 +16,12 @@ function DailyQuiz() {
   const userStr = localStorage.getItem("user");
   const user = userStr ? JSON.parse(userStr) : null;
   const userProgress = progress?.filter(
-    (progress) => progress.userName === user?.email
+    (progress) => progress.userName === user?.email,
   );
   const [currQuestion, setCurrQuestion] = useState(0);
   let learnedWords = userProgress?.reduce<string[][]>(
     (acc, curr) => acc.concat(curr.learned),
-    []
+    [],
   );
   const [correct, setCorrect] = useState(0);
   const [wrong, setWrong] = useState(0);
@@ -100,7 +100,7 @@ function DailyQuiz() {
           JSON.stringify({
             ...user,
             exp: user.exp + 30 * (user.streak.length / 100 + 1),
-          })
+          }),
         );
         //Daily Quest logic
         async function handleAnswerC(index: number) {
@@ -108,14 +108,14 @@ function DailyQuiz() {
             const res = await axios.patch(
               "https://verba-ywgu.onrender.com/api/daily-quests/increment",
               { index },
-              { withCredentials: true }
+              { withCredentials: true },
             );
             console.log(res.data);
           } catch (error) {
             console.error(error);
           }
         }
-        handleAnswerC(2);
+        handleAnswerC(1);
 
         editUser({
           id: user._id,
@@ -134,7 +134,7 @@ function DailyQuiz() {
               finished: true,
               date: new Date().toISOString().split("T")[0],
             },
-          })
+          }),
         );
       }
     }
@@ -205,7 +205,7 @@ function DailyQuiz() {
                           finished: false,
                           date: "01-01-0001",
                         },
-                      })
+                      }),
                     );
                     setCurrQuestion(0);
                     setCorrect(0);
