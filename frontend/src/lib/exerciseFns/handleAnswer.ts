@@ -91,7 +91,7 @@ export async function handleAnswer(
           console.error(error);
         }
       }
-      handleAnswerC(1);
+      handleAnswerC(0);
     }
 
     setSelectedVerbs((prev) => prev.filter((v) => v[0] !== answer));
