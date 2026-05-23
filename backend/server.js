@@ -27,7 +27,7 @@ app.use(
       "https://verba-ywgu.onrender.com",
     ],
     credentials: true,
-  })
+  }),
 );
 
 app.use("/api/modules", moduleRoutes);
@@ -38,10 +38,16 @@ app.use("/api/daily-quests", dailyQuestRoutes);
 app.use("/api/checkout", checkoutRouter);
 
 nodeCron.schedule("0 0 * * *", async () => {
-  console.log("RESET DAILY QUESTS");
+  const today = new Date().toISOString().split("T")[0];
   await DailyQuest.updateMany(
     {},
-    { $set: { "quests.$[].progress": 0, "quests.$[].completed": false } }
+    {
+      $set: {
+        day: today,
+        "quests.$[].progress": 0,
+        "quests.$[].completed": false,
+      },
+    },
   );
 });
 
