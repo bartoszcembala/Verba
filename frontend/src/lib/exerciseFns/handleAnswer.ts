@@ -51,8 +51,13 @@ export async function handleAnswer(
   queryClient: QueryClient,
   dailyQuests: DailyQuestsInterface[],
   editDailyQuests: any,
-  incrementDailyQuest: (payload: { index: number; userId: string }) => Promise<any>,
+  incrementDailyQuest: (payload: {
+    index: number;
+    userId: string;
+  }) => Promise<any>,
 ) {
+  console.log("user w handleAnswer:", user); // 👈
+  console.log("user._id w handleAnswer:", user?._id); // 👈
   const activeProgress = progress.find(
     (p) => p.moduleName === module && p.userName === user.email,
   );
@@ -79,6 +84,7 @@ export async function handleAnswer(
       );
 
       //Daily Quest logic
+
       incrementDailyQuest({ index: 1, userId: user._id });
     }
 
