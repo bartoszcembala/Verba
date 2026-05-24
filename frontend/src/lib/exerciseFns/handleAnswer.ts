@@ -51,7 +51,7 @@ export async function handleAnswer(
   queryClient: QueryClient,
   dailyQuests: DailyQuestsInterface[],
   editDailyQuests: any,
-  incrementDailyQuest: (payload: { index: number }) => Promise<any>,
+  incrementDailyQuest: (payload: { index: number; userId: string }) => Promise<any>,
 ) {
   const activeProgress = progress.find(
     (p) => p.moduleName === module && p.userName === user.email,
@@ -79,7 +79,7 @@ export async function handleAnswer(
       );
 
       //Daily Quest logic
-      incrementDailyQuest({ index: 1 });
+      incrementDailyQuest({ index: 1, userId: user._id });
     }
 
     setSelectedVerbs((prev) => prev.filter((v) => v[0] !== answer));

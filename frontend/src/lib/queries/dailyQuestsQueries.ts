@@ -47,6 +47,7 @@ export function useEditDailyQuests() {
 
 interface IncrementDailyQuestInput {
   index: number;
+  userId: string;
 }
 
 export function useIncrementDailyQuest() {
@@ -56,10 +57,10 @@ export function useIncrementDailyQuest() {
     Error,
     IncrementDailyQuestInput
   >({
-    mutationFn: async ({ index }) => {
+    mutationFn: async ({ index, userId }) => {
       const res = await axios.patch(
         "https://verba-ywgu.onrender.com/api/daily-quests/increment",
-        { index },
+        { index, userId },
         { withCredentials: true },
       );
       return res.data;

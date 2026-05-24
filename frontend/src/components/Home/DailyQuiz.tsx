@@ -104,7 +104,7 @@ function DailyQuiz() {
           }),
         );
         //Daily Quest logic
-       incrementDailyQuest({ index: 2 });
+       incrementDailyQuest({ index: 2, userId: user._id });
 
         editUser({
           id: user._id,

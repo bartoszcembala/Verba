@@ -77,7 +77,7 @@ function Lesson({ lesson }: { lesson: LessonInterface }) {
       );
       toast.success("Lesson Finished!");
 
-      incrementDailyQuest({ index: 3 });
+      incrementDailyQuest({ index: 3, userId: user._id });
     }
   }
 

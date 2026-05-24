@@ -69,7 +69,7 @@ export const useDailyStudyTimer = (): number => {
 
       //Daily Quest logic
 
-      incrementDailyQuest({ index: 0 });
+      incrementDailyQuest({ index: 0, userId: user._id });
 
       // Aktualizacja usera w localStorage
       localStorage.setItem(
