@@ -13,7 +13,7 @@ export function useGetDailyQuests() {
     queryFn: async () => {
       const dailyQuests = await axios.get(
         `https://verba-ywgu.onrender.com/api/daily-quests/`,
-        { withCredentials: true }
+        { withCredentials: true },
       );
       return dailyQuests.data.data as DailyQuestsInterface[];
     },
@@ -31,7 +31,7 @@ export function useEditDailyQuests() {
     mutationFn: async ({ updatedDailyQuests, id }) => {
       const res = await axios.patch(
         `https://verba-ywgu.onrender.com/api/daily-quests/${id}`,
-        updatedDailyQuests
+        updatedDailyQuests,
       );
 
       return res.data;
@@ -43,4 +43,32 @@ export function useEditDailyQuests() {
   });
 
   return { editDailyQuests: mutateAsync };
+}
+
+interface IncrementDailyQuestInput {
+  index: number;
+}
+
+export function useIncrementDailyQuest() {
+  const queryClient = useQueryClient();
+  const { mutateAsync } = useMutation<
+    DailyQuestsInterface,
+    Error,
+    IncrementDailyQuestInput
+  >({
+    mutationFn: async ({ index }) => {
+      const res = await axios.patch(
+        "https://verba-ywgu.onrender.com/api/daily-quests/increment",
+        { index },
+        { withCredentials: true },
+      );
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["dailyQuests"] });
+      queryClient.refetchQueries({ queryKey: ["dailyQuests"] });
+    },
+  });
+
+  return { incrementDailyQuest: mutateAsync };
 }

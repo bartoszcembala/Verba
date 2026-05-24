@@ -20,13 +20,6 @@ export async function signup(req, res, next) {
 
     const defaultQuests = [
       {
-        title: "spend 10 minutes learning",
-        progress: 0,
-        toObtain: 10,
-        completed: false,
-        icon: "clock",
-      },
-      {
         title: "learn words",
         progress: 0,
         toObtain: 5,
@@ -34,14 +27,21 @@ export async function signup(req, res, next) {
         icon: "bulb",
       },
       {
-        title: "finish quiz",
+        title: "finish lesson",
         progress: 0,
         toObtain: 1,
         completed: false,
         icon: "flag",
       },
       {
-        title: "finish lesson",
+        title: "spend 10 minutes learning",
+        progress: 0,
+        toObtain: 10,
+        completed: false,
+        icon: "clock",
+      },
+      {
+        title: "finish quiz",
         progress: 0,
         toObtain: 1,
         completed: false,

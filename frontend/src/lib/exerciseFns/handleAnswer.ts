@@ -30,7 +30,7 @@ type LearnedWordPayload = {
 
 type AddLearnedWordFunction = (
   payload: LearnedWordPayload,
-  options: { onSuccess: () => void }
+  options: { onSuccess: () => void },
 ) => void;
 
 type SetState<T> = (value: T | ((prev: T) => T)) => void;
@@ -51,10 +51,10 @@ export async function handleAnswer(
   queryClient: QueryClient,
   dailyQuests: DailyQuestsInterface[],
   editDailyQuests: any,
-  handleUpdateDailyQuest: any
+  incrementDailyQuest: (payload: { index: number }) => Promise<any>,
 ) {
   const activeProgress = progress.find(
-    (p) => p.moduleName === module && p.userName === user.email
+    (p) => p.moduleName === module && p.userName === user.email,
   );
 
   if (!activeProgress) {
@@ -75,23 +75,11 @@ export async function handleAnswer(
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["progress"] });
           },
-        }
+        },
       );
 
       //Daily Quest logic
-      async function handleAnswerC(index: number) {
-        try {
-          const res = await axios.patch(
-            "https://verba-ywgu.onrender.com/api/daily-quests/increment",
-            { index },
-            { withCredentials: true }
-          );
-          console.log(res.data);
-        } catch (error) {
-          console.error(error);
-        }
-      }
-      handleAnswerC(0);
+      incrementDailyQuest({ index: 1 });
     }
 
     setSelectedVerbs((prev) => prev.filter((v) => v[0] !== answer));
@@ -106,7 +94,7 @@ export async function handleAnswer(
       JSON.stringify({
         ...user,
         exp: user.exp + 10 * (user.streak.length / 100 + 1),
-      })
+      }),
     );
     if (selectedVerbs.length === 1) {
       setExercise({
@@ -120,7 +108,7 @@ export async function handleAnswer(
   } else {
     setIsCorrect("wrong");
     const filtered = activeProgress.learned.filter(
-      (x) => x[0] !== exercise.correctAnswer
+      (x) => x[0] !== exercise.correctAnswer,
     );
     addLearnedWord(
       {
@@ -133,7 +121,7 @@ export async function handleAnswer(
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["progress"] });
         },
-      }
+      },
     );
     toast.error("Źle");
   }

@@ -5,18 +5,19 @@ import { Link, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { LessonInterface } from "../types";
+import { useIncrementDailyQuest } from "../lib/queries/dailyQuestsQueries";
 
 function Lesson({ lesson }: { lesson: LessonInterface }) {
+  const { incrementDailyQuest } = useIncrementDailyQuest();
   const { addActivity } = useActivity();
   const { editUser } = useEditUser();
 
   const { authorized } = useContext(SettingsContext)!;
   const user = JSON.parse(localStorage.getItem("user")!);
   const lessonName = useLocation().pathname.slice(1);
-  console.log(lesson);
   useEffect(() => {
     const arrWithout = user.latestActivity.filter(
-      (item: string) => item[0] !== lessonName
+      (item: string) => item[0] !== lessonName,
     );
     const readyArr = [...arrWithout, [lessonName, lesson?.displayTitle]];
 
@@ -33,19 +34,19 @@ function Lesson({ lesson }: { lesson: LessonInterface }) {
         onSuccess: () => {
           console.log(readyArr);
         },
-      }
+      },
     );
 
     localStorage.setItem(
       "user",
-      JSON.stringify({ ...user, latestActivity: readyArr.reverse() })
+      JSON.stringify({ ...user, latestActivity: readyArr.reverse() }),
     );
   }, []);
 
   function handleFinishLesson() {
     if (user.finishedLessons.includes(lesson._id)) {
       const filteredLessons = user.finishedLessons.filter(
-        (id: string) => id !== lesson._id
+        (id: string) => id !== lesson._id,
       );
       editUser({
         id: user._id,
@@ -60,7 +61,7 @@ function Lesson({ lesson }: { lesson: LessonInterface }) {
           ...user,
           finishedLessons: filteredLessons,
           exp: user.exp + 30 * (user.streak.length / 100 + 1),
-        })
+        }),
       );
     } else {
       editUser({
@@ -72,22 +73,11 @@ function Lesson({ lesson }: { lesson: LessonInterface }) {
         JSON.stringify({
           ...user,
           finishedLessons: [...user.finishedLessons, lesson._id],
-        })
+        }),
       );
       toast.success("Lesson Finished!");
-      async function handleAnswerC(index: number) {
-        try {
-          const res = await axios.patch(
-            "https://verba-ywgu.onrender.com/api/daily-quests/increment",
-            { index },
-            { withCredentials: true }
-          );
-          console.log(res.data);
-        } catch (error) {
-          console.error(error);
-        }
-      }
-      handleAnswerC(3);
+
+      incrementDailyQuest({ index: 3 });
     }
   }
 

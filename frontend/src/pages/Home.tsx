@@ -14,7 +14,6 @@ function Home() {
   const storedUser = localStorage.getItem("user");
   const user: User | null = storedUser ? JSON.parse(storedUser) : null;
   const userLevel = getUserLevel(user?.exp ? Math.floor(user.exp) : 0);
-  console.log(user?.timeSpentLearning);
   const timeSpent = user?.timeSpentLearning
     .slice(-7)
     .reduce((sum, curr) => sum + curr.value, 0);

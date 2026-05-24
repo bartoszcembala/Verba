@@ -8,9 +8,10 @@ import { IoReload } from "react-icons/io5";
 import { CiLock } from "react-icons/ci";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { MdOutlineCancel } from "react-icons/md";
-import axios from "axios";
+import { useIncrementDailyQuest } from "../../lib/queries/dailyQuestsQueries";
 
 function DailyQuiz() {
+  const { incrementDailyQuest } = useIncrementDailyQuest();
   const { progress, isLoadingProgress } = useProgress();
   const { editUser } = useEditUser();
   const userStr = localStorage.getItem("user");
@@ -103,19 +104,7 @@ function DailyQuiz() {
           }),
         );
         //Daily Quest logic
-        async function handleAnswerC(index: number) {
-          try {
-            const res = await axios.patch(
-              "https://verba-ywgu.onrender.com/api/daily-quests/increment",
-              { index },
-              { withCredentials: true },
-            );
-            console.log(res.data);
-          } catch (error) {
-            console.error(error);
-          }
-        }
-        handleAnswerC(1);
+       incrementDailyQuest({ index: 2 });
 
         editUser({
           id: user._id,

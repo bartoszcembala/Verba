@@ -12,6 +12,7 @@ import Letters from "./Letters";
 import {
   useEditDailyQuests,
   useGetDailyQuests,
+  useIncrementDailyQuest,
 } from "../../lib/queries/dailyQuestsQueries";
 import { FiCheckSquare } from "react-icons/fi";
 import { useEditUser, useUser } from "../../lib/queries/userQueries";
@@ -36,6 +37,8 @@ function Main({ setCorrect }) {
   const [exerciseType, setExerciseType] = useState("translate");
   const [showTranslation, setShowTranslation] = useState(false);
   const [writing, setWriting] = useState(true);
+  const { incrementDailyQuest } = useIncrementDailyQuest();
+
 
 
   function getExercise(type) {
@@ -70,7 +73,8 @@ function Main({ setCorrect }) {
       setSelectedVerbs,
       queryClient,
       dailyQuests,
-      editDailyQuests
+      editDailyQuests,
+      incrementDailyQuest
     );
   }
 

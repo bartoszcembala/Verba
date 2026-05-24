@@ -11,7 +11,7 @@ export default function XpGuide() {
   const diff = levels[userLevel.level].xp - prevLevel;
   const toGo = diff - userLevel.xpToNextLevel!;
   const percent = calculatePercent(toGo, diff);
-  console.log(percent);
+
   return (
     <div className="flex items-center justify-center">
       <div className="w-[50%] border-1 mb-10 border-indigo-500 shadow-[0_0_100px_rgba(99,102,241,0.2)] rounded-3xl px-10  py-20">
