@@ -18,6 +18,7 @@ router.route("/").get(getDailyQuests).post(createDailyQuest);
 router.route("/increment").patch(async (req, res) => {
   console.log("Incrementing daily quest progress...");
   const { index, userId } = req.body;
+  console.log("Received index:", index, "and userId:", userId);
   // const userId = req.user._id.toString();
   // const userId = "6829113e3e415187ca672eec";
 
