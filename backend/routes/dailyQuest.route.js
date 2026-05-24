@@ -11,10 +11,6 @@ import { DailyQuest } from "../models/dailyQuest.model.js";
 
 const router = express.Router();
 
-router.route("/:id").get(getDailyQuest).delete(deleteDailyQuest);
-
-router.route("/").get(getDailyQuests).post(createDailyQuest);
-
 router.route("/increment").patch(async (req, res) => {
   console.log("Incrementing daily quest progress...");
   const { index, userId } = req.body;
@@ -46,5 +42,9 @@ router.route("/increment").patch(async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+router.route("/:id").get(getDailyQuest).delete(deleteDailyQuest);
+
+router.route("/").get(getDailyQuests).post(createDailyQuest);
 
 export default router;
