@@ -25,6 +25,7 @@ app.use(
       "https://verba-ebon.vercel.app",
       "http://localhost:5173",
       "https://verba-ywgu.onrender.com",
+      "https://verba-i9dm972qa-bartoszs-projects-9616a4a5.vercel.app/login",
     ],
     credentials: true,
   }),
