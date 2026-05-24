@@ -58,6 +58,12 @@ export function useIncrementDailyQuest() {
     IncrementDailyQuestInput
   >({
     mutationFn: async ({ index, userId }) => {
+      console.log(
+        "Incrementing daily quest at index:",
+        index,
+        "for userId:",
+        userId,
+      );
       const res = await axios.patch(
         "https://verba-ywgu.onrender.com/api/daily-quests/increment",
         { index, userId },
