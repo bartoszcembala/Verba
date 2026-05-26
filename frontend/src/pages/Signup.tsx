@@ -1,4 +1,5 @@
 import { useForm, SubmitHandler } from "react-hook-form";
+import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
 
 interface SignupFormInputs {
@@ -13,6 +14,7 @@ function Signup() {
 
   const onSubmit: SubmitHandler<SignupFormInputs> = async (data) => {
     try {
+      toast("Signing up...");
       await fetch(`https://verba-ywgu.onrender.com/api/users/signup`, {
         method: "POST",
         headers: {
@@ -21,7 +23,7 @@ function Signup() {
         credentials: "include",
         body: JSON.stringify(data),
       });
-      console.log("Signed up");
+      toast.success("Signed up successfully! Please log in.");
     } catch (error) {
       console.log("not logged in: ", error);
     }
