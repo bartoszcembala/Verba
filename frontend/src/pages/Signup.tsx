@@ -1,6 +1,6 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "react-hot-toast";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface SignupFormInputs {
   name: string;
@@ -10,21 +10,34 @@ interface SignupFormInputs {
 }
 
 function Signup() {
+  const navigate = useNavigate();
   const { register, handleSubmit } = useForm<SignupFormInputs>();
 
   const onSubmit: SubmitHandler<SignupFormInputs> = async (data) => {
     try {
       toast("Signing up...");
-      await fetch(`https://verba-ywgu.onrender.com/api/users/signup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const res = await fetch(
+        `https://verba-ywgu.onrender.com/api/users/signup`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(data),
         },
-        credentials: "include",
-        body: JSON.stringify(data),
-      });
+      );
+
+      if (!res.ok) {
+        const err = await res.json();
+        toast.error(err.message || "Signup failed");
+        return;
+      }
+
       toast.success("Signed up successfully! Please log in.");
+      navigate("/login"); 
     } catch (error) {
+      toast.error("Something went wrong");
       console.log("not logged in: ", error);
     }
   };

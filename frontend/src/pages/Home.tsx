@@ -8,6 +8,7 @@ import { useState } from "react";
 import DailyQuiz from "../components/Home/DailyQuiz";
 import DailyQuests from "../components/Home/DailyQuests";
 import { getUserLevel } from "../lib/getExpLevels";
+import { FaRegCirclePlay } from "react-icons/fa6";
 
 function Home() {
   const previousDates = getPreviousDates(7);
@@ -45,7 +46,10 @@ function Home() {
             {previousDates.map((date) => (
               <span key={date} className="h-20 w-20 text-center rounded-2xl">
                 <span className="block text-4xl pb-4">
-                  {user?.streak.includes(date) ? "🔥" : "⚫"}
+                  {user?.streak.includes(date) ||
+                  date == new Date().toISOString().split("T")[0]
+                    ? "🔥"
+                    : "⚫"}
                 </span>
                 <span className="block text-neutral-600 font-semibold dark:text-neutral-300 text-4xl">
                   {date.split("-")[2]}
@@ -92,14 +96,14 @@ function Home() {
 
           {!dailyQuizOpen &&
           user?.quiz.date !== new Date().toISOString().split("T")[0] ? (
-            <div className="bg-white shadow-xs border-neutral-300 border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-6 py-8 lg:h-[20rem] flex justify-center items-center gap-8">
+            <div onClick={() => setDailyQuizOpen(true)} className="bg-white shadow-xs border-neutral-300 border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-6 py-8 lg:h-[20rem] flex justify-center items-center gap-8 group cursor-pointer dark:hover:bg-neutral-700 hover:bg-neutral-200 transition-colors">
               <div
-                onClick={() => setDailyQuizOpen(true)}
-                className="self-center py-20 lg:py-12 pl-12 text-7xl lg:text-9xl h-full w-[30%] border-r-2 border-indigo-500 cursor-pointer"
+                
+                className=" self-center py-20 lg:py-12 pl-12 text-7xl lg:text-9xl h-full w-[25%] border-r-2 border-indigo-500 cursor-pointer"
               >
-                GO
+                <FaRegCirclePlay className="group-hover:scale-105 transition group-hover:text-indigo-400 group-hover:rotate-120 duration-400" />
               </div>
-              <div className="w-[70%] text-5xl font-semibold">
+              <div className="w-[75%] text-5xl font-semibold">
                 Complete short daily quiz to get xp!
               </div>
             </div>

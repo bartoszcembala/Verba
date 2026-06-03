@@ -2,6 +2,7 @@ import { getUserLevel } from "../lib/getExpLevels";
 import { levels } from "../lib/getExpLevels";
 import { User } from "../types";
 import { calculatePercent } from "../lib/calculatePercent";
+import { calculateStreak } from "../lib/calculateStreak";
 
 export default function XpGuide() {
   const storedUser = localStorage.getItem("user");
@@ -11,7 +12,8 @@ export default function XpGuide() {
   const diff = levels[userLevel.level].xp - prevLevel;
   const toGo = diff - userLevel.xpToNextLevel!;
   const percent = calculatePercent(toGo, diff);
-
+  const streak = user && calculateStreak(user.streak);
+  
   return (
     <div className="flex items-center justify-center">
       <div className="w-[50%] border-1 mb-10 border-indigo-500 shadow-[0_0_100px_rgba(99,102,241,0.2)] rounded-3xl px-10  py-20">
@@ -34,7 +36,7 @@ export default function XpGuide() {
             For each day of study you get a multiplier of 1% extra
           </h2>
           <p className="font-bold uppercase text-4xl text-indigo-500">
-            Current multiplier: {user?.streak.length}%
+            Current multiplier: {streak}%
           </p>
         </div>
         <div className="dark:bg-neutral-800 border-1 border-neutral-400 bg-neutral-300 rounded-3xl text-center py-10 tracking-wide w-[80%] mx-auto mb-10">

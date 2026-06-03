@@ -1,11 +1,16 @@
+import Spinner from "../components/Spinner";
 import { useUsers } from "../lib/queries/userQueries";
 import { BiSolidCrown } from "react-icons/bi";
 
 export default function Leaderboard() {
-  const { users } = useUsers();
+  const { users, isLoadingUsers } = useUsers();
   const sortedUsers = users?.sort((a, b) => b.exp - a.exp).slice(0, 10);
   const top3 = sortedUsers?.slice(0, 3);
   const rest = sortedUsers?.slice(3);
+
+  if (isLoadingUsers) {
+    return <Spinner />;
+  }
 
   return (
     <div className="flex items-center justify-center">
@@ -33,7 +38,9 @@ export default function Leaderboard() {
                   src={`/avatars/AV${user.avatar}.png`}
                   className="w-36 h-36 mx-auto mb-8 border-2 shadow-[0_0_10px_rgba(99,102,241)] rounded-full border-indigo-500"
                 />
-                <p className={`${index === 0 && "font-semibold"}`}>{user.name}</p>
+                <p className={`${index === 0 && "font-semibold"}`}>
+                  {user.name}
+                </p>
                 <p
                   className={`${
                     index === 0 && "dark:text-amber-300 text-6xl text-amber-400"
