@@ -39,7 +39,7 @@ app.use("/api/daily-quests", dailyQuestRoutes);
 app.use("/api/checkout", checkoutRouter);
 
 nodeCron.schedule(
-  "0 23 * * *",
+  "0 0 * * *",
   async () => {
     const today = new Date().toISOString().split("T")[0];
     await DailyQuest.updateMany(
