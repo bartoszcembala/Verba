@@ -38,19 +38,25 @@ app.use("/api/lesson", lessonRoutes);
 app.use("/api/daily-quests", dailyQuestRoutes);
 app.use("/api/checkout", checkoutRouter);
 
-nodeCron.schedule("* * * * *", async () => {
-  const today = new Date().toISOString().split("T")[0];
-  await DailyQuest.updateMany(
-    {},
-    {
-      $set: {
-        day: today,
-        "quests.$[].progress": 0,
-        "quests.$[].completed": false,
+nodeCron.schedule(
+  "0 23 * * *",
+  async () => {
+    const today = new Date().toISOString().split("T")[0];
+    await DailyQuest.updateMany(
+      {},
+      {
+        $set: {
+          day: today,
+          "quests.$[].progress": 0,
+          "quests.$[].completed": false,
+        },
       },
-    },
-  );
-});
+    );
+  },
+  {
+    timezone: "Europe/Warsaw",
+  },
+);
 
 app.listen(PORT, () => {
   connectDB();
