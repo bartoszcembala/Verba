@@ -74,7 +74,13 @@ const userSchema = new mongoose.Schema({
   },
   friends: {
     type: [friendsSchema],
-    default: [],
+    default: [
+      {
+        name: "Bartosz Cembala",
+        friendId: "6a26d73f0bdc4ef25037767d",
+        avatar: "5",
+      },
+    ],
   },
   avatar: {
     type: String,
@@ -97,7 +103,7 @@ userSchema.pre("save", async function (next) {
 
 userSchema.methods.correctPassword = async function (
   candidatePassword,
-  userPassword
+  userPassword,
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };

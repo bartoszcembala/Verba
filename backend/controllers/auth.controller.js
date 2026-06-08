@@ -41,7 +41,7 @@ export async function signup(req, res, next) {
         icon: "flag",
       },
       {
-        title: "finish new lesson",
+        title: "finish lesson",
         progress: 0,
         toObtain: 1,
         completed: false,
