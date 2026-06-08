@@ -20,7 +20,7 @@ function Modal({
   const user: User | null = userStr ? JSON.parse(userStr) : null;
 
   const filteredUsers = users?.filter((user) =>
-    user.name.toLowerCase().includes(input.toLowerCase())
+    user.name.toLowerCase().includes(input.toLowerCase()),
   );
 
   function addFriend({
@@ -49,10 +49,10 @@ function Modal({
           ...user!.friends,
           { name: name, friendId: _id, avatar: avatar },
         ],
-      })
+      }),
     );
     setIsOpen(false);
-    toast.success("Friend followed successfully!");
+    toast.success("Friend followed!");
   }
 
   useEffect(() => {
@@ -115,7 +115,7 @@ function Modal({
                 className="cursor-pointer w-16 h-16"
                 onClick={() =>
                   user?.friends.some(
-                    (friend) => friend.friendId === userFil._id
+                    (friend) => friend.friendId === userFil._id,
                   )
                     ? toast.error("You already follow this user.")
                     : addFriend({
