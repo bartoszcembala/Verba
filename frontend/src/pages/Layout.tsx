@@ -289,7 +289,7 @@ function Layout() {
       )}
       <Outlet />
       <div className="font-bold fixed bottom-0 left-0 right-0 border-t-2 border-neutral-600 dark:border-neutral-700  text-neutral-800 dark:text-neutral-300 bg-neutral-300 dark:bg-neutral-800 text-center text-3xl py-3 tracking-wide">
-         App is still in development - some bugs may occur. <span className=" text-indigo-400">v0.1.3-alpha</span>
+         App is still in development - some bugs may occur. <span className=" text-indigo-400">v0.1.4-alpha</span>
       </div>
     </>
   );
