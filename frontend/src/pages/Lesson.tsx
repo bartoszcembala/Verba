@@ -25,17 +25,10 @@ function Lesson({ lesson }: { lesson: LessonInterface }) {
       readyArr.shift();
     }
 
-    addActivity(
-      {
-        id: user._id,
-        activities: readyArr,
-      },
-      {
-        onSuccess: () => {
-          console.log(readyArr);
-        },
-      },
-    );
+    addActivity({
+      id: user._id,
+      activities: readyArr,
+    });
 
     localStorage.setItem(
       "user",

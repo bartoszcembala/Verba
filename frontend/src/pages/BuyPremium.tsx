@@ -15,7 +15,7 @@ function BuyPremium() {
           withCredentials: true,
         }
       );
-      window.location = session.data.session.url;
+      window.location.href = session.data.session.url;
     } catch (error) {
       console.log(error);
     }

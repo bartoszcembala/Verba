@@ -44,7 +44,7 @@ function Signup() {
 
   return (
     <div className="flex items-center justify-center">
-      <div className="mt-10 py-16 px-12 w-[52rem] h-[70rem] rounded-4xl border-1 border-solid border-neutral-400">
+      <div className="mt-10 py-16 px-12 w-[52rem] h-[70rem] rounded-4xl border-2 border-solid border-indigo-500">
         <h2 className="text-6xl mb-6 ">Register</h2>
         <p className="text-neutral-400 mb-10">
           Enter your data below to create an account

@@ -56,8 +56,7 @@ export async function handleAnswer(
     userId: string;
   }) => Promise<any>,
 ) {
-  console.log("user w handleAnswer:", user); // 👈
-  console.log("user._id w handleAnswer:", user?._id); // 👈
+
   const activeProgress = progress.find(
     (p) => p.moduleName === module && p.userName === user.email,
   );

@@ -27,11 +27,7 @@ function Dashboard() {
   function handleAddLesson() {
     addLesson(
       { title: "Main lesson", html: input },
-      {
-        onSuccess: (data: any) => {
-          console.log(data);
-        },
-      }
+      
     );
   }
 

@@ -40,7 +40,7 @@ function Login() {
     <>
       <Toaster />
       <div className="flex items-center justify-center">
-        <div className="mt-50 py-16 px-12 w-[52rem] h-[55rem] rounded-4xl border-1 border-solid border-neutral-400">
+        <div className="mt-50 py-16 px-12 w-[52rem] h-[55rem] rounded-4xl border-2 border-solid border-indigo-500">
           <h2 className="text-6xl mb-6 ">Login</h2>
           <p className="text-neutral-400 mb-10">
             Enter your email below to login to your account
