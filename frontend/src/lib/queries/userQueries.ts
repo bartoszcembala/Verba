@@ -27,7 +27,7 @@ export function useLogin() {
           headers: { "Content-Type": "application/json" },
           credentials: "include",
           body: JSON.stringify(userInformations),
-        }
+        },
       );
 
       const responseReady = await res.json();
@@ -37,6 +37,7 @@ export function useLogin() {
 
   return {
     login: mutation.mutateAsync,
+    isLogging: mutation.isPending,
   };
 }
 
@@ -49,7 +50,7 @@ export function useLogout() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
-        }
+        },
       );
     },
   });
@@ -84,7 +85,7 @@ export function useUser(userId: string) {
         {
           method: "GET",
           credentials: "include",
-        }
+        },
       );
       const json = await res.json();
       return json.data as User;
@@ -104,7 +105,7 @@ export function useActivity() {
           headers: { "Content-Type": "application/json" },
           credentials: "include",
           body: JSON.stringify({ latestActivity: activities }),
-        }
+        },
       );
 
       const json = await res.json();
@@ -129,7 +130,7 @@ export function useEditUser() {
         data,
         {
           withCredentials: true,
-        }
+        },
       );
 
       return res.data;

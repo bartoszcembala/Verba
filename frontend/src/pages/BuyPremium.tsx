@@ -32,7 +32,7 @@ function BuyPremium() {
         {" "}
         {user?.premium && (
           <div className="absolute top-[60%] -right-[14%] w-[50rem] rotate-15 bg-indigo-500 text-white text-4xl font-bold text-center py-3 shadow-lg text-shadow-lg z-10">
-            SUBSKRYPCJA AKTYWNA
+            ACTIVE SUBSCRIPTION
           </div>
         )}
         <div className="text-center py-8 bg-indigo-500 rounded-t-xl text-white">

@@ -30,7 +30,7 @@ function Sidebar({ setCorrect, className = "" }) {
 
   return (
     <div
-      className={` border-indigo-700 border-1 ml-4 px-12 overflow-y-auto max-h-[90vh] relative dark:bg-neutral-800 shadow-[0_0_20px_rgba(44,44,44,0.9)]  rounded-3xl bg-white  ${className}`}
+      className={` border-indigo-700 border-1 ml-4 px-12 pb-4 overflow-y-auto max-h-[90vh] relative dark:bg-neutral-800 shadow-[0_0_20px_rgba(44,44,44,0.9)]  rounded-3xl bg-white  ${className}`}
       style={{
         scrollbarWidth: "none",
         msOverflowStyle: "none",

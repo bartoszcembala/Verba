@@ -19,28 +19,31 @@ function Login() {
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<LoginFormInputs> = (data) => {
-    login(data, {
-      onSuccess(user) {
+    toast.promise(login(data), {
+      loading: "Logging in...",
+      success: "Logged in successfully!",
+      error: "Logging went wrong!",
+    });
+
+    login(data)
+      .then((user) => {
         localStorage.setItem("user", JSON.stringify(user));
         setMode("user");
         setAuthorized(true);
         navigate("/");
         reset();
         setId(user._id);
-        toast.success("Logged in successfully!");
-      },
-      onError() {
-        toast.error("Logging went wrong!");
+      })
+      .catch(() => {
         reset();
-      },
-    });
+      });
   };
 
   return (
     <>
       <Toaster />
       <div className="flex items-center justify-center">
-        <div className="mt-50 py-16 px-12 w-[52rem] h-[55rem] rounded-4xl border-2 border-solid border-indigo-500">
+        <div className="mt-50 py-16 px-12 w-[52rem] h-[60rem] rounded-4xl border-2 border-solid border-indigo-500">
           <h2 className="text-6xl mb-6 ">Login</h2>
           <p className="text-neutral-400 mb-10">
             Enter your email below to login to your account
@@ -69,6 +72,31 @@ function Login() {
               Sign up
             </Link>
           </p>
+          <button
+            className="mt-30 py-2 border-2 border-indigo-500 dark:text-neutral-100 dark:bg-neutral-800/70 w-full cursor-pointer rounded-xl dark:hover:bg-neutral-800 hover:scale-101 hover:bg-neutral-300 transition"
+            onClick={() => {
+              toast.promise(login({ email: "z@o2.pl", password: "12345678" }), {
+                loading: "Logging in...",
+                success: "Logged in successfully!",
+                error: "Logging went wrong!",
+              });
+
+              login({ email: "z@o2.pl", password: "12345678" })
+                .then((user) => {
+                  localStorage.setItem("user", JSON.stringify(user));
+                  setMode("user");
+                  setAuthorized(true);
+                  navigate("/");
+                  reset();
+                  setId(user._id);
+                })
+                .catch(() => {
+                  reset();
+                });
+            }}
+          >
+            Log in into demo account
+          </button>
         </div>
       </div>
     </>

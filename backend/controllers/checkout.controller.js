@@ -22,7 +22,7 @@ export async function getCheckoutSession(req, res) {
               name: "Premium Membership",
               description: "Premium membership",
             },
-            unit_amount: 1000, // 10 USD = 1000 cents
+            unit_amount: 1999, // 10 USD = 1000 cents
           },
           quantity: 1,
         },
