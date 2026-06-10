@@ -102,7 +102,7 @@ function Exercises() {
           </div>
         </div>
         {searchTerm.length === 0 ? (
-          ["verbs", "nouns", "hobbit", "dom", "jedzenie", "rodzina"].map(
+          ["verbs", "nouns",  "dom", "jedzenie", "rodzina"].map(
             (category) => (
               <div
                 key={category}

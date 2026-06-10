@@ -17,6 +17,7 @@ import { useNavigate } from "react-router";
 import { FaRegClipboard } from "react-icons/fa6";
 import { LuBook } from "react-icons/lu";
 import { LuCrown } from "react-icons/lu";
+import { FaGithub } from "react-icons/fa";
 
 type User = {
   _id: string;
@@ -289,7 +290,17 @@ function Layout() {
       )}
       <Outlet />
       <div className="font-bold fixed bottom-0 left-0 right-0 border-t-2 border-neutral-600 dark:border-neutral-700  text-neutral-800 dark:text-neutral-300 bg-neutral-300 dark:bg-neutral-800 text-center text-3xl py-3 tracking-wide">
-         App is still in development - some bugs may occur. <span className=" text-indigo-400">v0.1.5-alpha</span>
+        App is still in development - some bugs may occur.{" "}
+        <span className=" text-indigo-400 w-[70%]">v0.1.6-alpha</span>
+        <a
+          href="https://github.com/bartoszcembala/Verba"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-indigo-400 h-0 hover:underline fixed right-[8rem] flex items-center gap-2 justify-center -translate-y-4"
+        >
+          <FaGithub className="w-9 h-9" />
+          github
+        </a>
       </div>
     </>
   );
