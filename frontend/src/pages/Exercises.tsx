@@ -154,9 +154,9 @@ function Exercises() {
                     <p className="text-3xl md:text-3xl">{mod.displayName}</p>
                     <p
                       className={`ml-0 sm:ml-2 text-xl sm:text-2xl px-4 rounded-lg ${
-                        mod.level.startsWith("A") && "bg-green-600/85"
-                      } ${mod.level.startsWith("B") && "bg-yellow-500/85"} ${
-                        mod.level.startsWith("C") && "bg-red-500/85"
+                        mod.level.startsWith("A") && "bg-green-700"
+                      } ${mod.level.startsWith("B") && "bg-yellow-600"} ${
+                        mod.level.startsWith("C") && "bg-red-600"
                       }`}
                     >
                       {mod.level}

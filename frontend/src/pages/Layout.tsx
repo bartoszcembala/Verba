@@ -288,10 +288,12 @@ function Layout() {
           )}
         </nav>
       )}
-      <Outlet />
+      <div className="pb-40">
+        <Outlet />
+      </div>
       <div className="font-bold fixed bottom-0 left-0 right-0 border-t-2 border-neutral-600 dark:border-neutral-700  text-neutral-800 dark:text-neutral-300 bg-neutral-300 dark:bg-neutral-800 text-center text-3xl py-3 tracking-wide">
         App is still in development - some bugs may occur.{" "}
-        <span className=" text-indigo-400 w-[70%]">v0.1.6-alpha</span>
+        <span className=" text-indigo-400 w-[70%]">v0.2.0-alpha</span>
         <a
           href="https://github.com/bartoszcembala/Verba"
           target="_blank"

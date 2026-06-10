@@ -28,34 +28,42 @@ function Lessons() {
       </div>
     );
   }
-
+  console.log(grouped);
   return (
     <div className="flex items-center justify-center ">
       <div className="w-[95%] lg:w-[110rem]">
         <div className="bg-gradient-to-b from-indigo-500/30  dark:to-[#171717] to-neutral-200 px-5 py-6 rounded-2xl mb-20">
           <span className="mr-8">Sort By:</span>
           <span
-            className={`cursor-pointer px-2 py-1 rounded-2xl ${
-              filter === "type" && "bg-indigo-300 text-neutral-800"
-            } my-8 mr-5`}
-            onClick={() => setFilter("type")}
-          >
-            Type
-          </span>
-          <span
             className={`cursor-pointer px-2 py-1 rounded-2xl  ${
               filter === "level" && "bg-indigo-300 text-neutral-800"
-            } my-8`}
+            } my-8 mr-5`}
             onClick={() => setFilter("level")}
           >
             Level
+          </span>
+          <span
+            className={`cursor-pointer px-2 py-1 rounded-2xl ${
+              filter === "type" && "bg-indigo-300 text-neutral-800"
+            } my-8 `}
+            onClick={() => setFilter("type")}
+          >
+            Type
           </span>
         </div>
 
         {lessons &&
           Object.entries(grouped).map(([key, les]) => (
             <>
-              <div className=" text-5xl my-8 pl-10 uppercase">{key}</div>
+              <div className=" text-5xl my-8 pl-10 capitalize">
+                {key === "A" && filter === "level"
+                  ? "Level A: Beginner"
+                  : key === "B"
+                    ? "Level B: Intermediate"
+                    : key === "C"
+                      ? "Level C: Advanced"
+                      : key}
+              </div>
               <div className="lg:grid lg:grid-cols-2  gap-4 lg:gap-10 pb-10">
                 {les.map((lesson, i) => (
                   <Link
@@ -69,7 +77,9 @@ function Lessons() {
                     <div className="w-full">
                       <p className="text-4xl pb-1">
                         {lesson.displayTitle}{" "}
-                        <span className="ml-2 bg-green-700 inline-block px-4  text-2xl rounded-lg">
+                        <span
+                          className={`ml-2 ${key === "A" && filter === "level" ? "bg-green-700" : key === "B" && filter === "level" ? "bg-yellow-600" : key === "C" && filter === "level" ? "bg-red-600" : ""} ${lesson.level === "A" ? "bg-green-700" : lesson.level === "B" ? "bg-yellow-600" : lesson.level === "C" ? "bg-red-600" : ""} inline-block px-4  text-2xl rounded-lg`}
+                        >
                           {lesson.level}
                         </span>
                       </p>
