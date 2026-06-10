@@ -15,7 +15,7 @@ import {
   useIncrementDailyQuest,
 } from "../../lib/queries/dailyQuestsQueries";
 import { FiCheckSquare } from "react-icons/fi";
-import { useEditUser, useUser } from "../../lib/queries/userQueries";
+import { useEditUser } from "../../lib/queries/userQueries";
 
 function Main({ setCorrect }) {
   const { selectedVerbs, setSelectedVerbs, verbs, progress, module, user } =
@@ -39,8 +39,6 @@ function Main({ setCorrect }) {
   const [writing, setWriting] = useState(true);
   const { incrementDailyQuest } = useIncrementDailyQuest();
 
-
-
   function getExercise(type) {
     if (type === "translate") {
       getExerciseTranslate(
@@ -48,7 +46,7 @@ function Main({ setCorrect }) {
         setIsCorrect,
         setExercise,
         verbs,
-        selectedVerbs
+        selectedVerbs,
       );
     }
 
@@ -74,7 +72,7 @@ function Main({ setCorrect }) {
       queryClient,
       dailyQuests,
       editDailyQuests,
-      incrementDailyQuest
+      incrementDailyQuest,
     );
   }
 
@@ -108,13 +106,13 @@ function Main({ setCorrect }) {
                     setIsCorrect,
                     setExercise,
                     verbs,
-                    selectedVerbs
+                    selectedVerbs,
                   )
                 : getExerciseFill(
                     setInputValue,
                     setIsCorrect,
                     setExercise,
-                    selectedVerbs
+                    selectedVerbs,
                   )
             }
           >
@@ -195,7 +193,12 @@ function Main({ setCorrect }) {
               </div>
             )}
 
-            <Letters inputRef={inputRef} setInputValue={setInputValue} />
+            <Letters
+              inputValue={inputValue}
+              exercise={exercise}
+              inputRef={inputRef}
+              setInputValue={setInputValue}
+            />
 
             {/* Skip button */}
             <div className="buttons">
