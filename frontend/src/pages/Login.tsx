@@ -81,7 +81,7 @@ function Login() {
                 error: "Logging went wrong!",
               });
 
-              login({ email: "z@o2.pl", password: "12345678" })
+              login({ email: "acc@demo.pl", password: "12345678" })
                 .then((user) => {
                   localStorage.setItem("user", JSON.stringify(user));
                   setMode("user");

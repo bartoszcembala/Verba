@@ -55,7 +55,7 @@ function Lessons() {
         {lessons &&
           Object.entries(grouped).map(([key, les]) => (
             <>
-              <div className=" text-5xl my-8 pl-10 capitalize">
+              <div className=" text-5xl my-8 pt-8 pl-10 capitalize border-t-1 dark:border-indigo-500 border-indigo-400">
                 {key === "A" && filter === "level"
                   ? "Level A: Beginner"
                   : key === "B"
@@ -64,7 +64,7 @@ function Lessons() {
                       ? "Level C: Advanced"
                       : key}
               </div>
-              <div className="lg:grid lg:grid-cols-2  gap-4 lg:gap-10 pb-10">
+              <div className="lg:grid lg:grid-cols-2  gap-4 lg:gap-10 pb-5">
                 {les.map((lesson, i) => (
                   <Link
                     key={lesson._id}
