@@ -21,10 +21,10 @@ function Sidebar({ setCorrect, className = "" }) {
   function addVerb(verb) {
     if (selectedVerbs.includes(verb)) {
       setSelectedVerbs((prevVerbs) => prevVerbs.filter((v) => v !== verb));
-      toast.success("Czasownik usunięty.");
+      toast.success("Word removed.");
     } else {
       setSelectedVerbs((prevVerbs) => [...prevVerbs, verb]);
-      toast.success("Czasownik dodany.");
+      toast.success("Word added.");
     }
   }
 

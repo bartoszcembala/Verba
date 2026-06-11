@@ -88,7 +88,7 @@ export async function handleAnswer(
     }
 
     setSelectedVerbs((prev) => prev.filter((v) => v[0] !== answer));
-    toast.success("Brawo! Poprawna odpowiedź!");
+    toast.success("Correct!");
     setIsCorrect("correct");
     editUser({
       id: user._id,
@@ -128,6 +128,6 @@ export async function handleAnswer(
         },
       },
     );
-    toast.error("Źle");
+    toast.error("Wrong!");
   }
 }

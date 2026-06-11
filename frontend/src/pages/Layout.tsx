@@ -14,7 +14,7 @@ import { FaRegMoon } from "react-icons/fa";
 import { FiSun } from "react-icons/fi";
 import { IoArrowUpCircleOutline } from "react-icons/io5";
 import { useNavigate } from "react-router";
-import { FaRegClipboard } from "react-icons/fa6";
+import { IoClipboardOutline } from "react-icons/io5";
 import { LuBook } from "react-icons/lu";
 import { LuCrown } from "react-icons/lu";
 import { FaGithub } from "react-icons/fa";
@@ -142,6 +142,13 @@ function Layout() {
                 <GoPencil className="w-10 h-10 scale-100 group-hover:scale-110 transition" />
                 <p className="translate-y-0.5">Exercises</p>
               </Link>
+              <Link
+                to="/leaderboard"
+                className="group relative dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
+              >
+                <IoClipboardOutline className="w-10 h-10 scale-100 group-hover:scale-110 transition" />
+                <p className="translate-y-0.5">Leaderboard</p>
+              </Link>
               <div className="relative group inline-block ">
                 {/* Główny przycisk */}
                 <button className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4 cursor-pointer">
@@ -151,13 +158,6 @@ function Layout() {
 
                 {/* Menu rozwijane */}
                 <div className="absolute -left-8 mt-2 w-80 dark:bg-neutral-700 bg-white rounded-md shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition duration-300 z-50 -translate-y-4 py-4">
-                  <Link
-                    to="/leaderboard"
-                    className="dark:hover:bg-neutral-600 hover:bg-neutral-200/70 cursor-pointer  transition-colors justify-center items-center flex py-3 gap-4 px-3"
-                  >
-                    <FaRegClipboard className=" w-10 h-10" />
-                    <p>Leaderboard</p>
-                  </Link>
                   <Link
                     to="/xp-guide"
                     className="dark:hover:bg-neutral-600 hover:bg-neutral-200/70 cursor-pointer  transition-colors justify-center items-center flex py-3 gap-4 px-3"
@@ -293,7 +293,7 @@ function Layout() {
       </div>
       <div className="font-bold fixed bottom-0 left-0 right-0 border-t-2 border-neutral-600 dark:border-neutral-700  text-neutral-800 dark:text-neutral-300 bg-neutral-300 dark:bg-neutral-800 text-center text-3xl py-3 tracking-wide">
         App is still in development - some bugs may occur.{" "}
-        <span className=" text-indigo-400 w-[70%]">v0.2.2-alpha</span>
+        <span className=" text-indigo-400 w-[70%]">v0.2.3-alpha</span>
         <a
           href="https://github.com/bartoszcembala/Verba"
           target="_blank"
