@@ -4,7 +4,7 @@
 
 [Live Demo](https://verba-ebon.vercel.app) • [Report Bug](...)
 
-![screenshot](./image.png)
+![screenshot](.//assets/image.png)
 
 ## Features
 

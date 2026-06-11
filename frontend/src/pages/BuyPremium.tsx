@@ -13,7 +13,7 @@ function BuyPremium() {
         `https://verba-ywgu.onrender.com/api/checkout/${user._id}`,
         {
           withCredentials: true,
-        }
+        },
       );
       window.location.href = session.data.session.url;
     } catch (error) {
@@ -43,7 +43,9 @@ function BuyPremium() {
           <h3 className="text-7xl">$19.99</h3>
         </div>
         <div className="h-[36rem]">
-          <p className="text-center py-16">✔ You will get absolutely nothing</p>
+          <p className="text-center pt-16">✔ Extended Vocabulary</p>
+          {/* <p className="text-center ">✔ Ad-Free Experience</p>
+          <p className="text-center ">✔ Priority Support</p> */}
         </div>
         <button
           onClick={checkout}
