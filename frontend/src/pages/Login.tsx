@@ -75,11 +75,14 @@ function Login() {
           <button
             className="mt-30 py-2 border-2 border-indigo-500 dark:text-neutral-100 dark:bg-neutral-800/70 w-full cursor-pointer rounded-xl dark:hover:bg-neutral-800 hover:scale-101 hover:bg-neutral-300 transition"
             onClick={() => {
-              toast.promise(login({ email: "z@o2.pl", password: "12345678" }), {
-                loading: "Logging in...",
-                success: "Logged in successfully!",
-                error: "Logging went wrong!",
-              });
+              toast.promise(
+                login({ email: "acc@demo.pl", password: "12345678" }),
+                {
+                  loading: "Logging in...",
+                  success: "Logged in successfully!",
+                  error: "Logging went wrong!",
+                },
+              );
 
               login({ email: "acc@demo.pl", password: "12345678" })
                 .then((user) => {

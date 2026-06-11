@@ -16,7 +16,7 @@ function Exercises() {
   const user: User | null = storedUser ? JSON.parse(storedUser) : null;
   const [searchTerm, setSearchTerm] = useState<string>("");
   const filteredModules = modules?.filter((mod) =>
-    mod.title.toLowerCase().includes(searchTerm.toLowerCase())
+    mod.title.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const list = (
@@ -27,7 +27,7 @@ function Exercises() {
           if (mod.title.includes(show)) {
             const wordsNumber =
               progress.find(
-                (m) => m.moduleName === mod.title && m.userName === user?.email
+                (m) => m.moduleName === mod.title && m.userName === user?.email,
               )?.learned.length || 0;
 
             return (
@@ -102,35 +102,55 @@ function Exercises() {
           </div>
         </div>
         {searchTerm.length === 0 ? (
-          ["verbs", "nouns",  "dom", "jedzenie", "rodzina"].map(
-            (category) => (
+          ["verbs", "nouns", "dom", "jedzenie", "rodzina"].map((category) => (
+            <div
+              key={category}
+              className={`w-full cursor-pointer dark:border-none bg-white border border-neutral-300 dark:bg-neutral-700/70 rounded-2xl py-6 px-5 ${
+                (category === "dom" ||
+                  category === "jedzenie" ||
+                  category === "rodzina") &&
+                user?.premium === false
+                  ? "opacity-60 pointer-events-none cursor-not-allowed"
+                  : ""
+              }`}
+            >
               <div
-                key={category}
-                className="w-full cursor-pointer dark:border-none bg-white border border-neutral-300 dark:bg-neutral-700/70 rounded-2xl py-6 px-5"
+                className="flex justify-between items-center"
+                onClick={() =>
+                  setShow(show === category ? "undefined" : category)
+                }
               >
-                <div
-                  className="flex justify-between items-center"
-                  onClick={() =>
-                    setShow(show === category ? "undefined" : category)
-                  }
-                >
-                  <p className="text-4xl capitalize">{category}</p>
-
-                  <div className="flex justify-center items-center">
-                    <span className="mr-10 tracking-wide text-3xl text-neutral-400">
-                      {exercisesCount(category)} exercises
-                    </span>
-                    {show === category ? (
-                      <FaChevronUp className="text-indigo-500 w-10 h-10" />
-                    ) : (
-                      <FaChevronDown className="text-indigo-500 w-10 h-10" />
-                    )}
-                  </div>
+                <p className="text-4xl capitalize">
+                  {category}
+                  <span className="ml-2 text-red-400">
+                    {category === "dom" ||
+                    category === "jedzenie" ||
+                    category === "rodzina"
+                      ? "  🇵🇱"
+                      : ""}
+                  </span>
+                </p>
+                <span className="text-3xl capitalize text-indigo-300">
+                  {category === "dom" ||
+                  category === "jedzenie" ||
+                  category === "rodzina"
+                    ? "premium content"
+                    : ""}
+                </span>
+                <div className="flex justify-center items-center">
+                  <span className="mr-10 tracking-wide text-3xl text-neutral-400">
+                    {exercisesCount(category)} exercises
+                  </span>
+                  {show === category ? (
+                    <FaChevronUp className="text-indigo-500 w-10 h-10" />
+                  ) : (
+                    <FaChevronDown className="text-indigo-500 w-10 h-10" />
+                  )}
                 </div>
-                {show === category && list}
               </div>
-            )
-          )
+              {show === category && list}
+            </div>
+          ))
         ) : (
           <div className="w-full cursor-pointer rounded-2xl px-5">
             {" "}
@@ -138,7 +158,7 @@ function Exercises() {
               const wordsNumber =
                 progress?.find(
                   (m) =>
-                    m.moduleName === mod.title && m.userName === user?.email
+                    m.moduleName === mod.title && m.userName === user?.email,
                 )?.learned.length || 0;
 
               return (
