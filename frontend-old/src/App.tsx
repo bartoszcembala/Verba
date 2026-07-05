@@ -16,13 +16,7 @@ interface User {
   streak: string[];
 }
 
-function App() {
-  const [user, setUser] = useState<User | null>(null);
-  const [authorized, setAuthorized] = useState<boolean>(false);
-  const [mode, setMode] = useState<"guest" | "user">("guest");
-  const [id, setId] = useState<string | null>(null);
-
-  const queryClient = new QueryClient({
+const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
         staleTime: 60 * 1000, // 1 minute
@@ -30,6 +24,14 @@ function App() {
       },
     },
   });
+
+function App() {
+  const [user, setUser] = useState<User | null>(null);
+  const [authorized, setAuthorized] = useState<boolean>(false);
+  const [mode, setMode] = useState<"guest" | "user">("guest");
+  const [id, setId] = useState<string | null>(null);
+
+  
 
   // Check authentication status on mount
   useEffect(() => {
