@@ -1,0 +1,57 @@
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: verba-db
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: verba
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+
+  # backend:
+  #   build:
+  #     context: ./backend
+
+  #   container_name: todo-backend
+
+  #   ports:
+  #     - "3000:3000"
+
+  #   depends_on:
+  #     - postgres
+
+  #   environment:
+  #     DATABASE_URL: postgresql://postgres:postgres@postgres:5432/todo
+
+  #   volumes:
+  #     - ./backend:/app
+  #     - /app/node_modules
+
+
+  # frontend:
+  #   build:
+  #     context: ./frontend
+
+  #   container_name: todo-frontend
+
+  #   ports:
+  #     - "5173:5173"
+
+  #   depends_on:
+  #     - backend
+
+  #   volumes:
+  #     - ./frontend:/app
+  #     - /app/node_modules
+
+
+volumes:
+  postgres_data:
