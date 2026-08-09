@@ -24,3 +24,23 @@
 **Auth:** JWT + HTTP-only cookies
 
 **Payments:** Stripe
+
+## Local setup
+
+Make sure Node.js 20+, npm, Docker, and OpenSSL are installed, then run:
+
+```bash
+./setup.sh
+```
+
+The setup script creates missing environment files, installs frontend and backend dependencies, starts PostgreSQL, applies Drizzle migrations, and verifies both builds. Existing `.env` files and database data are preserved.
+
+After setup, start the applications in separate terminals:
+
+```bash
+cd backend && npm run start:dev
+```
+
+```bash
+cd frontend && npm run dev
+```

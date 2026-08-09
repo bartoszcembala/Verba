@@ -23,13 +23,13 @@ Existing frontend endpoints and response shapes remain compatible, including Mon
 
 ## Local setup
 
+From the repository root, run the complete setup:
+
 ```bash
-cp .env.example .env
-docker compose up -d postgres
-npm install
-npm run db:push
-npm run start:dev
+./setup.sh
 ```
+
+Then start the API with `npm run start:dev` from this directory.
 
 The API listens on `http://localhost:5001/api` by default. Port `5001` avoids the macOS AirPlay receiver that commonly occupies port `5000`.
 
