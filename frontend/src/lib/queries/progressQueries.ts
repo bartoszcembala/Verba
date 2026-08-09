@@ -1,24 +1,17 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { apiUrl } from "../api";
-
-interface Progress {
-  _id: string;
-  userName: string;
-  moduleName: string;
-  learned: string[][];
-  __v: number;
-}
+import type { Progress, WordPair } from "../../types";
 
 interface NewProgressInput {
   moduleName: string;
   userName: string;
-  learned: string[][];
+  learned: WordPair[];
 }
 
 interface LearnedWordInput {
   id: string;
-  word: { learned: string[][] };
+  word: { learned: WordPair[] };
 }
 
 interface EditProgressInput {

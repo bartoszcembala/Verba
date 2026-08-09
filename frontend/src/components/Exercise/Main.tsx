@@ -1,45 +1,42 @@
-/* eslint-disable react/prop-types */
 import { useQueryClient } from "@tanstack/react-query";
-import { useContext, useRef, useState } from "react";
+import { useContext, useRef, useState, type KeyboardEvent } from "react";
 import { useAddLearnedWord } from "../../lib/queries/progressQueries";
 import { handleAnswer as handleAnswerImported } from "../../lib/exerciseFns/handleAnswer";
 import {
   getExerciseFill,
   getExerciseTranslate,
-} from "../../lib/exerciseFns/exericsesFn";
+} from "../../lib/exerciseFns/exercisesFn";
 import { ExerciseContext } from "../../lib/contexts";
 import Letters from "./Letters";
 import {
-  useEditDailyQuests,
-  useGetDailyQuests,
   useIncrementDailyQuest,
 } from "../../lib/queries/dailyQuestsQueries";
 import { FiCheckSquare } from "react-icons/fi";
 import { useEditUser } from "../../lib/queries/userQueries";
+import type { AnswerStatus, ExercisePrompt } from "./types";
 
-function Main({ setCorrect }) {
+type ExerciseType = "translate" | "fillblank";
+
+function Main() {
   const { selectedVerbs, setSelectedVerbs, verbs, progress, module, user } =
-    useContext(ExerciseContext);
+    useContext(ExerciseContext)!;
   const { editUser } = useEditUser();
-  const { dailyQuests } = useGetDailyQuests();
-  const { editDailyQuests } = useEditDailyQuests();
   const { addLearnedWord } = useAddLearnedWord();
   const queryClient = useQueryClient();
-  const [exercise, setExercise] = useState({
+  const [exercise, setExercise] = useState<ExercisePrompt>({
     question: "",
     translation: "Tłumaczenie pytania",
     correctAnswer: "",
     options: ["opcja1", "opcja2", "opcja3", "opcja4"],
   });
   const [inputValue, setInputValue] = useState("");
-  const [isCorrect, setIsCorrect] = useState("");
-  const inputRef = useRef(null);
-  const [exerciseType, setExerciseType] = useState("translate");
-  const [showTranslation, setShowTranslation] = useState(false);
+  const [isCorrect, setIsCorrect] = useState<AnswerStatus>("");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [exerciseType, setExerciseType] = useState<ExerciseType>("translate");
   const [writing, setWriting] = useState(true);
   const { incrementDailyQuest } = useIncrementDailyQuest();
 
-  function getExercise(type) {
+  function getExercise(type: ExerciseType) {
     if (type === "translate") {
       getExerciseTranslate(
         setInputValue,
@@ -50,12 +47,12 @@ function Main({ setCorrect }) {
       );
     }
 
-    if (type === "fill") {
+    if (type === "fillblank") {
       getExerciseFill(setInputValue, setIsCorrect, setExercise, selectedVerbs);
     }
   }
 
-  function handleAnswer(input) {
+  function handleAnswer(input: string) {
     handleAnswerImported(
       editUser,
       input,
@@ -67,16 +64,13 @@ function Main({ setCorrect }) {
       user,
       exercise,
       setIsCorrect,
-      setCorrect,
       setSelectedVerbs,
       queryClient,
-      dailyQuests,
-      editDailyQuests,
       incrementDailyQuest,
     );
   }
 
-  function handleKeyDown(e) {
+  function handleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
       e.preventDefault();
       if (isCorrect === "" || isCorrect === "wrong") {
@@ -140,7 +134,6 @@ function Main({ setCorrect }) {
               <h2 className="text-[3.4rem] font-semibold tracking-tight sm:text-[4rem]">
               {exercise.question}{" "}
               </h2>
-              {showTranslation && <p className="mt-2 text-[1.3rem] text-neutral-500">{exercise.correctAnswer}</p>}
             </div>
 
             {isCorrect && <div className={`mb-4 flex w-full items-center gap-3 rounded-lg px-4 py-3 text-[1.3rem] font-medium ${isCorrect === "correct" ? "bg-emerald-50 text-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-300" : "bg-red-50 text-red-800 dark:bg-red-950/30 dark:text-red-300"}`}><span className={`h-3 w-3 rounded-full ${isCorrect === "correct" ? "bg-emerald-500" : "bg-red-500"}`} />{isCorrect === "correct" ? "Correct — nice work." : "Not quite. Check your answer and try again."}</div>}

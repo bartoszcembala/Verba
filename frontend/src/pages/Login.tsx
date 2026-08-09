@@ -2,7 +2,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { SettingsContext } from "../lib/contexts";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router";
 import { useLogin } from "../lib/queries/userQueries";
 

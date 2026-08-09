@@ -4,7 +4,6 @@ import {
   useGetDailyQuests,
   useIncrementDailyQuest,
 } from "../lib/queries/dailyQuestsQueries";
-import axios from "axios";
 
 export const useDailyStudyTimer = (): number => {
   const { incrementDailyQuest } = useIncrementDailyQuest();
@@ -59,7 +58,7 @@ export const useDailyStudyTimer = (): number => {
         data: {
           timeSpentLearning: [
             ...(user.timeSpentLearning.filter(
-              ({ date, value }: { date: string; value: number }) =>
+              ({ date }: { date: string; value: number }) =>
                 date !== today,
             ) || []),
             timeSpentLearningObj,
@@ -78,7 +77,7 @@ export const useDailyStudyTimer = (): number => {
           ...user,
           timeSpentLearning: [
             ...(user.timeSpentLearning.filter(
-              ({ date, value }: { date: string; value: number }) =>
+              ({ date }: { date: string; value: number }) =>
                 date !== today,
             ) || []),
             timeSpentLearningObj,
@@ -91,7 +90,7 @@ export const useDailyStudyTimer = (): number => {
       if (intervalRef.current) clearInterval(intervalRef.current);
       if (updateRef.current) clearInterval(updateRef.current);
     };
-  }, [editUser, dailyQuests]);
+  }, [editUser, dailyQuests, incrementDailyQuest]);
 
   return secondsToday;
 };

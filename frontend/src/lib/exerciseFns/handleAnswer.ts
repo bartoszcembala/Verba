@@ -1,61 +1,42 @@
 import toast from "react-hot-toast";
-import { QueryClient } from "@tanstack/react-query";
-import { DailyQuestsInterface } from "../../types";
-import axios from "axios";
-import { useEditUser } from "../queries/userQueries";
-
-//////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////
-//MIGRACJA NA TS NIE SPRAWDZONA: DO SPRAWDZENIA
-
-type Exercise = {
-  correctAnswer: string;
-  translation: string;
-  question: string;
-};
-
-type ProgressItem = {
-  moduleName: string;
-  userName: string;
-  _id: string;
-  learned: string[][];
-};
+import type { QueryClient } from "@tanstack/react-query";
+import type { Dispatch, SetStateAction } from "react";
+import type { DailyQuestsInterface, Progress, User, WordPair } from "../../types";
+import type { AnswerStatus, ExercisePrompt } from "../../components/Exercise/types";
 
 type LearnedWordPayload = {
   id: string;
   word: {
-    learned: string[][];
+    learned: WordPair[];
   };
 };
 
 type AddLearnedWordFunction = (
   payload: LearnedWordPayload,
   options: { onSuccess: () => void },
-) => void;
+) => Promise<Progress>;
 
-type SetState<T> = (value: T | ((prev: T) => T)) => void;
+type EditUserFunction = (input: { id: string; data: Partial<User> }) => Promise<User>;
 
 export async function handleAnswer(
-  editUser,
+  editUser: EditUserFunction,
   answer: string,
   addLearnedWord: AddLearnedWordFunction,
-  setExercise,
-  selectedVerbs,
-  progress: ProgressItem[],
+  setExercise: Dispatch<SetStateAction<ExercisePrompt>>,
+  selectedVerbs: WordPair[],
+  progress: Progress[] | undefined,
   module: string,
-  user,
-  exercise: Exercise,
-  setIsCorrect: SetState<"correct" | "wrong" | "">,
-  setCorrect: SetState<[{ value: string[] }, { value: [string, string][] }]>,
-  setSelectedVerbs: SetState<[string, string][]>,
+  user: User | null,
+  exercise: ExercisePrompt,
+  setIsCorrect: Dispatch<SetStateAction<AnswerStatus>>,
+  setSelectedVerbs: Dispatch<SetStateAction<WordPair[]>>,
   queryClient: QueryClient,
-  dailyQuests: DailyQuestsInterface[],
-  editDailyQuests: any,
   incrementDailyQuest: (payload: {
     index: number;
     userId: string;
-  }) => Promise<any>,
+  }) => Promise<DailyQuestsInterface>,
 ) {
+  if (!user || !progress) return;
 
   const activeProgress = progress.find(
     (p) => p.moduleName === module && p.userName === user.email,

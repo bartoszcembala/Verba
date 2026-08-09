@@ -1,28 +1,22 @@
-/* eslint-disable react/prop-types */
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Login from "../pages/Login.js";
-import Signup from "../pages/Signup.js";
-import Account from "../pages/Account.jsx";
-import Exercise from "../pages/Exercise.js";
-import Home from "../pages/Home.js";
-import Layout from "../pages/Layout.js";
-import DATA from "../data/verbs.js";
-import Dashboard from "../pages/Dashboard.js";
-import AddModule from "../pages/AddModule.jsx";
-import { useContext } from "react";
-import { SettingsContext } from "../lib/contexts.js";
-import Exercises from "../pages/Exercises.js";
-import Lessons from "../pages/Lessons.js";
-import Lesson from "../pages/Lesson.js";
-
-import { useLessons } from "../lib/queries/lessonsQueries.js";
-import { useModules } from "../lib/queries/modulesQueries.js";
-import { useProgress } from "../lib/queries/progressQueries.js";
-import BuyPremium from "../pages/BuyPremium.js";
-import NotFound from "../pages/NotFound.js";
-import User from "../pages/User.js";
-import Leaderboard from "../pages/Leaderboard.js";
-import XpGuide from "../pages/XpGuide.js";
+import Login from "../pages/Login";
+import Signup from "../pages/Signup";
+import Account from "../pages/Account";
+import Exercise from "../pages/Exercise";
+import Home from "../pages/Home";
+import Layout from "../pages/Layout";
+import Dashboard from "../pages/Dashboard";
+import Exercises from "../pages/Exercises";
+import Lessons from "../pages/Lessons";
+import Lesson from "../pages/Lesson";
+import { useLessons } from "../lib/queries/lessonsQueries";
+import { useModules } from "../lib/queries/modulesQueries";
+import { useProgress } from "../lib/queries/progressQueries";
+import BuyPremium from "../pages/BuyPremium";
+import NotFound from "../pages/NotFound";
+import User from "../pages/User";
+import Leaderboard from "../pages/Leaderboard";
+import XpGuide from "../pages/XpGuide";
 
 function AppRoutes() {
   const { progress } = useProgress();

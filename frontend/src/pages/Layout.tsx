@@ -1,5 +1,5 @@
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { SettingsContext } from "../lib/contexts";
@@ -43,7 +43,10 @@ function Layout() {
   }, [authorized, navigate]);
 
   const storedUser = localStorage.getItem("user");
-  const user: User | undefined = storedUser ? JSON.parse(storedUser) : undefined;
+  const user = useMemo<User | undefined>(
+    () => storedUser ? JSON.parse(storedUser) as User : undefined,
+    [storedUser],
+  );
   const [darkMode, setDarkMode] = useState(
     () => localStorage.getItem("theme") !== "light",
   );
@@ -86,7 +89,7 @@ function Layout() {
       editUser({ id: user._id, data: { streak: updatedStreak } });
       localStorage.setItem("user", JSON.stringify({ ...user, streak: updatedStreak }));
     }
-  }, [editUser, user?._id]);
+  }, [editUser, user]);
 
   async function handleLogout() {
     logout();

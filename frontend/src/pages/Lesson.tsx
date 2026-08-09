@@ -1,10 +1,9 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useMemo } from "react";
 import { useActivity, useEditUser } from "../lib/queries/userQueries";
 import { SettingsContext } from "../lib/contexts";
 import { Link, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
-import axios from "axios";
-import { LessonInterface } from "../types";
+import { LessonInterface, type User } from "../types";
 import { useIncrementDailyQuest } from "../lib/queries/dailyQuestsQueries";
 
 function Lesson({ lesson }: { lesson: LessonInterface }) {
@@ -13,11 +12,14 @@ function Lesson({ lesson }: { lesson: LessonInterface }) {
   const { editUser } = useEditUser();
 
   const { authorized } = useContext(SettingsContext)!;
-  const user = JSON.parse(localStorage.getItem("user")!);
+  const user = useMemo(
+    () => JSON.parse(localStorage.getItem("user")!) as User,
+    [],
+  );
   const lessonName = useLocation().pathname.slice(1);
   useEffect(() => {
     const arrWithout = user.latestActivity.filter(
-      (item: string) => item[0] !== lessonName,
+      (item) => item[0] !== lessonName,
     );
     const readyArr = [...arrWithout, [lessonName, lesson?.displayTitle]];
 
@@ -34,7 +36,7 @@ function Lesson({ lesson }: { lesson: LessonInterface }) {
       "user",
       JSON.stringify({ ...user, latestActivity: readyArr.reverse() }),
     );
-  }, []);
+  }, [addActivity, lesson.displayTitle, lessonName, user]);
 
   function handleFinishLesson() {
     if (user.finishedLessons.includes(lesson._id)) {

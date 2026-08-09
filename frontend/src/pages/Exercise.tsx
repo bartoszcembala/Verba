@@ -1,5 +1,5 @@
 import "../index.css";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { useLocation } from "react-router-dom";
 import { ExerciseContext, SettingsContext } from "../lib/contexts";
@@ -8,11 +8,12 @@ import { useActivity } from "../lib/queries/userQueries";
 import { useAddProgress, useProgress } from "../lib/queries/progressQueries";
 import Chart from "../components/Exercise/Chart";
 import Main from "../components/Exercise/Main";
-import { User } from "../types";
+import { User, type WordPair } from "../types";
 import { useQueryClient } from "@tanstack/react-query";
 import { useModules } from "../lib/queries/modulesQueries";
+import type { AnswerStat } from "../components/Exercise/types";
 
-function Exercise({ initVerbs }: { initVerbs: string[][] }) {
+function Exercise({ initVerbs }: { initVerbs: WordPair[] }) {
   const queryClient = useQueryClient();
 
   const { progress } = useProgress();
@@ -24,9 +25,10 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
   const module = useLocation().pathname.slice(1);
 
   const storedUser = localStorage.getItem("user");
-  const user: User | null = storedUser
-    ? (JSON.parse(storedUser) as User)
-    : null;
+  const user = useMemo<User | null>(
+    () => storedUser ? JSON.parse(storedUser) as User : null,
+    [storedUser],
+  );
 
   const { modules } = useModules();
   const moduleDisplayName = modules?.find(
@@ -37,18 +39,18 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
   );
   const verbs = [...initVerbs];
 
-  const [selectedVerbs, setSelectedVerbs] = useState<string[][]>([]);
+  const [selectedVerbs, setSelectedVerbs] = useState<WordPair[]>([]);
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
 
-  const [correct, setCorrect] = useState([
+  const [correct, setCorrect] = useState<AnswerStat[]>([
     {
       name: "correct",
-      value: activeProgress?.learned.length,
+      value: activeProgress?.learned.length ?? 0,
       color: "#34563c",
     },
     {
       name: "wrong",
-      value: initVerbs.length - activeProgress?.learned.length!,
+      value: initVerbs.length - (activeProgress?.learned.length ?? 0),
       color: "#563434",
     },
   ]);
@@ -58,7 +60,7 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
       const arrWithout = user.latestActivity.filter(
         (item) => item[0] !== module
       );
-      const readyArr = [...arrWithout, [module, moduleDisplayName]];
+      const readyArr = [...arrWithout, [module, moduleDisplayName ?? module]];
 
       while (readyArr.length > 3) {
         readyArr.shift();
@@ -73,7 +75,7 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
         JSON.stringify({ ...user, latestActivity: readyArr.reverse() })
       );
     }
-  }, []);
+  }, [addActivity, module, moduleDisplayName, user]);
 
   useEffect(() => {
     if (!progress) return;
@@ -101,12 +103,12 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
     setCorrect([
       {
         name: "correct",
-        value: activeProgress?.learned.length,
+        value: activeProgress?.learned.length ?? 0,
         color: "#34563c",
       },
       {
         name: "wrong",
-        value: initVerbs.length - activeProgress?.learned.length!,
+        value: initVerbs.length - (activeProgress?.learned.length ?? 0),
         color: "#563434",
       },
     ]);
@@ -147,7 +149,7 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
           </div>
 
           {/* Główna zawartość */}
-          <Main setCorrect={setCorrect} />
+          <Main />
 
           {/* Wykres */}
           <Chart correct={correct} activeProgress={activeProgress} />

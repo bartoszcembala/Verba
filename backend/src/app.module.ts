@@ -6,6 +6,7 @@ import { AuthModule } from "./auth/auth.module";
 import { CheckoutModule } from "./checkout/checkout.module";
 import { DailyQuestsModule } from "./daily-quests/daily-quests.module";
 import { HealthModule } from "./health/health.module";
+import { ExercisesModule } from "./exercises/exercises.module";
 import { LearningModulesModule } from "./learning-modules/learning-modules.module";
 import { LessonsModule } from "./lessons/lessons.module";
 import { ProgressModule } from "./progress/progress.module";
@@ -30,6 +31,7 @@ import { UsersModule } from "./users/users.module";
     DbModule,
     AuthModule,
     UsersModule,
+    ExercisesModule,
     LearningModulesModule,
     LessonsModule,
     ProgressModule,

@@ -1,13 +1,15 @@
 import toast from "react-hot-toast";
+import type { Dispatch, SetStateAction } from "react";
+import type { AnswerStatus, ExercisePrompt, WordPair } from "../../components/Exercise/types";
 import { fetchExercise } from "../fetchExercises";
 import { shuffleArray } from "../shuffle";
 
 export function getExerciseTranslate(
-  setInputValue: (v: string) => void,
-  setIsCorrect: (v: any) => void,
-  setExercise: (v: any) => void,
-  verbs: string[],
-  selectedVerbs: string[][]
+  setInputValue: Dispatch<SetStateAction<string>>,
+  setIsCorrect: Dispatch<SetStateAction<AnswerStatus>>,
+  setExercise: Dispatch<SetStateAction<ExercisePrompt>>,
+  verbs: WordPair[],
+  selectedVerbs: WordPair[],
 ) {
   setInputValue("");
   setIsCorrect("");
@@ -27,14 +29,15 @@ export function getExerciseTranslate(
     correctAnswer: answer,
     options: shuffleArray(array),
     question: `${pickedVerb[1]}`,
+    translation: pickedVerb[0],
   });
 }
 
 export function getExerciseFill(
-  setInputValue: (v: string) => void,
-  setIsCorrect: (v: any) => void,
-  setExercise: (v: any) => void,
-  selectedVerbs: string[][]
+  setInputValue: Dispatch<SetStateAction<string>>,
+  setIsCorrect: Dispatch<SetStateAction<AnswerStatus>>,
+  setExercise: Dispatch<SetStateAction<ExercisePrompt>>,
+  selectedVerbs: WordPair[],
 ) {
   const randomVerb =
     selectedVerbs[Math.floor(Math.random() * selectedVerbs.length)];

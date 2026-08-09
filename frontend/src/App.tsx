@@ -1,24 +1,12 @@
 import { useState, useEffect } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AppRoutes from "./components/AppRoutes";
 import { SettingsContext } from "./lib/contexts";
 import { apiUrl } from "./lib/api";
-import { data } from "react-router-dom";
-
-interface User {
-  _id: string;
-  __v: number;
-  name: string;
-  email: string;
-  password: string;
-  latestActivity: string[][];
-  streak: string[];
-}
 
 function App() {
-  const [user, setUser] = useState<User | null>(null);
   const [authorized, setAuthorized] = useState<boolean>(false);
   const [mode, setMode] = useState<"guest" | "user">("guest");
   const [id, setId] = useState<string | null>(null);
@@ -36,14 +24,14 @@ function App() {
   useEffect(() => {
     async function checkAuth() {
       try {
-        const user = await fetch(
+        await fetch(
           apiUrl("/users/check"),
           {
             method: "GET",
             credentials: "include",
           }
         );
-      } catch (error) {
+      } catch {
         console.log("Not authorized");
       }
     }
@@ -54,7 +42,6 @@ function App() {
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
       setMode("user");
     }
   }, []);

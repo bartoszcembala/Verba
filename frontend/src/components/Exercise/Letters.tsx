@@ -1,5 +1,14 @@
-/* eslint-disable react/prop-types */
-function Letters({ inputValue, exercise, setInputValue, inputRef }) {
+import type { Dispatch, RefObject, SetStateAction } from "react";
+import type { ExercisePrompt } from "./types";
+
+type LettersProps = {
+  inputValue: string;
+  exercise: ExercisePrompt;
+  setInputValue: Dispatch<SetStateAction<string>>;
+  inputRef: RefObject<HTMLInputElement | null>;
+};
+
+function Letters({ inputValue, exercise, setInputValue, inputRef }: LettersProps) {
   const letters = ["á", "é", "í", "ó", "ú", "ñ"];
   return (
     <div className="mt-5 flex flex-wrap justify-center gap-2 text-[1.4rem]">
@@ -8,7 +17,7 @@ function Letters({ inputValue, exercise, setInputValue, inputRef }) {
           key={letter}
           onClick={() => {
             setInputValue((prev) => prev + letter);
-            inputRef.current.focus();
+            inputRef.current?.focus();
           }}
           className="cursor-pointer rounded-md border border-neutral-300 px-3 py-2 font-medium hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
         >
@@ -42,7 +51,7 @@ function Letters({ inputValue, exercise, setInputValue, inputRef }) {
             );
           }
 
-          inputRef.current.focus();
+          inputRef.current?.focus();
         }}
       >
         Hint

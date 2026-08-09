@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useProgress } from "../../lib/queries/progressQueries";
 import { shuffleArray } from "../../lib/shuffle";
 import Spinner from "../Spinner";
@@ -16,13 +16,12 @@ function DailyQuiz() {
   const { editUser } = useEditUser();
   const userStr = localStorage.getItem("user");
   const user = userStr ? JSON.parse(userStr) : null;
-  const userProgress = progress?.filter(
-    (progress) => progress.userName === user?.email,
-  );
   const [currQuestion, setCurrQuestion] = useState(0);
-  let learnedWords = userProgress?.reduce<string[][]>(
-    (acc, curr) => acc.concat(curr.learned),
-    [],
+  const learnedWords = useMemo(
+    () => progress
+      ?.filter((progressItem) => progressItem.userName === user?.email)
+      .reduce<string[][]>((acc, curr) => acc.concat(curr.learned), []),
+    [progress, user?.email],
   );
   const [correct, setCorrect] = useState(0);
   const [wrong, setWrong] = useState(0);
@@ -80,7 +79,7 @@ function DailyQuiz() {
     }
 
     setQuizData(newQuizData);
-  }, [progress, refresh]);
+  }, [learnedWords, refresh]);
 
   function handleSelect(answer: string[]) {
     if (answer[0] === quizData[currQuestion]?.word) {

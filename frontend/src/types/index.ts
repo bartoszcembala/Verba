@@ -1,3 +1,5 @@
+export type WordPair = [string, string];
+
 type timeSpentLearningType = {
   date: string;
   value: number;
@@ -20,7 +22,7 @@ export interface User {
   name: string;
   email: string;
   password: string;
-  latestActivity: string[];
+  latestActivity: string[][];
   streak: string[];
   timeSpentLearning: timeSpentLearningType[];
   premium: boolean;
@@ -46,7 +48,7 @@ export interface Module {
   _id: string;
   title: string;
   displayName: string;
-  words: string[][];
+  words: WordPair[];
   level: string;
   __v: number;
 }
@@ -55,7 +57,7 @@ export interface Progress {
   _id: string;
   userName: string;
   moduleName: string;
-  learned: string[][];
+  learned: WordPair[];
   __v: number;
 }
 

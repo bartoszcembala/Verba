@@ -1,5 +1,5 @@
-import { createContext } from "react";
-import { Progress, User } from "../types";
+import { createContext, type Dispatch, type SetStateAction } from "react";
+import { Progress, User, type WordPair } from "../types";
 
 export type SettingsContextType = {
   mode: "guest" | "user";
@@ -11,9 +11,9 @@ export type SettingsContextType = {
 };
 
 export type ExerciseContextType = {
-  verbs: string[][];
-  selectedVerbs: string[][];
-  setSelectedVerbs: (v: string[][]) => void;
+  verbs: WordPair[];
+  selectedVerbs: WordPair[];
+  setSelectedVerbs: Dispatch<SetStateAction<WordPair[]>>;
   progress: Progress[] | undefined;
   user: User | null;
   module: string;

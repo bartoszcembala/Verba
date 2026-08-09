@@ -10,7 +10,7 @@ interface LoginInput {
 
 interface ActivityInput {
   id: string;
-  activities: string[];
+  activities: string[][];
 }
 
 interface EditUserInput {
@@ -45,7 +45,7 @@ export function useLogin() {
 export function useLogout() {
   const { mutate } = useMutation<unknown, Error, void>({
     mutationFn: async () => {
-      const res = await fetch(
+      await fetch(
         apiUrl("/users/logout"),
         {
           method: "POST",

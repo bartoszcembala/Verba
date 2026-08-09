@@ -1,15 +1,21 @@
-/* eslint-disable react/prop-types */
 import { Cell, Legend, Pie, PieChart, Tooltip } from "recharts";
+import type { Progress } from "../../types";
 import Percent from "./Percent";
+import type { AnswerStat } from "./types";
 
-function Chart({ correct, activeProgress }) {
+type ChartProps = {
+  correct: AnswerStat[];
+  activeProgress?: Progress;
+};
+
+function Chart({ correct, activeProgress }: ChartProps) {
   return (
     <aside className="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
       {correct[0].value !== 0 || correct[1].value !== 0 ? (
         <div className="text-center">
           <p className="text-[1.35rem] font-medium">
             {correct[0].value}/{correct[1].value}
-            <Percent correct={correct} activeProgress={activeProgress} />
+            <Percent activeProgress={activeProgress} />
           </p>
 
           <PieChart width={210} height={240}>

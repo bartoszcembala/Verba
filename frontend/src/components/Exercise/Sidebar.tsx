@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import toast from "react-hot-toast";
 import { useContext } from "react";
 import { ExerciseContext } from "../../lib/contexts";
@@ -7,20 +6,26 @@ import {
   useProgress,
 } from "../../lib/queries/progressQueries";
 import { useQueryClient } from "@tanstack/react-query";
+import type { SetCorrect, WordPair } from "./types";
 
-function Sidebar({ setCorrect, className = "" }) {
+type SidebarProps = {
+  setCorrect: SetCorrect;
+  className?: string;
+};
+
+function Sidebar({ setCorrect, className = "" }: SidebarProps) {
   const queryClient = useQueryClient();
   const { verbs, selectedVerbs, setSelectedVerbs, module, user } =
-    useContext(ExerciseContext);
+    useContext(ExerciseContext)!;
   const { progress } = useProgress();
   const { editProgress } = useEditProgress();
   const activeProgress = progress?.find(
     (p) => p.moduleName === module && p.userName === user?.email
   );
 
-  function addVerb(verb) {
-    if (selectedVerbs.includes(verb)) {
-      setSelectedVerbs((prevVerbs) => prevVerbs.filter((v) => v !== verb));
+  function addVerb(verb: WordPair) {
+    if (selectedVerbs.some(([word]) => word === verb[0])) {
+      setSelectedVerbs((prevVerbs) => prevVerbs.filter(([word]) => word !== verb[0]));
       toast.success("Word removed.");
     } else {
       setSelectedVerbs((prevVerbs) => [...prevVerbs, verb]);
@@ -58,12 +63,13 @@ function Sidebar({ setCorrect, className = "" }) {
         <button
           className="col-span-2 cursor-pointer rounded-md px-2 py-2 text-[1.15rem] font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
           onClick={() => {
+            if (!activeProgress) return;
             editProgress({ id: activeProgress._id, data: { learned: [] } });
             queryClient.invalidateQueries({ queryKey: ["progress"] });
 
             setCorrect((prev) => [
-              { ...prev[0], value: [] },
-              { ...prev[1], value: [...verbs] },
+              { ...prev[0], value: 0 },
+              { ...prev[1], value: verbs.length },
             ]);
           }}
         >
@@ -75,7 +81,7 @@ function Sidebar({ setCorrect, className = "" }) {
           <div key={verb[0]} className="flex items-center gap-3 border-b border-neutral-100 py-2 last:border-0 dark:border-neutral-800">
             {progress
               ?.find(
-                (p) => p.moduleName === module && p.userName === user.email
+                (p) => p.moduleName === module && p.userName === user?.email
               )
               ?.learned?.flat()
               .includes(verb[0]) ? (
