@@ -1,7 +1,7 @@
 function Spinner() {
   return (
-    <div className="flex items-center justify-center">
-      <div className="w-48 h-48 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
+    <div className="flex min-h-[30vh] items-center justify-center" role="status" aria-label="Loading">
+      <div className="h-12 w-12 animate-spin rounded-full border-2 border-neutral-200 border-t-indigo-600 dark:border-neutral-800 dark:border-t-indigo-400"></div>
     </div>
   );
 }

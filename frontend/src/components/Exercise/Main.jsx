@@ -88,17 +88,15 @@ function Main({ setCorrect }) {
   }
 
   return (
-    <div className="overflow-hidden w-[90%] h-[44rem] lg:h-[85vh] ">
+    <div className="w-full">
       <div
-        className={` relative flex  flex-col items-center rounded-2xl lg:py-24 py-19  px-10 h-[38rem] lg:h-[60rem] transition-colors duration-300 ease-in-out border-1 border-indigo-500 shadow-[inset_0_0_100px_rgba(99,102,241,0.3)] `}
+        className="relative flex min-h-[48rem] flex-col items-center justify-center rounded-xl border border-neutral-200 bg-white px-6 py-10 dark:border-neutral-800 dark:bg-neutral-900"
       >
         {selectedVerbs.length === 0 ? (
-          <p className="text-6xl mt-30 font-extrabold">
-            Add at least 1 word to start
-          </p>
+          <div className="text-center"><h2 className="text-[2.4rem] font-semibold">Choose words to begin</h2><p className="mt-2 text-[1.4rem] text-neutral-500">Add at least one word from the list.</p></div>
         ) : exercise.correctAnswer === "" ? (
           <button
-            className="cursor-pointer font-bold px-8 py-4 rounded-3xl shadow-[inset_0_0_100px_rgba(99,102,241,0.3)] bg-gradient-to-br from-indigo-500 to-indigo-900 text-7xl mt-30 overflow-hidden transition hover:scale-105 uppercase group  relative z-10"
+            className="cursor-pointer rounded-lg bg-indigo-600 px-8 py-4 text-[1.6rem] font-semibold text-white hover:bg-indigo-700"
             onClick={() =>
               exerciseType === "translate"
                 ? getExerciseTranslate(
@@ -116,18 +114,12 @@ function Main({ setCorrect }) {
                   )
             }
           >
-            <span>Start</span>
-            <span
-              className="absolute top-28 left-73 w-[250%] h-[250%]
-               bg-gradient-to-br from-white/0 via-white/40 to-white/0
-               -translate-x-full -translate-y-full
-               transition-transform duration-700 ease-out
-               group-hover:-translate-x-74 group-hover:-translate-y-29"
-            ></span>
+            Start practice
           </button>
         ) : (
           <>
-            <h2 className="text-6xl font-extrabold lg:mb-22 mb-20 lg:mt-26">
+            <p className="mb-3 text-[1.25rem] font-medium text-neutral-500">Translate this word</p>
+            <h2 className="mb-10 text-center text-[3.4rem] font-semibold">
               {exercise.question}{" "}
               {/* <span onClick={() => setShowTranslation(!showTranslation)}>
                 TRANSLATE
@@ -137,21 +129,18 @@ function Main({ setCorrect }) {
               {showTranslation && exercise.correctAnswer}
             </p>
             {writing ? (
-              <div className="text-5xl flex item-center justify-center">
+              <div className="flex w-full max-w-[54rem] flex-col items-stretch justify-center gap-3 sm:flex-row">
                 <span
-                  className={`w-[70%]  bg-neutral-200  border-1 border-neutral-300 dark:border-none rounded-xl px-5 py-3 mx-3 flex gap-6 
-                    ${isCorrect === "correct" && "dark:bg-[#323a34]"} 
-                    ${isCorrect === "wrong" && "dark:bg-[#3a3232]"} 
-                    bg-neutral-700`}
+                  className={`flex flex-1 items-center gap-3 rounded-lg border px-4 ${isCorrect === "correct" ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30" : isCorrect === "wrong" ? "border-red-500 bg-red-50 dark:bg-red-950/30" : "border-neutral-300 dark:border-neutral-700"}`}
                 >
                   <button
-                    className="cursor-pointer w-[10%]"
+                    className="cursor-pointer text-neutral-400"
                     onClick={() => setWriting(false)}
                   >
                     <FiCheckSquare />
                   </button>
                   <input
-                    className=""
+                    className="h-20 min-w-0 flex-1 bg-transparent text-[1.6rem]"
                     type="text"
                     ref={inputRef}
                     value={inputValue}
@@ -162,33 +151,33 @@ function Main({ setCorrect }) {
                 </span>
                 {isCorrect === "correct" || isCorrect === "wrong" ? (
                   <button
-                    className="cursor-pointer  bg-indigo-500 rounded-2xl px-4 py-1 text-3xl shadow-[0_0_20px_rgba(34,0,120,0.9)] hover:scale-102 hover:bg-indigo-600 transition border-indigo-700 border-1 w-40 "
+                    className="h-20 cursor-pointer rounded-lg bg-indigo-600 px-5 text-[1.35rem] font-semibold text-white hover:bg-indigo-700"
                     onClick={() => getExercise(exerciseType)}
                   >
-                    NEXT ➡
+                    Next
                   </button>
                 ) : (
                   <button
-                    className="cursor-pointer  bg-indigo-500 rounded-2xl w-40 px-4 py-1 text-3xl shadow-[0_0_20px_rgba(34,0,120,0.9)] hover:scale-102 hover:bg-indigo-600 transition border-indigo-700 border-1"
+                    className="h-20 cursor-pointer rounded-lg bg-indigo-600 px-5 text-[1.35rem] font-semibold text-white hover:bg-indigo-700"
                     onClick={() => handleAnswer(inputValue)}
                   >
-                    CHECK
+                    Check
                   </button>
                 )}
               </div>
             ) : (
-              <div className="">
-                <button className="" onClick={() => setWriting(true)}>
+              <div className="w-full max-w-[54rem]">
+                <button className="mb-3 text-[1.3rem] text-indigo-600" onClick={() => setWriting(true)}>
                   ✍
                 </button>
                 {exercise.options.map((answer) => (
-                  <div
+                  <button
                     onClick={() => handleAnswer(answer)}
                     key={answer}
-                    className=""
+                    className="mb-2 block w-full rounded-lg border border-neutral-300 px-4 py-3 text-left text-[1.45rem] hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
                   >
                     {answer}
-                  </div>
+                  </button>
                 ))}
               </div>
             )}
@@ -201,9 +190,9 @@ function Main({ setCorrect }) {
             />
 
             {/* Skip button */}
-            <div className="buttons">
+            <div>
               <button
-                className=" cursor-pointer   transition px-4 py-2 rounded-2xl mt-40 hover:bg-neutral-200 dark:hover:bg-neutral-700 hover:scale-104 [0_0_20px_rgba(34,0,120,0.9)] border-indigo-700 border-2"
+                className="mt-8 cursor-pointer px-4 py-2 text-[1.3rem] text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
                 onClick={() => getExercise(exerciseType)}
               >
                 Skip
@@ -214,13 +203,13 @@ function Main({ setCorrect }) {
       </div>
       {/* Exercise types */}
       <div className="flex justify-center">
-        <div className="mt-10 dark:bg-neutral-800 bg-neutral-300 rounded-full px-2 gap-3 py-2  flex justify-center ">
+        <div className="mt-4 flex justify-center gap-1 rounded-lg border border-neutral-200 p-1 dark:border-neutral-800">
           <button
             onClick={() => setExerciseType("translate")}
             className={` ${
               exerciseType === "translate" &&
-              "[0_0_20px_rgba(34,0,120,0.9)] border-indigo-600 border-1 dark:bg-gradient-to-r dark:from-indigo-500 dark:to-indigo-600 bg-gradient-to-r from-indigo-400 to-indigo-500"
-            } cursor-pointer   transition-colors  px-4 py-2 rounded-full  hover:bg-neutral-200 dark:hover:bg-neutral-600 `}
+              "bg-neutral-100 text-neutral-950 dark:bg-neutral-800 dark:text-white"
+            } cursor-pointer rounded-md px-4 py-2 text-[1.3rem] text-neutral-500 hover:text-neutral-950 dark:hover:text-white`}
           >
             Translate the Word
           </button>
@@ -228,8 +217,8 @@ function Main({ setCorrect }) {
             onClick={() => setExerciseType("fillblank")}
             className={`${
               exerciseType === "fillblank" &&
-              "[0_0_20px_rgba(34,0,120,0.9)] border-1 dark:bg-gradient-to-r dark:from-indigo-500 dark:to-indigo-600 bg-gradient-to-l from-indigo-400 to-indigo-500"
-            } cursor-pointer   transition-colors px-4 py-2 rounded-full   hover:bg-neutral-200 dark:hover:bg-neutral-600`}
+              "bg-neutral-100 text-neutral-950 dark:bg-neutral-800 dark:text-white"
+            } cursor-pointer rounded-md px-4 py-2 text-[1.3rem] text-neutral-500 hover:text-neutral-950 dark:hover:text-white`}
           >
             Fill the Blank
           </button>

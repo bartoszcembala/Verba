@@ -1,83 +1,64 @@
-import { getUserLevel } from "../lib/getExpLevels";
-import { levels } from "../lib/getExpLevels";
+import { getUserLevel, levels } from "../lib/getExpLevels";
 import { User } from "../types";
 import { calculatePercent } from "../lib/calculatePercent";
 import { calculateStreak } from "../lib/calculateStreak";
+import { LuBookOpen, LuCircleCheck, LuTrophy } from "react-icons/lu";
+
+const waysToEarn = [
+  { icon: LuBookOpen, title: "Learn a new word", xp: "+1 XP", text: "Earn experience as you add vocabulary to your learned list." },
+  { icon: LuCircleCheck, title: "Complete the daily quiz", xp: "+3 XP", text: "Use the daily review to reinforce words you already know." },
+  { icon: LuTrophy, title: "Complete a quest", xp: "+5 XP", text: "Finish daily learning goals to make steady progress." },
+];
 
 export default function XpGuide() {
   const storedUser = localStorage.getItem("user");
   const user: User | null = storedUser ? JSON.parse(storedUser) : null;
   const userLevel = getUserLevel(user?.exp ? Math.floor(user.exp) : 0);
-  const prevLevel = levels[userLevel.level - 1].xp;
-  const diff = levels[userLevel.level].xp - prevLevel;
-  const toGo = diff - userLevel.xpToNextLevel!;
-  const percent = calculatePercent(toGo, diff);
-  const streak = user && calculateStreak(user.streak);
+  const currentIndex = Math.max(0, userLevel.level - 1);
+  const prevXP = levels[currentIndex]?.xp ?? 0;
+  const nextXP = levels[userLevel.level]?.xp ?? userLevel.nextLevelXP;
+  const percent = calculatePercent(Math.max(0, userLevel.totalXP - prevXP), Math.max(1, nextXP - prevXP));
+  const streak = user ? calculateStreak(user.streak) : 0;
 
   return (
-    <div className="flex items-center justify-center">
-      <div className="w-[60%] flex border-1 mb-10 border-indigo-500 shadow-[0_0_100px_rgba(99,102,241,0.2)] rounded-3xl px-10  py-16">
-        <div className="w-[70%] mr-20">
-          <h2 className=" text-center font-bold text-6xl pb-8">
-            {userLevel.levelName}
-          </h2>
-          <div className="flex gap-4">
-            <p>{userLevel.totalXP}XP</p>
-            <div className="bg-indigo-200 text-center mb-10  rounded-xl w-full">
-              <span className="absolute">{percent}%</span>
-              <div
-                className="bg-indigo-500 h-12 rounded-xl"
-                style={{ width: `${percent}%` }}
-              />
+    <div className="mx-auto max-w-[104rem]">
+      <header className="mb-10">
+        <h1 className="text-[3.4rem] font-bold tracking-tight">XP and levels</h1>
+        <p className="mt-2 text-[1.5rem] text-neutral-500">See how experience works and what comes next.</p>
+      </header>
+      <div className="grid gap-8 lg:grid-cols-[1fr_30rem]">
+        <div className="space-y-6">
+          <section className="rounded-xl border border-neutral-200 bg-white p-7 dark:border-neutral-800 dark:bg-neutral-900">
+            <div className="flex items-start justify-between gap-4">
+              <div><p className="text-[1.3rem] text-neutral-500">Level {userLevel.level}</p><h2 className="mt-1 text-[2.6rem] font-semibold">{userLevel.levelName}</h2></div>
+              <strong className="text-[1.5rem]">{userLevel.totalXP} XP</strong>
             </div>
-            <p>{userLevel.nextLevelXP}XP</p>
-          </div>
-          <div className="text-center py-6 mb-10  rounded-3xl">
-            <h2 className="font-semibold">
-              For each day of study you get a multiplier of 1% extra
-            </h2>
-            <p className="font-bold uppercase text-4xl text-indigo-500">
-              Current multiplier: {streak}%
-            </p>
-          </div>
-          <div className="dark:bg-neutral-800/80 border-1 border-neutral-400 dark:border-neutral-600 bg-neutral-300 rounded-3xl text-center py-10 tracking-wide w-[95%] mx-auto mb-10 dark:text-neutral-200">
-            <h2 className="font-bold text-4xl mb-8">
-              📘 New Word Learned — +1 XP
-            </h2>
-            <p>Every time you learn a new word, you gain experience points.</p>
-            <p>This rewards consistency and vocabulary growth.</p>
-          </div>
-          <div className="dark:bg-neutral-800/80 border-1 border-neutral-400 dark:border-neutral-600 bg-neutral-300 rounded-3xl text-center py-10  tracking-wide w-[95%] mx-auto mb-10 dark:text-neutral-200">
-            <h2 className="font-bold text-4xl mb-8">
-              📝 Daily Quiz Completed — +3 XP
-            </h2>
-            <p>Finishing the daily quiz gives you a solid XP boost.</p>
-            <p>Quizzes help reinforce learning and test your memory.</p>
-          </div>
-          <div className="dark:bg-neutral-800/80 border-1 border-neutral-400 dark:border-neutral-600 bg-neutral-300 rounded-3xl text-center py-10  tracking-wide w-[95%] mx-auto mb-10 dark:text-neutral-200">
-            <h2 className="font-bold text-4xl mb-8">
-              🏆 Quest Completed — +5 XP
-            </h2>
-            <p>
-              Completing one of your daily quests grants the highest amount of
-              XP.
-            </p>
-            <p>Quests push you to stay active and reach your learning goals.</p>
-          </div>
-        </div>{" "}
-        <div className="w-[30%] py-6 px-10 bg-indigo-900/5  rounded-4xl mr-4">
-          {levels.map((level) => (
-            <div
-              className="mb-4 text-center  dark:border-indigo-200"
-              key={level.level}
-            >
-              <p className="font-bold dark:text-indigo-200 border-b-1 text-indigo-300">
-                lvl.{level.level} - {level.name}
-              </p>
-              <div>{level.xp} XP</div>
+            <div className="mt-6 h-3 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800"><span className="block h-full bg-indigo-600" style={{ width: `${Math.min(100, percent)}%` }} /></div>
+            <div className="mt-2 flex justify-between text-[1.2rem] text-neutral-500"><span>{prevXP} XP</span><span>{nextXP} XP</span></div>
+            <p className="mt-6 border-t border-neutral-100 pt-5 text-[1.4rem] dark:border-neutral-800">Your {streak}-day streak adds a <strong>{streak}% XP multiplier</strong>.</p>
+          </section>
+          <section>
+            <h2 className="mb-4 text-[2rem] font-semibold">Ways to earn XP</h2>
+            <div className="space-y-3">
+              {waysToEarn.map(({ icon: Icon, title, xp, text }) => (
+                <div key={title} className="flex gap-4 rounded-xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+                  <span className="grid h-16 w-16 shrink-0 place-items-center rounded-lg bg-neutral-100 text-indigo-600 dark:bg-neutral-800 dark:text-indigo-400"><Icon /></span>
+                  <div className="flex-1"><div className="flex justify-between gap-3"><h3 className="text-[1.55rem] font-semibold">{title}</h3><strong className="text-[1.35rem] text-indigo-600 dark:text-indigo-400">{xp}</strong></div><p className="mt-1 text-[1.35rem] text-neutral-500">{text}</p></div>
+                </div>
+              ))}
             </div>
-          ))}
+          </section>
         </div>
+        <aside className="rounded-xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+          <h2 className="mb-3 text-[1.7rem] font-semibold">Level milestones</h2>
+          <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
+            {levels.map((level) => (
+              <div key={level.level} className={`flex items-center justify-between py-3 text-[1.3rem] ${level.level === userLevel.level ? "font-semibold text-indigo-600 dark:text-indigo-400" : ""}`}>
+                <span>{level.level}. {level.name}</span><span className="text-neutral-500">{level.xp} XP</span>
+              </div>
+            ))}
+          </div>
+        </aside>
       </div>
     </div>
   );

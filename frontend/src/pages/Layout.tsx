@@ -1,310 +1,171 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { SettingsContext } from "../lib/contexts";
 import { useQueryClient } from "@tanstack/react-query";
+import { SettingsContext } from "../lib/contexts";
 import { useEditUser, useLogout } from "../lib/queries/userQueries";
 import { useDailyStudyTimer } from "../components/useDailyStudyTimer";
-import { IoHome } from "react-icons/io5";
+import { IoHome, IoClipboardOutline } from "react-icons/io5";
 import { HiOutlineBookOpen } from "react-icons/hi2";
 import { GoPencil } from "react-icons/go";
-import { FaArrowRightFromBracket } from "react-icons/fa6";
-import { FaRegUser } from "react-icons/fa6";
+import { FaArrowRightFromBracket, FaGithub } from "react-icons/fa6";
 import { FaRegMoon } from "react-icons/fa";
-import { FiSun } from "react-icons/fi";
-import { IoArrowUpCircleOutline } from "react-icons/io5";
-import { useNavigate } from "react-router";
-import { IoClipboardOutline } from "react-icons/io5";
-import { LuBook } from "react-icons/lu";
-import { LuCrown } from "react-icons/lu";
-import { FaGithub } from "react-icons/fa";
+import { FiSun, FiMenu, FiX, FiUser } from "react-icons/fi";
+import { LuBook, LuCrown } from "react-icons/lu";
 
 type User = {
   _id: string;
-  __v: number;
   name: string;
-  email: string;
-  password: string;
-  latestActivity: string[][];
+  avatar?: string;
   streak: string[];
 };
 
+const navItems = [
+  { to: "/", label: "Home", icon: IoHome, end: true },
+  { to: "/lessons", label: "Lessons", icon: HiOutlineBookOpen },
+  { to: "/exercises", label: "Practice", icon: GoPencil },
+  { to: "/leaderboard", label: "Leaderboard", icon: IoClipboardOutline },
+];
+
 function Layout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { authorized, setAuthorized, setMode, mode } =
-    useContext(SettingsContext)!;
+  const { authorized, setAuthorized, setMode } = useContext(SettingsContext)!;
   const { logout } = useLogout();
   const { editUser } = useEditUser();
   useDailyStudyTimer();
 
-  // Navigate to login if not authorized
   useEffect(() => {
-    !authorized && !localStorage.getItem("user") && navigate("/login");
-  }, [authorized]);
+    if (!authorized && !localStorage.getItem("user")) navigate("/login");
+  }, [authorized, navigate]);
 
   const storedUser = localStorage.getItem("user");
-  const user: User | undefined = storedUser
-    ? (JSON.parse(storedUser) as User)
-    : undefined;
+  const user: User | undefined = storedUser ? JSON.parse(storedUser) : undefined;
+  const [darkMode, setDarkMode] = useState(
+    () => localStorage.getItem("theme") !== "light",
+  );
 
-  // Dark mode
-  const [darkMode, setDarkMode] = useState(true);
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
+    localStorage.setItem("theme", darkMode ? "dark" : "light");
   }, [darkMode]);
 
-  // Update user streak
   useEffect(() => {
-    if (user) {
-      const today = new Date().toISOString().split("T")[0];
-
-      if (!user.streak.includes(today)) {
-        const updatedStreak = [...user.streak, today];
-
-        editUser({
-          id: user._id,
-          data: { streak: updatedStreak },
-        });
-
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            ...user,
-            streak: updatedStreak,
-          }),
-        );
-      }
+    if (!user) return;
+    const today = new Date().toISOString().split("T")[0];
+    if (!user.streak.includes(today)) {
+      const updatedStreak = [...user.streak, today];
+      editUser({ id: user._id, data: { streak: updatedStreak } });
+      localStorage.setItem("user", JSON.stringify({ ...user, streak: updatedStreak }));
     }
-  }, [editUser]);
+  }, [editUser, user?._id]);
 
-  // Logout handler
   async function handleLogout() {
     logout();
     queryClient.clear();
     localStorage.removeItem("user");
     setMode("guest");
     setAuthorized(false);
-    toast.success("You have been logged out successfully.", {
-      duration: 2000,
-    });
+    toast.success("You have been logged out.");
     navigate("/login");
   }
 
+  const navClass = ({ isActive }: { isActive: boolean }) =>
+    `flex items-center gap-2 rounded-lg px-3 py-2 text-[1.4rem] font-medium transition-colors ${
+      isActive
+        ? "bg-neutral-100 text-neutral-950 dark:bg-neutral-800 dark:text-white"
+        : "text-neutral-500 hover:text-neutral-950 dark:text-neutral-400 dark:hover:text-white"
+    }`;
+
   return (
-    <>
+    <div className="flex min-h-screen flex-col">
       <Toaster />
       {user && (
-        <nav className="relative mb-10">
-          <div className="flex justify-between items-center uppercase px-6 mb-8 dark:border-b-2 dark:border-indigo-500 font-semibold tracking-wide bg-white dark:bg-[#171717]">
-            {/* Hamburger button */}
-            <button
-              className="lg:hidden py-6 cursor-pointer"
-              onClick={() => setMobileMenuOpen((prev) => !prev)}
-            >
-              <svg
-                className="w-8 h-8 text-gray-800 dark:text-white"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
-            </button>
+        <header className="sticky top-0 z-50 border-b border-neutral-200 bg-white/95 dark:border-neutral-800 dark:bg-neutral-950/95">
+          <div className="mx-auto flex h-28 max-w-[128rem] items-center justify-between gap-6 px-6 lg:px-10">
+            <Link to="/" className="flex items-center gap-3 text-[2.2rem] font-bold tracking-tight">
+              <span className="grid h-10 w-10 place-items-center rounded-lg bg-indigo-600 text-[1.7rem] text-white">V</span>
+              verba
+            </Link>
 
-            {/* Desktop nav */}
-            <div className="hidden lg:flex text-3xl">
-              <Link
-                to="/"
-                className="group relative dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
-              >
-                {/* <IoHomeOutline className="w-10 h-10 text-indigo-500" /> */}
-                <IoHome className="w-10 h-10 scale-100 group-hover:scale-110 transition" />
-                <p className="translate-y-0.5">Home</p>
-              </Link>
-              <Link
-                to="/lessons"
-                className=" group relative dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
-              >
-                <HiOutlineBookOpen className="w-10 h-10 scale-100 group-hover:scale-110 transition" />
-                <p className="translate-y-0.5">Lessons</p>
-              </Link>{" "}
-              <Link
-                to="/exercises"
-                className="group relative dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
-              >
-                <GoPencil className="w-10 h-10 scale-100 group-hover:scale-110 transition" />
-                <p className="translate-y-0.5">Exercises</p>
-              </Link>
-              <Link
-                to="/leaderboard"
-                className="group relative dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4"
-              >
-                <IoClipboardOutline className="w-10 h-10 scale-100 group-hover:scale-110 transition" />
-                <p className="translate-y-0.5">Leaderboard</p>
-              </Link>
-              <div className="relative group inline-block ">
-                {/* Główny przycisk */}
-                <button className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4 cursor-pointer">
-                  <IoArrowUpCircleOutline className="w-10 h-10 scale-100 group-hover:scale-110 transition group-hover:rotate-180 duration-250" />
-                  MORE
-                </button>
+            <nav className="hidden items-center gap-1 lg:flex" aria-label="Main navigation">
+              {navItems.map(({ to, label, icon: Icon, end }) => (
+                <NavLink key={to} to={to} end={end} className={navClass}>
+                  <Icon className="h-7 w-7" /> {label}
+                </NavLink>
+              ))}
+              <NavLink to="/xp-guide" className={navClass}>
+                <LuBook className="h-7 w-7" /> XP guide
+              </NavLink>
+            </nav>
 
-                {/* Menu rozwijane */}
-                <div className="absolute -left-8 mt-2 w-80 dark:bg-neutral-700 bg-white rounded-md shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition duration-300 z-50 -translate-y-4 py-4">
-                  <Link
-                    to="/xp-guide"
-                    className="dark:hover:bg-neutral-600 hover:bg-neutral-200/70 cursor-pointer  transition-colors justify-center items-center flex py-3 gap-4 px-3"
-                  >
-                    <LuBook className=" w-10 h-10" />
-                    <p>XP Guide</p>
-                  </Link>
-                  <Link
-                    to="/buy-premium"
-                    className="dark:hover:bg-neutral-600 hover:bg-neutral-200/70 cursor-pointer  transition-colors justify-center items-center flex py-3 gap-4 px-3"
-                  >
-                    <LuCrown className=" w-10 h-10" />
-                    <p>Buy Premium</p>
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            {/* Actions (darkmode, login/logout) */}
-            <div className="relative group inline-block ">
-              {/* Główny przycisk */}
-              <button className="dark:hover:bg-neutral-800 hover:bg-neutral-200/70 py-8 px-10 transition-colors flex justify-center items-center gap-4 cursor-pointer">
-                <FaRegUser className="scale-100 w-12 h-12 text-indigo-500 group-hover:scale-110 transition" />
+            <div className="flex items-center gap-2">
+              <Link
+                to="/buy-premium"
+                className="hidden items-center gap-2 rounded-lg border border-neutral-200 px-3 py-2 text-[1.35rem] font-semibold text-indigo-600 hover:bg-neutral-50 sm:flex dark:border-neutral-800 dark:text-indigo-400 dark:hover:bg-neutral-900"
+              >
+                <LuCrown /> Premium
+              </Link>
+              <button
+                className="grid h-10 w-10 place-items-center rounded-lg border border-neutral-200 lg:hidden dark:border-neutral-800"
+                onClick={() => setMobileMenuOpen((open) => !open)}
+                aria-label="Toggle navigation"
+              >
+                {mobileMenuOpen ? <FiX /> : <FiMenu />}
               </button>
-
-              {/* Menu rozwijane */}
-              <div className="absolute -left-50 mt-2 w-80 dark:bg-neutral-700 bg-white rounded-md shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto py-4 transition duration-300 z-50 -translate-y-4">
-                <Link
-                  to="/account"
-                  className="dark:hover:bg-neutral-600 hover:bg-neutral-200/70 cursor-pointer  transition-colors justify-center items-center flex py-2 gap-4 px-3"
+              <div className="relative">
+                <button
+                  className="flex items-center gap-2 rounded-lg p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-900"
+                  onClick={() => setProfileOpen((open) => !open)}
+                  aria-label="Open profile menu"
                 >
-                  <FaRegUser />
-                  <p>Account</p>
-                </Link>
-
-                <div
-                  className="dark:hover:bg-neutral-600 hover:bg-neutral-200/70 cursor-pointer  transition-colors justify-center items-center flex py-2 gap-4 px-3"
-                  onClick={() => setDarkMode((prev) => !prev)}
-                >
-                  {darkMode ? (
-                    <>
-                      <FiSun className=" w-10 h-10 " />
-                      <p>Light Mode</p>
-                    </>
-                  ) : (
-                    <>
-                      <FaRegMoon className=" w-10 h-10" />
-                      <p>Dark Mode</p>
-                    </>
-                  )}
-                </div>
-                <div
-                  className="dark:hover:bg-neutral-600 hover:bg-neutral-200/70 cursor-pointer  transition-colors justify-center items-center gap-4 flex py-2 "
-                  onClick={handleLogout}
-                >
-                  <FaArrowRightFromBracket />
-                  <p>Log out</p>
-                </div>
+                  <img className="h-9 w-9 rounded-md object-cover" src={`/avatars/AV${user.avatar}.png`} alt="" />
+                  <span className="hidden text-[1.4rem] font-medium sm:block">{user.name}</span>
+                </button>
+                {profileOpen && (
+                  <div className="absolute right-0 top-20 w-72 rounded-xl border border-neutral-200 bg-white p-2 shadow-lg dark:border-neutral-800 dark:bg-neutral-900">
+                    <Link className="flex items-center gap-3 rounded-lg px-3 py-2 text-[1.4rem] hover:bg-neutral-100 dark:hover:bg-neutral-800" to="/account" onClick={() => setProfileOpen(false)}>
+                      <FiUser /> Account
+                    </Link>
+                    <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[1.4rem] hover:bg-neutral-100 dark:hover:bg-neutral-800" onClick={() => setDarkMode((mode) => !mode)}>
+                      {darkMode ? <FiSun /> : <FaRegMoon />} {darkMode ? "Light mode" : "Dark mode"}
+                    </button>
+                    <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[1.4rem] text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30" onClick={handleLogout}>
+                      <FaArrowRightFromBracket /> Log out
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
 
-          {/* Mobile nav - dropdown */}
           {mobileMenuOpen && (
-            <div className="lg:hidden flex flex-col gap-1 px-6 pb-4">
-              <Link
-                to="/"
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-2 px-4 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-md"
-              >
-                Home
-              </Link>
-              <Link
-                to="/lessons"
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-2 px-4 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-md"
-              >
-                Lessons
-              </Link>
-              <Link
-                to="/exercises"
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-2 px-4 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-md"
-              >
-                Exercises
-              </Link>
-              <Link
-                to="/account"
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-2 px-4 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-md"
-              >
-                {user ? user.name : "Guest"}
-              </Link>
-              {authorized ? (
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    handleLogout();
-                  }}
-                  className="py-2 px-4 cursor-pointer hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-md text-left"
-                >
-                  Log out
-                </button>
-              ) : (
-                <Link
-                  to="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="py-2 px-4 cursor-pointer hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-md"
-                >
-                  Log in
-                </Link>
-              )}
-              <button
-                className="py-2 px-4 flex items-center gap-2 hover:bg-neutral-200 dark:hover:bg-neutral-800  cursor-pointer rounded-md"
-                onClick={() => {
-                  setDarkMode((prev) => !prev);
-                  setMobileMenuOpen(false);
-                }}
-              >
-                {darkMode ? (
-                  <FiSun className="w-6 h-6" />
-                ) : (
-                  <FaRegMoon className="w-6 h-6" />
-                )}
-                {darkMode ? "Light mode" : "Dark mode"}
-              </button>
-            </div>
+            <nav className="mx-6 mb-4 grid gap-1 border-t border-neutral-200 pt-3 dark:border-neutral-800" aria-label="Mobile navigation">
+              {navItems.map(({ to, label, icon: Icon, end }) => (
+                <NavLink key={to} to={to} end={end} className={navClass} onClick={() => setMobileMenuOpen(false)}>
+                  <Icon /> {label}
+                </NavLink>
+              ))}
+            </nav>
           )}
-        </nav>
+        </header>
       )}
-      <div className="pb-40">
+
+      <main className={user ? "w-full flex-1 px-6 py-10 lg:px-10 lg:py-14" : "flex-1"}>
         <Outlet />
-      </div>
-      <div className="font-bold fixed bottom-0 left-0 right-0 border-t-2 border-neutral-600 dark:border-neutral-700  text-neutral-800 dark:text-neutral-300 bg-neutral-300 dark:bg-neutral-800 text-center text-3xl py-3 tracking-wide">
-        App is still in development - some bugs may occur.{" "}
-        <span className=" text-indigo-400 w-[70%]">v0.2.4-alpha</span>
-        <a
-          href="https://github.com/bartoszcembala/Verba"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-indigo-400 h-0 hover:underline fixed right-[8rem] flex items-center gap-2 justify-center -translate-y-4"
-        >
-          <FaGithub className="w-9 h-9" />
-          github
-        </a>
-      </div>
-    </>
+      </main>
+
+      {user && (
+        <footer className="mx-auto flex w-full max-w-[128rem] items-center justify-between border-t border-neutral-200 px-6 py-8 text-[1.3rem] text-neutral-500 dark:border-neutral-800">
+          <span>Verba · Learn a little every day</span>
+          <a className="flex items-center gap-2 hover:text-neutral-900 dark:hover:text-white" href="https://github.com/bartoszcembala/Verba" target="_blank" rel="noopener noreferrer">
+            <FaGithub /> GitHub
+          </a>
+        </footer>
+      )}
+    </div>
   );
 }
 

@@ -6,14 +6,14 @@ export default function AvatarSelector({
   setSelectedAvatar: (num: number | null) => void;
 }) {
   return (
-    <div className="flex justify-center shadow-[0_0_10px_rgba(93,93,93,0.3)] bg-neutral-700 px-8 py-4 rounded-2xl mb-20  gap-16">
+    <div className="mb-8 grid grid-cols-5 gap-3 rounded-lg border border-neutral-200 p-3 dark:border-neutral-700">
       {[1, 2, 3, 4, 5].map((num) => (
         <img
           key={num}
-          className={`hover:scale-102 cursor-pointer transition h-34 border-2 border-indigo-500 rounded-full ${
+          className={`aspect-square w-full cursor-pointer rounded-lg border-2 object-cover transition ${
             selectedAvatar === num
-              ? "opacity-100 scale-108 hover:scale-108"
-              : "opacity-50"
+              ? "border-indigo-600 opacity-100"
+              : "border-transparent opacity-50 hover:opacity-80"
           }`}
           src={`/avatars/AV${num}.png`}
           onClick={() => setSelectedAvatar(num)}

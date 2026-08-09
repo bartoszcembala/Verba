@@ -77,42 +77,42 @@ function Modal({
   }, [isOpen]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-6">
       <div
         ref={modalRef}
-        className="bg-white dark:bg-neutral-800 px-14 py-10 rounded-2xl shadow-xl  w-[40%] h-[50%] relative text-5xl"
+        className="relative max-h-[70vh] w-full max-w-[52rem] overflow-y-auto rounded-xl border border-neutral-200 bg-white p-7 shadow-xl dark:border-neutral-800 dark:bg-neutral-900"
       >
         <button
-          className="absolute cursor-pointer top-4 right-6  "
+          className="absolute right-5 top-5 cursor-pointer text-neutral-400 hover:text-neutral-900 dark:hover:text-white"
           onClick={() => setIsOpen(false)}
         >
-          <IoCloseCircleOutline className="w-18 h-18 transition hover:text-indigo-400 text-indigo-300" />
+          <IoCloseCircleOutline className="h-10 w-10" />
         </button>
-        <h2 className="text-5xl font-bold mb-14">Find a Friend: </h2>
+        <h2 className="mb-6 text-[2.3rem] font-semibold">Find a friend</h2>
         <input
           type="text"
           placeholder="Search by name..."
-          className="bg-neutral-200 dark:bg-neutral-700 rounded-lg w-[100%] px-4 py-2 mb-10"
+          className="mb-5 h-20 w-full rounded-lg border border-neutral-300 bg-transparent px-4 text-[1.45rem] dark:border-neutral-700"
           onChange={(e) => setInput(e.target.value)}
         />
         {input.length < 3 && (
-          <p className="text-neutral-500 mt-2">
+          <p className="mt-2 text-[1.35rem] text-neutral-500">
             Type at least 3 characters to search for friends.
           </p>
         )}
         {input.length >= 3 && filteredUsers?.length === 0 && (
-          <p className="text-neutral-500 mt-2">No Users Found.</p>
+          <p className="mt-2 text-[1.35rem] text-neutral-500">No users found.</p>
         )}
         {input.length >= 3 &&
           filteredUsers?.map((userFil) => (
-            <div key={userFil._id} className="flex items-center gap-7 mx-10">
+            <div key={userFil._id} className="flex items-center gap-4 border-t border-neutral-100 py-4 dark:border-neutral-800">
               <img
                 src={`/avatars/AV${userFil.avatar}.png`}
-                className="w-22 h-22 rounded-full border-2 border-indigo-500"
+                className="h-16 w-16 rounded-lg object-cover"
               />
-              <p className="font-semibold text-6xl">{userFil.name}</p>
+              <p className="flex-1 text-[1.5rem] font-semibold">{userFil.name}</p>
               <CiCirclePlus
-                className="cursor-pointer w-16 h-16"
+                className="h-9 w-9 cursor-pointer text-indigo-600"
                 onClick={() =>
                   user?.friends.some(
                     (friend) => friend.friendId === userFil._id,

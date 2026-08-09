@@ -126,16 +126,16 @@ function Exercise({ initVerbs }: { initVerbs: string[][] }) {
           user,
         }}
       >
-        <div className="lg:hidden flex justify-end mb-8">
+        <div className="mx-auto mb-6 flex max-w-[128rem] justify-end lg:hidden">
           <button
             onClick={() => setIsSidebarVisible(!isSidebarVisible)}
-            className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 rounded-xl cursor-pointer w-full"
+            className="w-full cursor-pointer rounded-lg border border-neutral-300 px-4 py-3 text-[1.4rem] font-medium dark:border-neutral-700"
           >
             {isSidebarVisible ? "Close word list" : "Show word list"}
           </button>
         </div>
 
-        <div className="flex flex-col justify-center lg:items-stretch items-center lg:grid  lg:grid-cols-[4fr_8fr_3fr] gap-16 dark:text-white">
+        <div className="mx-auto flex max-w-[128rem] flex-col gap-6 lg:grid lg:grid-cols-[30rem_minmax(0,1fr)_22rem] lg:items-start">
           {/* Sidebar na małych ekranach */}
           {isSidebarVisible && (
             <Sidebar setCorrect={setCorrect} className="lg:hidden" />

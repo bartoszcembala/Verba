@@ -47,35 +47,35 @@ function Dashboard() {
   }
 
   return (
-    <div>
+    <div className="mx-auto max-w-[120rem]">
       {authorized ? (
-        <div className="flex gap-40">
-          <div>
-            <p onClick={() => setAction("")} className="cursor-pointer">
+        <div className="grid gap-8 lg:grid-cols-[20rem_1fr]">
+          <nav className="space-y-1 rounded-xl border border-neutral-200 bg-white p-3 self-start dark:border-neutral-800 dark:bg-neutral-900">
+            <p onClick={() => setAction("")} className="cursor-pointer rounded-lg px-3 py-2 text-[1.35rem] hover:bg-neutral-100 dark:hover:bg-neutral-800">
               Home
             </p>
             <p
               onClick={() => setAction("addLesson")}
-              className="cursor-pointer"
+              className="cursor-pointer rounded-lg px-3 py-2 text-[1.35rem] hover:bg-neutral-100 dark:hover:bg-neutral-800"
             >
               Add Lesson
             </p>
             <p
               onClick={() => setAction("editModules")}
-              className="cursor-pointer"
+              className="cursor-pointer rounded-lg px-3 py-2 text-[1.35rem] hover:bg-neutral-100 dark:hover:bg-neutral-800"
             >
               Edit Module
             </p>
-          </div>
+          </nav>
 
           {action === "" && (
-            <div className="flex flex-col gap-6">
+            <div className="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+              <h1 className="mb-5 text-[2.4rem] font-semibold">Users</h1>
               {users?.map((user: User) => (
-                <div key={user._id}>
-                  <p>
+                <div key={user._id} className="border-t border-neutral-100 py-3 first:border-0 dark:border-neutral-800">
+                  <p className="text-[1.35rem]">
                     {user.name} | {user.email}
                   </p>
-                  <hr />
                 </div>
               ))}
             </div>
@@ -83,28 +83,28 @@ function Dashboard() {
 
           {action === "editModules" && (
             <>
-              <div>
+              <div className="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
                 {modules?.map((module: Module) => (
                   <p
                     onClick={() => handleModuleSelection(module._id)}
                     key={module._id}
-                    className="cursor-pointer"
+                    className="cursor-pointer rounded-md px-3 py-2 text-[1.3rem] hover:bg-neutral-100 dark:hover:bg-neutral-800"
                   >
                     {module.title}
                   </p>
                 ))}
               </div>
               {selectedModule && (
-                <div className="w-[120rem]">
-                  <h2>Edit Module {selectedModule.title}</h2>
+                <div className="min-w-0 rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+                  <h2 className="mb-5 text-[2rem] font-semibold">Edit module: {selectedModule.title}</h2>
                   <form onSubmit={(e) => e.preventDefault()}>
                     <textarea
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
-                      className="w-full"
+                      className="min-h-[30rem] w-full rounded-lg border border-neutral-300 bg-transparent p-4 text-[1.35rem] dark:border-neutral-700"
                       style={{ minHeight: "30rem" }}
                     />
-                    <input type="submit" onClick={handleSend} />
+                    <input className="mt-4 cursor-pointer rounded-lg bg-indigo-600 px-5 py-3 text-[1.35rem] font-semibold text-white" type="submit" value="Save module" onClick={handleSend} />
                   </form>
                 </div>
               )}
@@ -112,22 +112,22 @@ function Dashboard() {
           )}
 
           {action === "addLesson" && (
-            <div className="w-[120rem]">
-              <h2>Add Lesson</h2>
+            <div className="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+              <h2 className="mb-5 text-[2rem] font-semibold">Add lesson</h2>
               <form onSubmit={(e) => e.preventDefault()}>
                 <textarea
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  className="w-full"
+                  className="min-h-[30rem] w-full rounded-lg border border-neutral-300 bg-transparent p-4 text-[1.35rem] dark:border-neutral-700"
                   style={{ minHeight: "30rem" }}
                 />
-                <input type="submit" onClick={handleAddLesson} />
+                <input className="mt-4 cursor-pointer rounded-lg bg-indigo-600 px-5 py-3 text-[1.35rem] font-semibold text-white" type="submit" value="Add lesson" onClick={handleAddLesson} />
               </form>
             </div>
           )}
         </div>
       ) : (
-        <div>route protected 🔐</div>
+        <div className="py-24 text-center text-[1.5rem] text-neutral-500">This route is protected.</div>
       )}
     </div>
   );

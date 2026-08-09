@@ -16,19 +16,19 @@ export default function ModalReusable({
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-6"
     >
       {/* kontener modala */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-white dark:bg-neutral-800 rounded-xl shadow-lg  w-300 h-230 px-14 py-10 relative "
+        className="relative max-h-[90vh] w-full max-w-[72rem] overflow-y-auto rounded-xl border border-neutral-200 bg-white p-7 shadow-xl dark:border-neutral-800 dark:bg-neutral-900 sm:p-10"
       >
         {/* przycisk zamknięcia */}
         <button
-          className="absolute cursor-pointer top-4 right-6  "
+          className="absolute right-5 top-5 cursor-pointer text-neutral-400 hover:text-neutral-900 dark:hover:text-white"
           onClick={onClose}
         >
-          <IoCloseCircleOutline className="w-18 h-18 transition hover:text-indigo-400 text-indigo-300" />
+          <IoCloseCircleOutline className="h-10 w-10" />
         </button>
 
         {/* zawartość */}

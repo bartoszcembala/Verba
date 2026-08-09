@@ -3,192 +3,51 @@ import { Link } from "react-router-dom";
 import { calculatePercent } from "../lib/calculatePercent";
 import { useModules } from "../lib/queries/modulesQueries";
 import { useProgress } from "../lib/queries/progressQueries";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import { HiOutlinePlay } from "react-icons/hi2";
+import { FaChevronDown, FaMagnifyingGlass } from "react-icons/fa6";
+import { HiOutlineArrowRight } from "react-icons/hi2";
 import { User } from "../types";
-import { FaMagnifyingGlass } from "react-icons/fa6";
+import Spinner from "../components/Spinner";
+
+const categories = ["verbs", "nouns", "dom", "jedzenie", "rodzina"];
+const premiumCategories = ["dom", "jedzenie", "rodzina"];
 
 function Exercises() {
   const { modules, isLoadingModules } = useModules();
   const { progress, isLoadingProgress } = useProgress();
-  const [show, setShow] = useState<string>("undefined");
+  const [show, setShow] = useState<string | null>(null);
   const storedUser = localStorage.getItem("user");
   const user: User | null = storedUser ? JSON.parse(storedUser) : null;
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const filteredModules = modules?.filter((mod) =>
-    mod.title.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const [searchTerm, setSearchTerm] = useState("");
+  const filteredModules = modules?.filter((mod) => `${mod.title} ${mod.displayName}`.toLowerCase().includes(searchTerm.toLowerCase()));
+  if (isLoadingModules || isLoadingProgress) return <Spinner />;
 
-  const list = (
-    <div className="mt-4">
-      {modules &&
-        progress &&
-        modules.map((mod) => {
-          if (mod.title.includes(show)) {
-            const wordsNumber =
-              progress.find(
-                (m) => m.moduleName === mod.title && m.userName === user?.email,
-              )?.learned.length || 0;
-
-            return (
-              <Link
-                key={mod._id}
-                to={`/${mod.title}`}
-                className="flex justify-between border-t px-4 py-6 dark:hover:bg-neutral-700 hover:bg-neutral-200 transition-colors border-neutral-400"
-              >
-                <div className="flex gap-4 sm:gap-8 items-center">
-                  <p className="text-3xl font-semibold">
-                    {calculatePercent(wordsNumber, mod.words.length)}%
-                  </p>
-                  <p className="text-3xl md:text-3xl">{mod.displayName}</p>
-                  <p
-                    className={`ml-0 sm:ml-2 text-xl sm:text-2xl px-4 rounded-lg ${
-                      mod.level.startsWith("A") && "bg-green-600/85"
-                    } ${mod.level.startsWith("B") && "bg-yellow-500/85"} ${
-                      mod.level.startsWith("C") && "bg-red-500/85"
-                    }`}
-                  >
-                    {mod.level}
-                  </p>
-                </div>
-                <HiOutlinePlay className="text-indigo-500 w-8 h-8 sm:w-10 sm:h-10 mt-4 sm:mt-0" />
-              </Link>
-            );
-          }
-        })}
-    </div>
-  );
-
-  if (isLoadingModules || isLoadingProgress) {
-    return (
-      <div className="flex items-center justify-center min-h-[40vh]">
-        <div className="w-24 h-24 sm:w-36 sm:h-36 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
-  function exercisesCount(category: string) {
-    let count = 0;
-    modules!.map((mod) => {
-      if (mod.title.includes(category)) {
-        count++;
-      }
-    });
-
-    return count;
-  }
-
-  function handleShowAll() {
-    setSearchTerm("");
-  }
+  const moduleRow = (mod: NonNullable<typeof modules>[number]) => {
+    const learned = progress?.find((m) => m.moduleName === mod.title && m.userName === user?.email)?.learned.length || 0;
+    const percent = calculatePercent(learned, mod.words.length);
+    return <Link key={mod._id} to={`/${mod.title}`} className="group flex items-center gap-4 border-t border-neutral-100 px-1 py-4 first:border-0 dark:border-neutral-800">
+      <div className="min-w-0 flex-1"><div className="flex items-center gap-2"><h3 className="truncate text-[1.5rem] font-medium">{mod.displayName}</h3><span className="rounded bg-neutral-100 px-2 py-0.5 text-[1.1rem] text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">{mod.level}</span></div><div className="mt-2 flex items-center gap-3"><div className="h-2 flex-1 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800"><span className="block h-full bg-indigo-600" style={{ width: `${percent}%` }} /></div><span className="text-[1.2rem] text-neutral-500">{percent}%</span></div></div><HiOutlineArrowRight className="text-neutral-400 transition-transform group-hover:translate-x-1" />
+    </Link>;
+  };
 
   return (
-    <div className="flex items-center justify-center w-full px-2">
-      <div className="flex flex-col items-center justify-center w-full max-w-[80rem] gap-7">
-        <div className="flex gap-5 justify-around items-center w-full bg-gradient-to-b from-indigo-500/30  dark:to-[#171717] to-neutral-200 px-5 py-6 rounded-2xl mb-8 h-[8rem]">
-          <FaMagnifyingGlass className="w-8 h-8" />
-          <input
-            placeholder="Search for an exercise..."
-            value={searchTerm}
-            type="text"
-            className="focus:border-2 focus:border-indigo-400 hover:border-2 hover:border-indigo-200 h-[3.5rem] text-neutral-900 px-5 py-1 bg-neutral-100 dark:bg-neutral-300 w-[80%] rounded-2xl"
-            onChange={(e) => setSearchTerm(e.currentTarget.value)}
-          />
-          <div
-            className="uppercase bg-neutral-100  hover:border-indigo-200 h-[3.5rem] text-neutral-900 px-5 py-1 dark:bg-neutral-300 rounded-2xl cursor-pointer"
-            onClick={handleShowAll}
-          >
-            all
-          </div>
-        </div>
-        {searchTerm.length === 0 ? (
-          ["verbs", "nouns", "dom", "jedzenie", "rodzina"].map((category) => (
-            <div
-              key={category}
-              className={`w-full cursor-pointer dark:border-none bg-white border border-neutral-300 dark:bg-neutral-700/70 rounded-2xl py-6 px-5 ${
-                (category === "dom" ||
-                  category === "jedzenie" ||
-                  category === "rodzina") &&
-                user?.premium === false
-                  ? "opacity-60 pointer-events-none cursor-not-allowed"
-                  : ""
-              }`}
-            >
-              <div
-                className="flex justify-between items-center"
-                onClick={() =>
-                  setShow(show === category ? "undefined" : category)
-                }
-              >
-                <p className="text-4xl capitalize">
-                  {category}
-                  <span className="ml-2 text-red-400">
-                    {category === "dom" ||
-                    category === "jedzenie" ||
-                    category === "rodzina"
-                      ? "  🇵🇱"
-                      : ""}
-                  </span>
-                </p>
-                <span className="text-3xl capitalize text-indigo-300">
-                  {category === "dom" ||
-                  category === "jedzenie" ||
-                  category === "rodzina"
-                    ? "premium content"
-                    : ""}
-                </span>
-                <div className="flex justify-center items-center">
-                  <span className="mr-10 tracking-wide text-3xl text-neutral-400">
-                    {exercisesCount(category)} exercises
-                  </span>
-                  {show === category ? (
-                    <FaChevronUp className="text-indigo-500 w-10 h-10" />
-                  ) : (
-                    <FaChevronDown className="text-indigo-500 w-10 h-10" />
-                  )}
-                </div>
-              </div>
-              {show === category && list}
-            </div>
-          ))
-        ) : (
-          <div className="w-full cursor-pointer rounded-2xl px-5">
-            {" "}
-            {filteredModules?.map((mod) => {
-              const wordsNumber =
-                progress?.find(
-                  (m) =>
-                    m.moduleName === mod.title && m.userName === user?.email,
-                )?.learned.length || 0;
-
-              return (
-                <Link
-                  key={mod._id}
-                  to={`/${mod.title}`}
-                  className="flex justify-between  px-4 py-6 dark:hover:bg-neutral-700 hover:bg-neutral-200 transition-colors"
-                >
-                  <div className="flex gap-4 sm:gap-8 items-center">
-                    <p className="text-3xl font-semibold">
-                      {calculatePercent(wordsNumber, mod.words.length)}%
-                    </p>
-                    <p className="text-3xl md:text-3xl">{mod.displayName}</p>
-                    <p
-                      className={`ml-0 sm:ml-2 text-xl sm:text-2xl px-4 rounded-lg ${
-                        mod.level.startsWith("A") && "bg-green-700"
-                      } ${mod.level.startsWith("B") && "bg-yellow-600"} ${
-                        mod.level.startsWith("C") && "bg-red-600"
-                      }`}
-                    >
-                      {mod.level}
-                    </p>
-                  </div>
-                  <HiOutlinePlay className="text-indigo-500 w-8 h-8 sm:w-10 sm:h-10 mt-4 sm:mt-0" />
-                </Link>
-              );
-            })}
-          </div>
-        )}
-      </div>
+    <div className="mx-auto max-w-[88rem]">
+      <header className="mb-8"><h1 className="text-[3.4rem] font-bold tracking-tight">Practice</h1><p className="mt-2 text-[1.5rem] text-neutral-500">Choose a word set and build your recall.</p></header>
+      <label className="mb-7 flex items-center gap-3 rounded-lg border border-neutral-300 bg-white px-4 dark:border-neutral-700 dark:bg-neutral-900">
+        <FaMagnifyingGlass className="text-neutral-400" /><input placeholder="Search exercises" value={searchTerm} className="h-20 w-full bg-transparent text-[1.45rem]" onChange={(e) => setSearchTerm(e.currentTarget.value)} />
+        {searchTerm && <button className="text-[1.25rem] text-neutral-500" onClick={() => setSearchTerm("")}>Clear</button>}
+      </label>
+      {searchTerm ? <div className="rounded-xl border border-neutral-200 bg-white px-5 dark:border-neutral-800 dark:bg-neutral-900">{filteredModules?.map(moduleRow)}</div> : <div className="space-y-3">
+        {categories.map((category) => {
+          const categoryModules = modules?.filter((mod) => mod.title.includes(category)) ?? [];
+          const locked = premiumCategories.includes(category) && !user?.premium;
+          return <section key={category} className={`rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900 ${locked ? "opacity-60" : ""}`}>
+            <button disabled={locked} className="flex w-full items-center justify-between gap-4 p-5 text-left disabled:cursor-not-allowed" onClick={() => setShow(show === category ? null : category)}>
+              <div><h2 className="text-[1.7rem] font-semibold capitalize">{category}{premiumCategories.includes(category) && " 🇵🇱"}</h2><p className="mt-1 text-[1.2rem] text-neutral-500">{categoryModules.length} exercises{locked && " · Premium"}</p></div><FaChevronDown className={`text-neutral-400 transition-transform ${show === category ? "rotate-180" : ""}`} />
+            </button>
+            {show === category && <div className="border-t border-neutral-100 px-5 dark:border-neutral-800">{categoryModules.map(moduleRow)}</div>}
+          </section>;
+        })}
+      </div>}
     </div>
   );
 }

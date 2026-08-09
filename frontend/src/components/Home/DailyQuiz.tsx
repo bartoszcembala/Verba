@@ -130,25 +130,25 @@ function DailyQuiz() {
   }
 
   return (
-    <div className="bg-white shadow-xs border-neutral-300 border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10  h-[20rem] flex justify-center items-center gap-8 relative">
+    <div className="relative flex min-h-[22rem] items-center justify-center rounded-xl border border-neutral-200 bg-white p-7 dark:border-neutral-800 dark:bg-neutral-900">
       {learnedWords && learnedWords?.length >= 10 ? (
         <div>
           {isLoadingProgress && <Spinner />}
           {currQuestion < 5 &&
           user.quiz.date !== new Date().toISOString().split("T")[0] ? (
             <>
-              <div className="absolute top-10 right-30">
-                <span className="text-green-300">{correct}</span> |{" "}
-                <span className="text-red-300">{wrong}</span>
+              <div className="absolute right-6 top-5 text-[1.25rem] text-neutral-500">
+                <span className="text-emerald-600">{correct} correct</span> ·{" "}
+                <span className="text-red-600">{wrong} wrong</span>
               </div>{" "}
-              <div className="text-5xl text-center mb-10 font-semibold">
+              <div className="mb-7 text-center text-[2.5rem] font-semibold">
                 {quizData[currQuestion]?.translation}
               </div>
-              <div className="flex gap-5 w-full">
+              <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-4">
                 {quizData[currQuestion].answers.map((answer, i) => (
                   <div
                     onClick={() => handleSelect(answer)}
-                    className="border-2 border-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.2)] cursor-pointer px-5 py-3 rounded-2xl  dark:hover:bg-neutral-700 hover:bg-neutral-200 transition  text-center bg-neutral-800/40"
+                    className="cursor-pointer rounded-lg border border-neutral-300 px-4 py-3 text-center text-[1.4rem] hover:border-indigo-400 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
                     key={i}
                   >
                     {answer[0]}
@@ -157,16 +157,16 @@ function DailyQuiz() {
               </div>
             </>
           ) : (
-            <div className="flex justify-center items-center ">
-              <div className="">
+            <div className="flex items-center justify-center gap-5">
+              <div>
                 {" "}
                 {user.quiz.date === new Date().toISOString().split("T")[0] ? (
-                  <IoIosCheckmarkCircleOutline className="w-50 h-50 mr-10 lg:mr-0  pr-10 text-indigo-500" />
+                  <IoIosCheckmarkCircleOutline className="h-20 w-20 text-emerald-600" />
                 ) : (
-                  <MdOutlineCancel className="w-50 h-50 mr-10  lg:mr-0 pr-10 text-indigo-500" />
+                  <MdOutlineCancel className="h-20 w-20 text-red-600" />
                 )}
               </div>
-              <div className="text-6xl uppercase">
+              <div className="text-[2.2rem] font-semibold">
                 {user.quiz.date === new Date().toISOString().split("T")[0] ? (
                   <span>Daily Quiz completed!</span>
                 ) : (
@@ -207,17 +207,17 @@ function DailyQuiz() {
                     setRefresh((prev) => prev + 1);
                   }
                 }}
-                className="absolute bottom-5 right-5 cursor-pointer"
+                className="absolute bottom-5 right-5 cursor-pointer text-neutral-500 hover:text-indigo-600"
               >
-                <IoReload className="w-20 h-20 hover:rotate-250 transition duration-450" />
+                <IoReload className="h-9 w-9 transition hover:rotate-180" />
               </button>
             </div>
           )}
         </div>
       ) : (
-        <div className="flex gap-10 items-center justify-center">
-          <p className="text-5xl">Learn at least 10 words to unlock</p>
-          <CiLock className="w-20 h-20" />
+        <div className="flex items-center justify-center gap-4 text-neutral-500">
+          <CiLock className="h-9 w-9" />
+          <p className="text-[1.6rem]">Learn at least 10 words to unlock the daily quiz.</p>
         </div>
       )}
     </div>

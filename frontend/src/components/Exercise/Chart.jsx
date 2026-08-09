@@ -4,10 +4,10 @@ import Percent from "./Percent";
 
 function Chart({ correct, activeProgress }) {
   return (
-    <div>
+    <aside className="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
       {correct[0].value !== 0 || correct[1].value !== 0 ? (
-        <div className=" w-[20rem] ">
-          <p className="border-1 rounded-xl border-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.3)] flex justify-center">
+        <div className="text-center">
+          <p className="text-[1.35rem] font-medium">
             {correct[0].value}/{correct[1].value}
             <Percent correct={correct} activeProgress={activeProgress} />
           </p>
@@ -17,7 +17,7 @@ function Chart({ correct, activeProgress }) {
               data={correct}
               name="name"
               dataKey={"value"}
-              innerRadius={25}
+              innerRadius={38}
               animationDuration={1000}
               animationBegin={0}
             >
@@ -34,9 +34,9 @@ function Chart({ correct, activeProgress }) {
           </PieChart>
         </div>
       ) : (
-        <p>Answer to see chart</p>
+        <p className="py-8 text-center text-[1.3rem] text-neutral-500">Answer a question to see your progress.</p>
       )}
-    </div>
+    </aside>
   );
 }
 

@@ -7,7 +7,7 @@ function Percent({ activeProgress }) {
   const { verbs } = useContext(ExerciseContext);
 
   return (
-    <span className="ml-10">
+    <span className="ml-2 text-neutral-500">
       {calculatePercent(activeProgress?.learned.length, verbs.length) + "%"}
     </span>
   );

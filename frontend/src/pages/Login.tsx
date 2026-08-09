@@ -42,38 +42,44 @@ function Login() {
   return (
     <>
       <Toaster />
-      <div className="flex items-center justify-center">
-        <div className="mt-50 py-16 px-12 w-[52rem] h-[60rem] rounded-4xl border-2 border-solid border-indigo-500">
-          <h2 className="text-6xl mb-6 ">Login</h2>
-          <p className="text-neutral-400 mb-10">
+      <div className="flex min-h-screen flex-col items-center justify-center gap-8 px-6 py-12">
+        <div className="flex items-center gap-3 text-[2.4rem] font-bold tracking-tight">
+          <span className="grid h-11 w-11 place-items-center rounded-lg bg-indigo-600 text-[1.8rem] text-white">V</span>
+          verba
+        </div>
+        <div className="w-full max-w-[44rem] rounded-xl border border-neutral-200 bg-white p-10 dark:border-neutral-800 dark:bg-neutral-900 sm:p-12">
+          <p className="text-[1.3rem] font-semibold text-indigo-600 dark:text-indigo-400">Welcome back</p>
+          <h2 className="mt-2 text-[3.2rem] font-bold tracking-tight">Log in to Verba</h2>
+          <p className="mb-8 mt-2 text-[1.45rem] text-neutral-500">
             Enter your email below to login to your account
           </p>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <label>Email</label>
+          <form className="grid" onSubmit={handleSubmit(onSubmit)}>
+            <label className="mb-2 text-[1.35rem] font-semibold">Email</label>
             <input
-              className="mt-2 mb-8 border-1 border-solid border-neutral-400 rounded-xl w-full h-16 px-6 "
+              className="mb-6 h-20 rounded-lg border border-neutral-300 bg-transparent px-4 text-[1.5rem] focus:border-indigo-600 dark:border-neutral-700"
               type="text"
               {...register("email")}
             />
-            <label>Password</label>
+            <label className="mb-2 text-[1.35rem] font-semibold">Password</label>
             <input
-              className="mt-2 mb-8 border-1 border-solid border-neutral-400 rounded-xl w-full h-16 px-6"
+              className="mb-6 h-20 rounded-lg border border-neutral-300 bg-transparent px-4 text-[1.5rem] focus:border-indigo-600 dark:border-neutral-700"
               type="password"
               {...register("password")}
             />
             <input
               type="submit"
-              className="mt-10 h-14 bg-neutral-100 text-neutral-900 w-full cursor-pointer rounded-xl hover:bg-neutral-300 hover:scale-101 transition"
+              value="Log in"
+              className="mt-2 h-20 cursor-pointer rounded-lg bg-indigo-600 text-[1.5rem] font-semibold text-white hover:bg-indigo-700"
             />
           </form>
-          <p className="text-center mt-6 text-neutral-200">
+          <p className="mt-7 text-center text-[1.35rem] text-neutral-500">
             Don&apos;t have an account?{" "}
-            <Link to="/signup" className="cursor-pointer underline">
+            <Link to="/signup" className="font-semibold text-indigo-600 hover:underline dark:text-indigo-400">
               Sign up
             </Link>
           </p>
           <button
-            className="mt-30 py-2 border-2 border-indigo-500 dark:text-neutral-100 dark:bg-neutral-800/70 w-full cursor-pointer rounded-xl dark:hover:bg-neutral-800 hover:scale-101 hover:bg-neutral-300 transition"
+            className="mt-8 w-full cursor-pointer rounded-lg border border-neutral-300 py-3 text-[1.4rem] font-semibold hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
             onClick={() => {
               toast.promise(
                 login({ email: "acc@demo.pl", password: "12345678" }),

@@ -1,112 +1,101 @@
 import { Link } from "react-router-dom";
 import { User } from "../types";
 import { getPreviousDates } from "../lib/getPreviousDates";
-import { HiOutlinePlay } from "react-icons/hi2";
-import { FaStar } from "react-icons/fa";
-import { LuCrown } from "react-icons/lu";
+import { HiOutlineArrowRight, HiOutlinePlay } from "react-icons/hi2";
+import { LuCrown, LuClock3 } from "react-icons/lu";
 import { useState } from "react";
 import DailyQuiz from "../components/Home/DailyQuiz";
 import DailyQuests from "../components/Home/DailyQuests";
 import { getUserLevel } from "../lib/getExpLevels";
-import { FaRegCirclePlay } from "react-icons/fa6";
 
 function Home() {
   const previousDates = getPreviousDates(7);
   const storedUser = localStorage.getItem("user");
   const user: User | null = storedUser ? JSON.parse(storedUser) : null;
   const userLevel = getUserLevel(user?.exp ? Math.floor(user.exp) : 0);
-  const timeSpent = user?.timeSpentLearning
-    .slice(-7)
-    .reduce((sum, curr) => sum + curr.value, 0);
+  const timeSpent = user?.timeSpentLearning?.slice(-7).reduce((sum, curr) => sum + curr.value, 0) ?? 0;
   const [dailyQuizOpen, setDailyQuizOpen] = useState(false);
+  const today = new Date().toISOString().split("T")[0];
+  const nextPath = user?.latestActivity?.[0] ? `/${user.latestActivity[0][0]}` : "/lessons";
+  const nextLabel = user?.latestActivity?.[0] ? user.latestActivity[0][1] : "Start your first lesson";
 
   return (
-    <div className="flex items-center justify-center ">
-      <div className="w-[95%] flex flex-col lg:grid lg:grid-cols-[2fr_5fr] lg:w-[120rem] gap-6 lg:gap-20">
-        <div className="flex flex-col text-5xl gap-6 lg:gap-10">
-          <div className="flex shadow-xs flex-col justify-center items-center border-neutral-300  bg-white border-1 dark:border-none dark:bg-gradient-to-br dark:from-neutral-900/80 dark:via-neutral-900/87 dark:to-neutral-900/92 rounded-3xl px-10 py-6 h-[23rem] lg:h-[30rem] relative">
-            <img
-              src={`/avatars/AV${user?.avatar}.png`}
-              className="w-34 h-34 rounded-full border-2 border-indigo-500 mb-4"
-            />
-            <h1 className="text-5xl pt-5 mb-3">{user?.name}</h1>
-            <p className="text-neutral-500 dark:text-neutral-300 text-3xl mb-5">
-              Welcome back!
-            </p>
-            <p className="text-neutral-700 dark:text-neutral-200 text-3xl  lg:translate-y-10 -translate-y-2">
-              level {userLevel.level}.{" "}
-              <FaStar className="inline-block -translate-y-1 text-indigo-500" />{" "}
-              {userLevel.levelName} ({user?.exp && Math.round(user!.exp)} exp)
-            </p>
-            <p className="absolute bottom-1 text-2xl text-neutral-400">
-              Next level in: {userLevel.xpToNextLevel}XP
-            </p>
-          </div>
-          <div className="flex items-center justify-center gap-2 shadow-xs border-neutral-300  bg-white border-1 dark:border-none  dark:bg-neutral-700/70 rounded-2xl px-5 py-9">
-            {previousDates.map((date) => (
-              <span key={date} className="h-20 w-20 text-center rounded-2xl">
-                <span className="block text-4xl pb-4">
-                  {user?.streak.includes(date) ||
-                  date == new Date().toISOString().split("T")[0]
-                    ? "🔥"
-                    : "⚫"}
-                </span>
-                <span className="block text-neutral-600 font-semibold dark:text-neutral-300 text-4xl">
-                  {date.split("-")[2]}
-                </span>
-              </span>
-            ))}
-          </div>
-
-          <div className="bg-white shadow-xs border-1 dark:border-none border-neutral-300  dark:bg-neutral-700/70 rounded-2xl px-5 py-9 text-center">
-            <p className=" text-4xl mb-4 dark:text-neutral-100">
-              This week you studied for:
-            </p>
-            <p className="text-5xl underline">{timeSpent} minutes!</p>{" "}
-          </div>
-          <div className="bg-white shadow-xs border-1 dark:border-none border-neutral-300  dark:bg-neutral-700/70 rounded-2xl px-5 text-center text-4xl py-5 font-semibold cursor-pointer dark:hover:bg-neutral-700 hover:bg-neutral-200 transition-colors">
-            <Link to="/buy-premium" className="group relative">
-              <p className="translate-y-2">
-                GET
-                <LuCrown className="scale-100 group-hover:scale-110 transition inline-block mx-3 w-16 h-16 -translate-y-3 text-indigo-500" />
-                PREMIUM!
-              </p>
-            </Link>
-          </div>
+    <div className="mx-auto max-w-[118rem]">
+      <div className="mb-10 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+        <div>
+          <h1 className="text-[3.2rem] font-bold tracking-tight sm:text-[4rem]">Welcome back, {user?.name}</h1>
+          <p className="mt-2 text-[1.6rem] text-neutral-500 dark:text-neutral-400">Here&apos;s where you left off.</p>
         </div>
-        <div className="flex flex-col  gap-6 lg:gap-12 ">
-          <Link
-            to={
-              user?.latestActivity[0]
-                ? `/${user?.latestActivity[0][0]}`
-                : "/lessons"
-            }
-            className="group relative bg-white shadow-xs border-1 border-neutral-300 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-10 py-12 flex justify-between dark:hover:bg-neutral-700 hover:bg-neutral-200 transition-colors"
-          >
-            <div className="">
-              <p className="text-5xl mb-4">Pick up where you left of: </p>
-              <p className="text-4xl">
-                {user?.latestActivity[0]
-                  ? user?.latestActivity[0][1]
-                  : "Start your first lesson"}
-              </p>{" "}
+        <Link to={nextPath} className="flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 py-3 text-[1.45rem] font-semibold text-white hover:bg-indigo-700">
+          <HiOutlinePlay /> Continue learning
+        </Link>
+      </div>
+
+      <div className="grid gap-8 lg:grid-cols-[31rem_minmax(0,1fr)]">
+        <aside className="space-y-6">
+          <section className="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+            <div className="flex items-center gap-4">
+              <img className="h-24 w-24 rounded-lg object-cover" src={`/avatars/AV${user?.avatar}.png`} alt={`${user?.name}'s avatar`} />
+              <div>
+                <p className="text-[1.3rem] text-neutral-500">Level {userLevel.level}</p>
+                <h2 className="text-[2rem] font-semibold">{userLevel.levelName}</h2>
+                <p className="mt-1 text-[1.3rem] text-neutral-500">{Math.round(user?.exp ?? 0)} XP total</p>
+              </div>
             </div>
-            <HiOutlinePlay className="scale-100 group-hover:scale-110 transition text-8xl text-indigo-500" />
+            <div className="mt-5 h-2 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+              <span className="block h-full bg-indigo-600" style={{ width: `${Math.max(8, Math.min(100, 100 - userLevel.xpToNextLevel))}%` }} />
+            </div>
+            <p className="mt-2 text-[1.2rem] text-neutral-500">{userLevel.xpToNextLevel} XP to the next level</p>
+          </section>
+
+          <section className="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+            <h2 className="text-[1.7rem] font-semibold">This week</h2>
+            <div className="mt-5 grid grid-cols-7 gap-2">
+              {previousDates.map((date) => {
+                const active = user?.streak.includes(date) || date === today;
+                return (
+                  <div className="text-center" key={date}>
+                    <span className="block text-[1.15rem] text-neutral-500">{date.split("-")[2]}</span>
+                    <span className={`mx-auto mt-2 grid h-8 w-8 place-items-center rounded-full text-[1.1rem] ${active ? "bg-indigo-600 text-white" : "bg-neutral-100 text-transparent dark:bg-neutral-800"}`}>✓</span>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          <section className="grid grid-cols-2 gap-3">
+            <div className="rounded-xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+              <LuClock3 className="mb-4 text-indigo-600" />
+              <strong className="block text-[2.2rem]">{timeSpent}</strong>
+              <span className="text-[1.2rem] text-neutral-500">minutes studied</span>
+            </div>
+            <Link to="/buy-premium" className="rounded-xl border border-neutral-200 bg-white p-5 hover:border-indigo-300 dark:border-neutral-800 dark:bg-neutral-900">
+              <LuCrown className="mb-4 text-indigo-600" />
+              <strong className="block text-[1.6rem]">Premium</strong>
+              <span className="text-[1.2rem] text-neutral-500">More lessons</span>
+            </Link>
+          </section>
+        </aside>
+
+        <div className="space-y-6">
+          <Link to={nextPath} className="group flex items-center gap-5 rounded-xl border border-neutral-200 bg-white p-6 hover:border-indigo-300 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-indigo-700">
+            <span className="grid h-16 w-16 shrink-0 place-items-center rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-950/50 dark:text-indigo-400"><HiOutlinePlay /></span>
+            <div className="min-w-0 flex-1">
+              <p className="text-[1.25rem] font-medium text-neutral-500">Continue where you left off</p>
+              <h2 className="mt-1 truncate text-[2.1rem] font-semibold">{nextLabel}</h2>
+            </div>
+            <HiOutlineArrowRight className="h-8 w-8 text-neutral-400 transition-transform group-hover:translate-x-1" />
           </Link>
 
-          {!dailyQuizOpen &&
-          user?.quiz.date !== new Date().toISOString().split("T")[0] ? (
-            <div onClick={() => setDailyQuizOpen(true)} className="bg-white shadow-xs border-neutral-300 border-1 dark:border-none dark:bg-neutral-700/70 rounded-3xl px-6 py-8 lg:h-[20rem] flex justify-center items-center gap-8 group cursor-pointer dark:hover:bg-neutral-700 hover:bg-neutral-200 transition-colors">
-              <div
-                
-                className=" self-center py-20 lg:py-12 pl-12 text-7xl lg:text-9xl h-full w-[25%] border-r-2 border-indigo-500 cursor-pointer"
-              >
-                <FaRegCirclePlay className="group-hover:scale-105 transition group-hover:text-indigo-400 group-hover:rotate-120 duration-400" />
+          {!dailyQuizOpen && user?.quiz.date !== today ? (
+            <button className="flex w-full flex-col items-start rounded-xl border border-neutral-200 bg-white p-7 text-left hover:border-indigo-300 sm:flex-row sm:items-center sm:justify-between dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-indigo-700" onClick={() => setDailyQuizOpen(true)}>
+              <div>
+                <p className="text-[1.3rem] font-medium text-indigo-600 dark:text-indigo-400">Daily quiz · 5 questions</p>
+                <h2 className="mt-2 text-[2.3rem] font-semibold">Quick vocabulary check</h2>
+                <p className="mt-1 text-[1.4rem] text-neutral-500">Complete it today to earn bonus XP.</p>
               </div>
-              <div className="w-[75%] text-5xl font-semibold">
-                Complete short daily quiz to get xp!
-              </div>
-            </div>
+              <span className="mt-5 flex items-center gap-2 text-[1.4rem] font-semibold text-indigo-600 sm:mt-0">Start quiz <HiOutlineArrowRight /></span>
+            </button>
           ) : (
             <DailyQuiz />
           )}

@@ -16,43 +16,44 @@ export default function DailyQuests() {
   const todayDailyQuests =
     dailyQuests && dailyQuests.find((item) => item.userId === user?._id);
   const iconStore: Record<string, JSX.Element> = {
-    flag: <FaFlagCheckered className="h-16 w-16" />,
-    clock: <IoMdTime className="h-16 w-16" />,
-    bulb: <IoBulbOutline className="h-16 w-16" />,
+    flag: <FaFlagCheckered />,
+    clock: <IoMdTime />,
+    bulb: <IoBulbOutline />,
   };
 
   return (
-    <div className="border-1 border-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.3)] bg-white   dark:bg-neutral-700/70 rounded-3xl px-10 py-8 h-[35rem]  dark:border-indigo-500 mb-10">
-      <h3 className="text-4xl mb-5 pb-5 text-center border-b-2 border-indigo-500 ">
-        Daily Quests:{" "}
-      </h3>
+    <section className="rounded-xl border border-neutral-200 bg-white p-7 dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-[1.25rem] text-neutral-500">Today&apos;s progress</p>
+          <h2 className="mt-1 text-[2.2rem] font-semibold">Daily quests</h2>
+        </div>
+        <span className="rounded-md bg-neutral-100 px-3 py-1 text-[1.25rem] font-semibold dark:bg-neutral-800">
+          {todayDailyQuests?.quests.filter((quest) => quest.completed).length ?? 0}/{todayDailyQuests?.quests.length ?? 3}
+        </span>
+      </div>
       {todayDailyQuests ? (
-        <div className="grid grid-cols-2 gap-y-10">
+        <div className="mt-6 divide-y divide-neutral-100 dark:divide-neutral-800">
           {todayDailyQuests.quests.map((quest, index) => (
-            <div
-              key={index}
-              className="flex flex-col justify-center items-center gap-3 relative"
-            >
-              <p>{quest.title}</p>
-
-              {iconStore[quest.icon]}
-
-              <p>
-                {quest.progress}/{quest.toObtain} (
-                {calculatePercent(quest.progress, quest.toObtain)}%)
-              </p>
-
-              {quest.completed && (
-                <span className="absolute rotate-14 bg-indigo-500/90 px-4 top-20 rounded-lg">
-                  COMPLETED
-                </span>
-              )}
+            <div key={index} className="flex items-center gap-4 py-4 first:pt-0 last:pb-0">
+              <span className={`grid h-16 w-16 shrink-0 place-items-center rounded-lg [&>svg]:h-7 [&>svg]:w-7 ${quest.completed ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400" : "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"}`}>
+                {iconStore[quest.icon]}
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="mb-2 flex justify-between gap-3 text-[1.35rem]">
+                  <strong className="truncate font-medium">{quest.title}</strong>
+                  <span className="shrink-0 text-neutral-500">{quest.progress} / {quest.toObtain}</span>
+                </div>
+                <div className="h-2 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+                  <span className={`block h-full ${quest.completed ? "bg-emerald-600" : "bg-indigo-600"}`} style={{ width: `${calculatePercent(quest.progress, quest.toObtain)}%` }} />
+                </div>
+              </div>
             </div>
           ))}
         </div>
       ) : (
         <Spinner />
       )}
-    </div>
+    </section>
   );
 }

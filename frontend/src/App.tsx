@@ -65,7 +65,7 @@ function App() {
       <SettingsContext.Provider
         value={{ mode, setMode, authorized, setAuthorized, id, setId }}
       >
-        <div className="text-neutral-800/90 bg-neutral-200 dark:bg-[#171717] dark:text-white  min-h-screen transition-colors">
+        <div className="min-h-screen bg-neutral-50 text-neutral-950 transition-colors dark:bg-neutral-950 dark:text-neutral-100">
           <AppRoutes />
         </div>
       </SettingsContext.Provider>

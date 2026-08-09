@@ -75,31 +75,25 @@ function Lesson({ lesson }: { lesson: LessonInterface }) {
   }
 
   return (
-    <div className="lg:grid lg:grid-cols-[1fr_3fr_1fr] p-4 flex flex-col gap-20  relative">
-      <div className="order-3 lg:order-2 ml-10">
-        Exercises for this topic:
+    <div className="mx-auto grid max-w-[108rem] gap-8 lg:grid-cols-[minmax(0,1fr)_25rem]">
+      <article className="rounded-xl border border-neutral-200 bg-white px-7 py-8 text-[1.6rem] leading-relaxed dark:border-neutral-800 dark:bg-neutral-900 sm:px-12 sm:py-10 [&_h1]:mb-6 [&_h1]:text-[3rem] [&_h1]:font-bold [&_h2]:mb-4 [&_h2]:mt-8 [&_h2]:text-[2.2rem] [&_h2]:font-semibold [&_li]:ml-6 [&_li]:list-disc [&_p]:mb-4 [&_strong]:font-semibold" dangerouslySetInnerHTML={{ __html: lesson.html }} />
+      <aside className="space-y-4 lg:sticky lg:top-36 lg:self-start">
+        <section className="rounded-xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+          <h2 className="text-[1.6rem] font-semibold">Practice this topic</h2>
+          <div className="mt-3 space-y-2">
         {lesson.relatedExercises &&
           authorized &&
           lesson.relatedExercises.map((exercise) => (
-            <Link key={exercise} to={`/${exercise}`} className="block">
+            <Link key={exercise} to={`/${exercise}`} className="block rounded-lg bg-neutral-50 px-3 py-2 text-[1.35rem] text-indigo-600 hover:bg-neutral-100 dark:bg-neutral-800 dark:text-indigo-400">
               {exercise}
             </Link>
           ))}
-      </div>
-
-      <div
-        className="order-1 lg:order-2 border-2 border-indigo-500 rounded-2xl px-20 py-10"
-        dangerouslySetInnerHTML={{ __html: lesson.html }}
-      />
-
-      <button
-        onClick={handleFinishLesson}
-        className="order-3 lg:order-3 bg-indigo-500 cursor-pointer rounded-xl px-4 py-2 lg:absolute lg:top-[3%] lg:right-[10%] mt-auto"
-      >
-        {user.finishedLessons.includes(lesson._id)
-          ? "Mark as unfinished"
-          : "Finish Lesson"}
-      </button>
+          </div>
+        </section>
+        <button onClick={handleFinishLesson} className={`w-full cursor-pointer rounded-lg px-4 py-3 text-[1.4rem] font-semibold ${user.finishedLessons.includes(lesson._id) ? "border border-neutral-300 hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800" : "bg-indigo-600 text-white hover:bg-indigo-700"}`}>
+          {user.finishedLessons.includes(lesson._id) ? "Mark as unfinished" : "Finish lesson"}
+        </button>
+      </aside>
     </div>
   );
 }

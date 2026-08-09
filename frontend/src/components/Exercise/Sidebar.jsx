@@ -30,21 +30,21 @@ function Sidebar({ setCorrect, className = "" }) {
 
   return (
     <div
-      className={` border-indigo-700 border-1 ml-4 px-12 pb-4 overflow-y-auto max-h-[90vh] relative dark:bg-neutral-800 shadow-[0_0_20px_rgba(44,44,44,0.9)]  rounded-3xl bg-white  ${className}`}
+      className={`max-h-[72vh] overflow-y-auto rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900 ${className}`}
       style={{
         scrollbarWidth: "none",
         msOverflowStyle: "none",
       }}
     >
-      <div className="font-semibold py-6 mb-6 flex gap-3 border-b-2">
+      <div className="mb-4 grid grid-cols-2 gap-2 border-b border-neutral-100 pb-4 dark:border-neutral-800">
         <button
-          className=" border-1 cursor-pointer border-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors px-3 py-3 rounded-xl leading-9"
+          className="cursor-pointer rounded-md border border-neutral-300 px-2 py-2 text-[1.15rem] font-medium hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
           onClick={() => setSelectedVerbs(verbs)}
         >
           Add all
         </button>
         <button
-          className="border-1 cursor-pointer border-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors px-3 py-3 rounded-xl leading-9"
+          className="cursor-pointer rounded-md border border-neutral-300 px-2 py-2 text-[1.15rem] font-medium hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
           onClick={() => {
             setSelectedVerbs(
               verbs.filter(
@@ -56,7 +56,7 @@ function Sidebar({ setCorrect, className = "" }) {
           Add not learned
         </button>
         <button
-          className="border-1 cursor-pointer border-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors px-3 py-3 rounded-xl leading-9"
+          className="col-span-2 cursor-pointer rounded-md px-2 py-2 text-[1.15rem] font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
           onClick={() => {
             editProgress({ id: activeProgress._id, data: { learned: [] } });
             queryClient.invalidateQueries({ queryKey: ["progress"] });
@@ -72,25 +72,24 @@ function Sidebar({ setCorrect, className = "" }) {
       </div>
       {verbs.length >= 1 ? (
         verbs.map((verb) => (
-          <div key={verb[0]} className="flex  items-center gap-4 pb-2 ">
+          <div key={verb[0]} className="flex items-center gap-3 border-b border-neutral-100 py-2 last:border-0 dark:border-neutral-800">
             {progress
               ?.find(
                 (p) => p.moduleName === module && p.userName === user.email
               )
               ?.learned?.flat()
               .includes(verb[0]) ? (
-              <span className="w-8 h-8  rounded-md bg-[#3c6847]" />
+              <span className="h-3 w-3 shrink-0 rounded-full bg-emerald-500" />
             ) : (
-              <span className="w-8 h-8  rounded-md bg-[#6f4242]" />
+              <span className="h-3 w-3 shrink-0 rounded-full bg-neutral-300 dark:bg-neutral-600" />
             )}
 
-            <span className="cursor-pointer">🔈</span>
-            <p>{verb[0] + ` (${verb[1]})`}</p>
+            <p className="min-w-0 flex-1 truncate text-[1.3rem]">{verb[0]} <span className="text-neutral-500">({verb[1]})</span></p>
             <button
               className={`${
                 selectedVerbs.some(([element]) => element === verb[0]) &&
-                "bg-neutral-600"
-              } border-1 cursor-pointer uppercase text-3xl border-neutral-300 rounded-xl px-3 hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors`}
+                "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900"
+              } grid h-8 w-8 cursor-pointer place-items-center rounded-md border border-neutral-300 text-[1.4rem] hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800`}
               onClick={() => addVerb(verb)}
             >
               {selectedVerbs.some(([element]) => element === verb[0])

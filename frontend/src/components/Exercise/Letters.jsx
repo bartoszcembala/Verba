@@ -2,7 +2,7 @@
 function Letters({ inputValue, exercise, setInputValue, inputRef }) {
   const letters = ["á", "é", "í", "ó", "ú", "ñ"];
   return (
-    <div className="flex gap-3 text-4xl lg:mt-10 mt-4">
+    <div className="mt-5 flex flex-wrap justify-center gap-2 text-[1.4rem]">
       {letters.map((letter) => (
         <span
           key={letter}
@@ -10,13 +10,13 @@ function Letters({ inputValue, exercise, setInputValue, inputRef }) {
             setInputValue((prev) => prev + letter);
             inputRef.current.focus();
           }}
-          className="   cursor-pointer   px-4 py-2 rounded-2xl bg-indigo-500 shadow-[0_0_20px_rgba(34,0,120,0.9)] border-indigo-700 border-1 hover:scale-102 hover:bg-indigo-600 transition"
+          className="cursor-pointer rounded-md border border-neutral-300 px-3 py-2 font-medium hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
         >
           {letter}
         </span>
       ))}{" "}
       <button
-        className="cursor-pointer   px-4 py-2 rounded-2xl  shadow-[0_0_20px_rgba(34,0,120,0.9)] border-indigo-700 border-2 hover:scale-102 hover:bg-neutral-800 transition"
+        className="cursor-pointer rounded-md border border-indigo-300 px-3 py-2 font-semibold text-indigo-600 hover:bg-indigo-50 dark:border-indigo-800 dark:text-indigo-400 dark:hover:bg-indigo-950/40"
         onClick={() => {
           const correct = exercise.correctAnswer;
           const current = inputValue;
@@ -45,7 +45,7 @@ function Letters({ inputValue, exercise, setInputValue, inputRef }) {
           inputRef.current.focus();
         }}
       >
-        HINT
+        Hint
       </button>
     </div>
   );

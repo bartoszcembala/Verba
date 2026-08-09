@@ -79,6 +79,6 @@
 // export default AddModule;
 
 function AddModule() {
-  return <div className="text-white text-center text-6xl pt-12">In work 🚧</div>;
+  return <div className="mx-auto max-w-[60rem] py-28 text-center"><h1 className="text-[3rem] font-bold">Custom modules</h1><p className="mt-3 text-[1.5rem] text-neutral-500">This feature is still in development.</p></div>;
 }
 export default AddModule;

@@ -1,99 +1,48 @@
 import { Link } from "react-router-dom";
 import { useLessons } from "../lib/queries/lessonsQueries";
-import { HiOutlinePlay } from "react-icons/hi2";
+import { HiOutlineArrowRight } from "react-icons/hi2";
 import { useState } from "react";
+import Spinner from "../components/Spinner";
 
 function Lessons() {
   const userStr = localStorage.getItem("user");
   const user = userStr ? JSON.parse(userStr) : null;
-
   const { lessons, isLoadingLessons } = useLessons();
   const [filter, setFilter] = useState<"type" | "level">("level");
-
-  const grouped = lessons?.reduce((acc, item) => {
-    const key = item[filter]; // tu podajesz według czego grupujesz
-
-    if (!acc[key]) {
-      acc[key] = [];
-    }
-
-    acc[key].push(item);
+  const grouped = lessons?.reduce<Record<string, typeof lessons>>((acc, item) => {
+    const key = item[filter];
+    (acc[key] ||= []).push(item);
     return acc;
   }, {});
 
-  if (isLoadingLessons) {
-    return (
-      <div className="flex items-center justify-center min-h-[40vh]">
-        <div className="w-24 h-24 sm:w-36 sm:h-36 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-  console.log(grouped);
-  return (
-    <div className="flex items-center justify-center ">
-      <div className="w-[95%] lg:w-[110rem]">
-        <div className="bg-gradient-to-b from-indigo-500/30  dark:to-[#171717] to-neutral-200 px-5 py-6 rounded-2xl mb-20">
-          <span className="mr-8">Sort By:</span>
-          <span
-            className={`cursor-pointer px-2 py-1 rounded-2xl  ${
-              filter === "level" && "bg-indigo-300 text-neutral-800"
-            } my-8 mr-5`}
-            onClick={() => setFilter("level")}
-          >
-            Level
-          </span>
-          <span
-            className={`cursor-pointer px-2 py-1 rounded-2xl ${
-              filter === "type" && "bg-indigo-300 text-neutral-800"
-            } my-8 `}
-            onClick={() => setFilter("type")}
-          >
-            Type
-          </span>
-        </div>
+  if (isLoadingLessons) return <Spinner />;
+  const levelLabel = (key: string) => filter !== "level" ? key : key === "A" ? "Beginner" : key === "B" ? "Intermediate" : key === "C" ? "Advanced" : key;
+  const badgeClass = (level: string) => level === "A" ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" : level === "B" ? "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300" : "bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300";
 
-        {lessons &&
-          Object.entries(grouped).map(([key, les]) => (
-            <>
-              <div className=" text-5xl my-8 pt-8 pl-10 capitalize border-t-1 dark:border-indigo-500 border-indigo-400">
-                {key === "A" && filter === "level"
-                  ? "Level A: Beginner"
-                  : key === "B"
-                    ? "Level B: Intermediate"
-                    : key === "C"
-                      ? "Level C: Advanced"
-                      : key}
-              </div>
-              <div className="lg:grid lg:grid-cols-2  gap-4 lg:gap-10 pb-5">
-                {les.map((lesson, i) => (
-                  <Link
-                    key={lesson._id}
-                    to={`/${lesson.title}`}
-                    className="bg-white border-1 border-neutral-300  dark:border-none dark:bg-neutral-700/70 rounded-xl dark:hover:bg-neutral-700 hover:bg-neutral-200 transition-colors items-center flex gap-10 px-5"
-                  >
-                    <p className="text-6xl text-neutral-500 dark:text-neutral-400">
-                      #{i + 1}
-                    </p>
-                    <div className="w-full">
-                      <p className="text-4xl pb-1">
-                        {lesson.displayTitle}{" "}
-                        <span
-                          className={`ml-2 ${key === "A" && filter === "level" ? "bg-green-700" : key === "B" && filter === "level" ? "bg-yellow-600" : key === "C" && filter === "level" ? "bg-red-600" : ""} ${lesson.level === "A" ? "bg-green-700" : lesson.level === "B" ? "bg-yellow-600" : lesson.level === "C" ? "bg-red-600" : ""} inline-block px-4  text-2xl rounded-lg`}
-                        >
-                          {lesson.level}
-                        </span>
-                      </p>
-                      <p className=" text-2xl text-neutral-400">
-                        {user.finishedLessons.includes(lesson._id) ? "1" : "0"}
-                        /1
-                      </p>
-                    </div>
-                    <HiOutlinePlay className="text-indigo-500 w-30 h-30 -translate-x-4" />
-                  </Link>
-                ))}
-              </div>
-            </>
-          ))}
+  return (
+    <div className="mx-auto max-w-[104rem]">
+      <header className="mb-8 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+        <div><h1 className="text-[3.4rem] font-bold tracking-tight">Lessons</h1><p className="mt-2 text-[1.5rem] text-neutral-500">Build your language skills one topic at a time.</p></div>
+        <div className="flex rounded-lg border border-neutral-200 p-1 dark:border-neutral-800">
+          {(["level", "type"] as const).map((option) => <button key={option} onClick={() => setFilter(option)} className={`rounded-md px-4 py-2 text-[1.3rem] font-medium capitalize ${filter === option ? "bg-neutral-100 dark:bg-neutral-800" : "text-neutral-500"}`}>{option}</button>)}
+        </div>
+      </header>
+      <div className="space-y-10">
+        {grouped && Object.entries(grouped).map(([key, group]) => (
+          <section key={key}>
+            <div className="mb-4 flex items-baseline justify-between"><h2 className="text-[2rem] font-semibold capitalize">{filter === "level" && `Level ${key}: `}{levelLabel(key)}</h2><span className="text-[1.25rem] text-neutral-500">{group?.length} lessons</span></div>
+            <div className="grid gap-3 md:grid-cols-2">
+              {group?.map((lesson, i) => {
+                const finished = user?.finishedLessons?.includes(lesson._id);
+                return <Link key={lesson._id} to={`/${lesson.title}`} className="group flex items-center gap-4 rounded-xl border border-neutral-200 bg-white p-5 hover:border-indigo-300 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-indigo-700">
+                  <span className="grid h-14 w-14 shrink-0 place-items-center rounded-lg bg-neutral-100 text-[1.3rem] font-semibold text-neutral-500 dark:bg-neutral-800">{i + 1}</span>
+                  <div className="min-w-0 flex-1"><div className="flex items-center gap-2"><h3 className="truncate text-[1.55rem] font-semibold">{lesson.displayTitle}</h3><span className={`rounded px-2 py-0.5 text-[1.1rem] font-semibold ${badgeClass(lesson.level)}`}>{lesson.level}</span></div><p className="mt-1 text-[1.2rem] text-neutral-500">{finished ? "Completed" : "Not started"}</p></div>
+                  <HiOutlineArrowRight className="text-neutral-400 transition-transform group-hover:translate-x-1" />
+                </Link>;
+              })}
+            </div>
+          </section>
+        ))}
       </div>
     </div>
   );
