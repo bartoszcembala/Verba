@@ -17,7 +17,10 @@
 
 ## Tech Stack
 
-**Frontend:** React, TypeScript, Tailwind CSS, TanStack Query  
-**Backend:** Node.js, Express, MongoDB  
-**Auth:** JWT + HTTP-only cookies  
+**Frontend:** React, TypeScript, Tailwind CSS, TanStack Query
+
+**Backend:** NestJS, TypeScript, Drizzle ORM, PostgreSQL
+
+**Auth:** JWT + HTTP-only cookies
+
 **Payments:** Stripe

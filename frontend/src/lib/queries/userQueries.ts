@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { User } from "../../types";
+import { apiUrl } from "../api";
 
 interface LoginInput {
   email: string;
@@ -21,7 +22,7 @@ export function useLogin() {
   const mutation = useMutation<User, Error, LoginInput>({
     mutationFn: async (userInformations) => {
       const res = await fetch(
-        `https://verba-ywgu.onrender.com/api/users/login`,
+        apiUrl("/users/login"),
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -45,7 +46,7 @@ export function useLogout() {
   const { mutate } = useMutation<unknown, Error, void>({
     mutationFn: async () => {
       const res = await fetch(
-        `https://verba-ywgu.onrender.com/api/users/logout`,
+        apiUrl("/users/logout"),
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -64,7 +65,7 @@ export function useUsers() {
   const { data, isLoading } = useQuery<User[]>({
     queryKey: ["users"],
     queryFn: async () => {
-      const res = await fetch(`https://verba-ywgu.onrender.com/api/users/`, {
+      const res = await fetch(apiUrl("/users/"), {
         method: "GET",
         credentials: "include",
       });
@@ -81,7 +82,7 @@ export function useUser(userId: string) {
     queryKey: ["user"],
     queryFn: async () => {
       const res = await fetch(
-        `https://verba-ywgu.onrender.com/api/users/${userId}`,
+        apiUrl(`/users/${userId}`),
         {
           method: "GET",
           credentials: "include",
@@ -99,7 +100,7 @@ export function useActivity() {
   const { mutateAsync } = useMutation<User, Error, ActivityInput>({
     mutationFn: async ({ id, activities }) => {
       const res = await fetch(
-        `https://verba-ywgu.onrender.com/api/users/${id}`,
+        apiUrl(`/users/${id}`),
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -126,7 +127,7 @@ export function useEditUser() {
   const { mutateAsync } = useMutation<User, Error, EditUserInput>({
     mutationFn: async ({ id, data }) => {
       const res = await axios.patch<User>(
-        `https://verba-ywgu.onrender.com/api/users/${id}`,
+        apiUrl(`/users/${id}`),
         data,
         {
           withCredentials: true,

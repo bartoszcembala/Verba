@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { LessonInterface } from "../../types";
+import { apiUrl } from "../api";
 
 interface NewLessonInput {
   title: string;
@@ -11,7 +12,7 @@ export function useLessons() {
   const { data, isLoading } = useQuery<LessonInterface[]>({
     queryKey: ["lessons"],
     queryFn: async () => {
-      const res = await fetch(`https://verba-ywgu.onrender.com/api/lesson/`, {
+      const res = await fetch(apiUrl("/lesson/"), {
         method: "GET",
         credentials: "include",
       });
@@ -26,7 +27,7 @@ export function useLessons() {
 export function useAddLesson() {
   const mutation = useMutation<LessonInterface, Error, NewLessonInput>({
     mutationFn: async ({ title, html }) => {
-      const res = await fetch(`https://verba-ywgu.onrender.com/api/lesson/`, {
+      const res = await fetch(apiUrl("/lesson/"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

@@ -1,6 +1,7 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
+import { apiUrl } from "../lib/api";
 
 interface SignupFormInputs {
   name: string;
@@ -17,7 +18,7 @@ function Signup() {
     try {
       toast("Signing up...");
       const res = await fetch(
-        `https://verba-ywgu.onrender.com/api/users/signup`,
+        apiUrl("/users/signup"),
         {
           method: "POST",
           headers: {

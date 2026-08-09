@@ -1,6 +1,7 @@
 import axios from "axios";
 import { User } from "../types";
 import { LuCheck, LuCrown } from "react-icons/lu";
+import { apiUrl } from "../lib/api";
 
 function BuyPremium() {
   const userJson = localStorage.getItem("user");
@@ -9,7 +10,7 @@ function BuyPremium() {
   async function checkout() {
     try {
       if (!user) return;
-      const session = await axios(`https://verba-ywgu.onrender.com/api/checkout/${user._id}`, { withCredentials: true });
+      const session = await axios(apiUrl(`/checkout/${user._id}`), { withCredentials: true });
       window.location.href = session.data.session.url;
     } catch (error) { console.log(error); }
   }

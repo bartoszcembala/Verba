@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { apiUrl } from "../api";
 
 interface Progress {
   _id: string;
@@ -29,7 +30,7 @@ export function useProgress() {
   const { data, isLoading } = useQuery<Progress[]>({
     queryKey: ["progress"],
     queryFn: async () => {
-      const res = await fetch(`https://verba-ywgu.onrender.com/api/progress/`, {
+      const res = await fetch(apiUrl("/progress/"), {
         method: "GET",
         credentials: "include",
       });
@@ -47,7 +48,7 @@ export function useProgress() {
 export function useAddProgress() {
   const mutation = useMutation<Progress, Error, NewProgressInput>({
     mutationFn: async (progress) => {
-      const res = await fetch(`https://verba-ywgu.onrender.com/api/progress/`, {
+      const res = await fetch(apiUrl("/progress/"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -72,7 +73,7 @@ export function useAddLearnedWord() {
   const mutation = useMutation<Progress, Error, LearnedWordInput>({
     mutationFn: async ({ id, word }) => {
       const res = await fetch(
-        `https://verba-ywgu.onrender.com/api/progress/${id}`,
+        apiUrl(`/progress/${id}`),
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -99,7 +100,7 @@ export function useEditProgress() {
   const mutation = useMutation<Progress, Error, EditProgressInput>({
     mutationFn: async ({ id, data }) => {
       const res = await axios.patch<Progress>(
-        `https://verba-ywgu.onrender.com/api/progress/${id}`,
+        apiUrl(`/progress/${id}`),
         data,
         {
           withCredentials: true,

@@ -4,6 +4,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AppRoutes from "./components/AppRoutes";
 import { SettingsContext } from "./lib/contexts";
+import { apiUrl } from "./lib/api";
 import { data } from "react-router-dom";
 
 interface User {
@@ -36,7 +37,7 @@ function App() {
     async function checkAuth() {
       try {
         const user = await fetch(
-          `https://verba-ywgu.onrender.com/api/users/check`,
+          apiUrl("/users/check"),
           {
             method: "GET",
             credentials: "include",

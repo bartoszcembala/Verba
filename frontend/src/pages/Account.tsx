@@ -17,6 +17,7 @@ import axios from "axios";
 import AvatarSelector from "../components/Account/AvatarSelector";
 import { useProgress } from "../lib/queries/progressQueries";
 import { getUserLevel } from "../lib/getExpLevels";
+import { apiUrl } from "../lib/api";
 
 function Account() {
   const { progress } = useProgress();
@@ -44,7 +45,7 @@ function Account() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     try {
-      await axios.patch(`https://verba-ywgu.onrender.com/api/users/${user?._id}`, { name: userName, ...(Number.isFinite(selectedAvatar) && { avatar: selectedAvatar }) });
+      await axios.patch(apiUrl(`/users/${user?._id}`), { name: userName, ...(Number.isFinite(selectedAvatar) && { avatar: selectedAvatar }) });
       localStorage.setItem("user", JSON.stringify({ ...user, name: userName, ...(Number.isFinite(selectedAvatar) && { avatar: selectedAvatar }) }));
       setSettingsOpen(false);
       toast.success("Profile updated.");

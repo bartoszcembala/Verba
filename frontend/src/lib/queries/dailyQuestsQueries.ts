@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { DailyQuestsInterface } from "../../types";
+import { apiUrl } from "../api";
 
 interface DailyQuestsInput {
   updatedDailyQuests: DailyQuestsInterface;
@@ -12,7 +13,7 @@ export function useGetDailyQuests() {
     queryKey: ["dailyQuests"],
     queryFn: async () => {
       const dailyQuests = await axios.get(
-        `https://verba-ywgu.onrender.com/api/daily-quests/`,
+        apiUrl("/daily-quests/"),
         { withCredentials: true },
       );
       return dailyQuests.data.data as DailyQuestsInterface[];
@@ -30,7 +31,7 @@ export function useEditDailyQuests() {
   >({
     mutationFn: async ({ updatedDailyQuests, id }) => {
       const res = await axios.patch(
-        `https://verba-ywgu.onrender.com/api/daily-quests/${id}`,
+        apiUrl(`/daily-quests/${id}`),
         updatedDailyQuests,
       );
 
@@ -59,7 +60,7 @@ export function useIncrementDailyQuest() {
   >({
     mutationFn: async ({ index, userId }) => {
       const res = await axios.patch(
-        "https://verba-ywgu.onrender.com/api/daily-quests/increment",
+        apiUrl("/daily-quests/increment"),
         { index, userId },
         { withCredentials: true },
       );

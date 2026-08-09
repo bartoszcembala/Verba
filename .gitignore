@@ -4,3 +4,23 @@ data.png
 expguide.txt
 inf.txt
 job.txt
+
+# Dependencies and generated output
+**/node_modules/
+**/dist/
+**/dist-ssr/
+**/coverage/
+**/.turbo/
+**/.cache/
+
+# Local environment and credentials
+**/.env
+**/.env.local
+**/.env.*.local
+!**/.env.example
+
+# Logs and local tooling
+**/*.log
+**/.DS_Store
+**/.idea/
+**/.vscode/
