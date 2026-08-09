@@ -96,7 +96,43 @@ function Account() {
       </div>
 
       {isOpen && <Modal setIsOpen={setIsOpen} isOpen={isOpen} />}
-      <ModalReusable isOpen={settingsOpen} onClose={() => setSettingsOpen(false)}><h2 className="text-[2.4rem] font-semibold">Edit profile</h2><form className="mt-7" onSubmit={handleSubmit}><label className="mb-2 block text-[1.3rem] font-medium">Name</label><input className="mb-5 h-20 w-full rounded-lg border border-neutral-300 bg-transparent px-4 text-[1.45rem] dark:border-neutral-700" value={userName} onChange={(e) => setUserName(e.currentTarget.value)}/><label className="mb-2 block text-[1.3rem] font-medium">Email</label><input className="mb-5 h-20 w-full cursor-not-allowed rounded-lg border border-neutral-200 bg-neutral-50 px-4 text-[1.45rem] text-neutral-500 dark:border-neutral-800 dark:bg-neutral-950" value={user.email} disabled/><label className="mb-2 block text-[1.3rem] font-medium">Avatar</label><AvatarSelector selectedAvatar={selectedAvatar} setSelectedAvatar={setSelectedAvatar}/><button className="w-full rounded-lg bg-indigo-600 px-4 py-3 text-[1.4rem] font-semibold text-white hover:bg-indigo-700">Save changes</button></form></ModalReusable>
+      <ModalReusable isOpen={settingsOpen} onClose={() => setSettingsOpen(false)}>
+        <form onSubmit={handleSubmit}>
+          <div className="border-b border-neutral-200 px-6 py-5 pr-16 dark:border-neutral-800 sm:px-8 sm:py-6">
+            <h2 className="text-[2.2rem] font-semibold">Edit profile</h2>
+            <p className="mt-1 text-[1.35rem] text-neutral-500">Update how your profile appears to other learners.</p>
+          </div>
+
+          <div className="space-y-7 px-6 py-6 sm:px-8">
+            <section className="flex items-center gap-4 rounded-lg bg-neutral-50 p-4 dark:bg-neutral-950">
+              <img src={`/avatars/AV${selectedAvatar ?? user.avatar}.png`} className="h-20 w-20 rounded-full object-cover" alt="Selected avatar preview" />
+              <div className="min-w-0"><p className="truncate text-[1.5rem] font-semibold">{userName || user.name}</p><p className="truncate text-[1.25rem] text-neutral-500">{user.email}</p></div>
+            </section>
+
+            <div>
+              <label htmlFor="profile-name" className="mb-2 block text-[1.3rem] font-semibold">Display name</label>
+              <input id="profile-name" className="h-20 w-full rounded-lg border border-neutral-300 bg-transparent px-4 text-[1.45rem] focus:border-indigo-600 dark:border-neutral-700" value={userName} onChange={(e) => setUserName(e.currentTarget.value)}/>
+              <p className="mt-2 text-[1.2rem] text-neutral-500">This name is visible on your profile and leaderboard.</p>
+            </div>
+
+            <div>
+              <label htmlFor="profile-email" className="mb-2 block text-[1.3rem] font-semibold">Email address</label>
+              <input id="profile-email" className="h-20 w-full cursor-not-allowed rounded-lg border border-neutral-200 bg-neutral-50 px-4 text-[1.45rem] text-neutral-500 dark:border-neutral-800 dark:bg-neutral-950" value={user.email} disabled/>
+              <p className="mt-2 text-[1.2rem] text-neutral-500">Your email cannot be changed here.</p>
+            </div>
+
+            <fieldset>
+              <legend className="mb-3 text-[1.3rem] font-semibold">Choose an avatar</legend>
+              <AvatarSelector selectedAvatar={selectedAvatar} setSelectedAvatar={setSelectedAvatar}/>
+            </fieldset>
+          </div>
+
+          <div className="flex items-center justify-end gap-3 border-t border-neutral-200 bg-neutral-50 px-6 py-4 dark:border-neutral-800 dark:bg-neutral-950 sm:px-8">
+            <button type="button" onClick={() => setSettingsOpen(false)} className="rounded-lg border border-neutral-300 px-5 py-2.5 text-[1.35rem] font-semibold hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800">Cancel</button>
+            <button type="submit" className="rounded-lg bg-indigo-600 px-5 py-2.5 text-[1.35rem] font-semibold text-white hover:bg-indigo-700">Save changes</button>
+          </div>
+        </form>
+      </ModalReusable>
     </div>
   );
 }

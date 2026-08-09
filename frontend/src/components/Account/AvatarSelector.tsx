@@ -6,18 +6,19 @@ export default function AvatarSelector({
   setSelectedAvatar: (num: number | null) => void;
 }) {
   return (
-    <div className="mb-8 grid grid-cols-5 gap-3 rounded-lg border border-neutral-200 p-3 dark:border-neutral-700">
+    <div className="grid grid-cols-5 gap-3">
       {[1, 2, 3, 4, 5].map((num) => (
-        <img
-          key={num}
-          className={`aspect-square w-full cursor-pointer rounded-lg border-2 object-cover transition ${
-            selectedAvatar === num
-              ? "border-indigo-600 opacity-100"
-              : "border-transparent opacity-50 hover:opacity-80"
-          }`}
-          src={`/avatars/AV${num}.png`}
-          onClick={() => setSelectedAvatar(num)}
-        />
+        <button key={num} type="button" onClick={() => setSelectedAvatar(num)} className="rounded-full" aria-label={`Select avatar ${num}`} aria-pressed={selectedAvatar === num}>
+          <img
+            className={`aspect-square w-full cursor-pointer rounded-full border-2 object-cover p-0.5 transition ${
+              selectedAvatar === num
+                ? "border-indigo-600 opacity-100 ring-2 ring-indigo-100 dark:ring-indigo-950"
+                : "border-transparent opacity-60 hover:opacity-100"
+            }`}
+            src={`/avatars/AV${num}.png`}
+            alt=""
+          />
+        </button>
       ))}
     </div>
   );
