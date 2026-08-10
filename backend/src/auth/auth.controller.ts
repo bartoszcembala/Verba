@@ -1,8 +1,5 @@
-import { Body, Controller, Get, Post, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Post, Res } from "@nestjs/common";
 import type { Response } from "express";
-import { CurrentUser } from "../common/auth/current-user.decorator";
-import { JwtAuthGuard } from "../common/auth/jwt-auth.guard";
-import type { AuthUser } from "../common/auth/auth-user";
 import { AuthService } from "./auth.service";
 import type { LoginInput, SignupInput } from "./auth.types";
 
@@ -26,9 +23,4 @@ export class AuthController {
     return { message: "Logged out successfully" };
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get("check")
-  check(@CurrentUser() user: AuthUser) {
-    return { user, message: "User is authenticated" };
-  }
 }

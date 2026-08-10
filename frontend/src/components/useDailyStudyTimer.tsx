@@ -54,7 +54,6 @@ export const useDailyStudyTimer = (): number => {
 
       // Zapis do backendu
       editUser({
-        id: user._id,
         data: {
           timeSpentLearning: [
             ...(user.timeSpentLearning.filter(

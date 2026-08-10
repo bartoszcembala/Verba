@@ -33,14 +33,14 @@ function Layout() {
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { authorized, setAuthorized, setMode } = useContext(SettingsContext)!;
+  const { authorized, setAuthorized, setMode, authLoading } = useContext(SettingsContext)!;
   const { logout } = useLogout();
   const { editUser } = useEditUser();
   useDailyStudyTimer();
 
   useEffect(() => {
-    if (!authorized && !localStorage.getItem("user")) navigate("/login");
-  }, [authorized, navigate]);
+    if (!authLoading && !authorized) navigate("/login");
+  }, [authLoading, authorized, navigate]);
 
   const storedUser = localStorage.getItem("user");
   const user = useMemo<User | undefined>(
@@ -86,7 +86,7 @@ function Layout() {
     const today = new Date().toISOString().split("T")[0];
     if (!user.streak.includes(today)) {
       const updatedStreak = [...user.streak, today];
-      editUser({ id: user._id, data: { streak: updatedStreak } });
+      editUser({ data: { streak: updatedStreak } });
       localStorage.setItem("user", JSON.stringify({ ...user, streak: updatedStreak }));
     }
   }, [editUser, user]);

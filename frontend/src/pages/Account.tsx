@@ -13,11 +13,9 @@ import toast from "react-hot-toast";
 import { getLastDates } from "../lib/getLastDates";
 import { SlFire } from "react-icons/sl";
 import ModalReusable from "../components/ModalReusable";
-import axios from "axios";
 import AvatarSelector from "../components/Account/AvatarSelector";
 import { useProgress } from "../lib/queries/progressQueries";
 import { getUserLevel } from "../lib/getExpLevels";
-import { apiUrl } from "../lib/api";
 
 function Account() {
   const { progress } = useProgress();
@@ -38,14 +36,14 @@ function Account() {
 
   function handleDeleteFriend(friendId: string) {
     const friends = user!.friends.filter((friend) => friend.friendId !== friendId);
-    editUser({ id: user!._id, data: { friends } }, { onSuccess: () => toast.success("Friend removed.") });
+    editUser({ data: { friends } }, { onSuccess: () => toast.success("Friend removed.") });
     localStorage.setItem("user", JSON.stringify({ ...user, friends }));
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     try {
-      await axios.patch(apiUrl(`/users/${user?._id}`), { name: userName, ...(Number.isFinite(selectedAvatar) && { avatar: selectedAvatar }) });
+      await editUser({ data: { name: userName, ...(Number.isFinite(selectedAvatar) && { avatar: String(selectedAvatar) }) } });
       localStorage.setItem("user", JSON.stringify({ ...user, name: userName, ...(Number.isFinite(selectedAvatar) && { avatar: selectedAvatar }) }));
       setSettingsOpen(false);
       toast.success("Profile updated.");

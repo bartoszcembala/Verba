@@ -11,7 +11,7 @@ export class CheckoutService {
     private readonly usersRepository: UsersRepository,
   ) {}
 
-  async createSession(userId: string, user: AuthUser) {
+  async createSession(user: AuthUser) {
     const secret = this.config.get<string>("STRIPE_SECRET_KEY");
     if (!secret) throw new ServiceUnavailableException("Stripe is not configured");
     const stripe = new Stripe(secret);
@@ -31,7 +31,7 @@ export class CheckoutService {
         quantity: 1,
       }],
     });
-    await this.usersRepository.update(userId, { premium: true });
+    await this.usersRepository.update(user._id, { premium: true });
     return session;
   }
 }

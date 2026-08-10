@@ -6,6 +6,7 @@ export type SettingsContextType = {
   setMode: (v: "guest" | "user") => void;
   authorized: boolean;
   setAuthorized: (v: boolean) => void;
+  authLoading: boolean;
   id: string | null;
   setId: (v: string | null) => void;
 };

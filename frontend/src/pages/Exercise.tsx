@@ -67,7 +67,6 @@ function Exercise({ initVerbs }: { initVerbs: WordPair[] }) {
       }
 
       addActivity({
-        id: user._id,
         activities: readyArr,
       });
       localStorage.setItem(

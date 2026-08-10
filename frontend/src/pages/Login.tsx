@@ -12,31 +12,31 @@ interface LoginFormInputs {
 }
 
 function Login() {
-  const { setAuthorized, setMode } = useContext(SettingsContext)!;
-  const { setId } = useContext(SettingsContext)!;
+  const { setAuthorized, setMode, setId } = useContext(SettingsContext)!;
   const { register, handleSubmit, reset } = useForm<LoginFormInputs>();
   const { login } = useLogin();
   const navigate = useNavigate();
 
-  const onSubmit: SubmitHandler<LoginFormInputs> = (data) => {
-    toast.promise(login(data), {
+  async function authenticate(credentials: LoginFormInputs) {
+    const user = await toast.promise(login(credentials), {
       loading: "Logging in...",
       success: "Logged in successfully!",
       error: "Logging went wrong!",
     });
+    localStorage.setItem("user", JSON.stringify(user));
+    setMode("user");
+    setAuthorized(true);
+    setId(user._id);
+    navigate("/");
+    reset();
+  }
 
-    login(data)
-      .then((user) => {
-        localStorage.setItem("user", JSON.stringify(user));
-        setMode("user");
-        setAuthorized(true);
-        navigate("/");
-        reset();
-        setId(user._id);
-      })
-      .catch(() => {
-        reset();
-      });
+  const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
+    try {
+      await authenticate(data);
+    } catch {
+      reset();
+    }
   };
 
   return (
@@ -80,28 +80,12 @@ function Login() {
           </p>
           <button
             className="mt-8 w-full cursor-pointer rounded-lg border border-neutral-300 py-3 text-[1.4rem] font-semibold hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
-            onClick={() => {
-              toast.promise(
-                login({ email: "acc@demo.pl", password: "12345678" }),
-                {
-                  loading: "Logging in...",
-                  success: "Logged in successfully!",
-                  error: "Logging went wrong!",
-                },
-              );
-
-              login({ email: "acc@demo.pl", password: "12345678" })
-                .then((user) => {
-                  localStorage.setItem("user", JSON.stringify(user));
-                  setMode("user");
-                  setAuthorized(true);
-                  navigate("/");
-                  reset();
-                  setId(user._id);
-                })
-                .catch(() => {
-                  reset();
-                });
+            onClick={async () => {
+              try {
+                await authenticate({ email: "acc@demo.pl", password: "12345678" });
+              } catch {
+                reset();
+              }
             }}
           >
             Log in into demo account

@@ -1,7 +1,12 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { User } from "../../types";
 import { apiUrl } from "../api";
+
+type ApiResponse<T> = {
+  success: boolean;
+  data: T;
+  message?: string;
+};
 
 interface LoginInput {
   email: string;
@@ -9,13 +14,34 @@ interface LoginInput {
 }
 
 interface ActivityInput {
-  id: string;
   activities: string[][];
 }
 
 interface EditUserInput {
-  id: string;
   data: Partial<User>;
+}
+
+export async function getCurrentUser(): Promise<User | null> {
+  const response = await fetch(apiUrl("/users/me"), {
+    method: "GET",
+    credentials: "include",
+  });
+
+  if (response.status === 401) return null;
+  if (!response.ok) throw new Error("Unable to load current user");
+
+  const body = await response.json() as ApiResponse<User>;
+  return body.data;
+}
+
+export function useCurrentUser() {
+  const query = useQuery<User | null>({
+    queryKey: ["currentUser"],
+    queryFn: getCurrentUser,
+    retry: false,
+  });
+
+  return { user: query.data, isLoadingUser: query.isLoading };
 }
 
 export function useLogin() {
@@ -31,6 +57,8 @@ export function useLogin() {
         },
       );
 
+      if (!res.ok) throw new Error("Invalid email or password");
+
       const responseReady = await res.json();
       return responseReady.data.user as User;
     },
@@ -43,6 +71,7 @@ export function useLogin() {
 }
 
 export function useLogout() {
+  const queryClient = useQueryClient();
   const { mutate } = useMutation<unknown, Error, void>({
     mutationFn: async () => {
       await fetch(
@@ -53,6 +82,9 @@ export function useLogout() {
           credentials: "include",
         },
       );
+    },
+    onSuccess: () => {
+      queryClient.setQueryData(["currentUser"], null);
     },
   });
 
@@ -79,7 +111,7 @@ export function useUsers() {
 
 export function useUser(userId: string) {
   const { data, isLoading } = useQuery<User>({
-    queryKey: ["user"],
+    queryKey: ["user", userId],
     queryFn: async () => {
       const res = await fetch(
         apiUrl(`/users/${userId}`),
@@ -97,10 +129,11 @@ export function useUser(userId: string) {
 }
 
 export function useActivity() {
+  const queryClient = useQueryClient();
   const { mutateAsync } = useMutation<User, Error, ActivityInput>({
-    mutationFn: async ({ id, activities }) => {
+    mutationFn: async ({ activities }) => {
       const res = await fetch(
-        apiUrl(`/users/${id}`),
+        apiUrl("/users/me"),
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -116,6 +149,9 @@ export function useActivity() {
 
       return json.data as User;
     },
+    onSuccess: (user) => {
+      queryClient.setQueryData(["currentUser"], user);
+    },
   });
 
   return {
@@ -124,17 +160,22 @@ export function useActivity() {
 }
 
 export function useEditUser() {
+  const queryClient = useQueryClient();
   const { mutateAsync } = useMutation<User, Error, EditUserInput>({
-    mutationFn: async ({ id, data }) => {
-      const res = await axios.patch<User>(
-        apiUrl(`/users/${id}`),
-        data,
-        {
-          withCredentials: true,
-        },
-      );
-
-      return res.data;
+    mutationFn: async ({ data }) => {
+      const response = await fetch(apiUrl("/users/me"), {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(data),
+      });
+      const body = await response.json() as ApiResponse<User>;
+      if (!response.ok) throw new Error(body.message || "Unable to update user");
+      return body.data;
+    },
+    onSuccess: (user) => {
+      queryClient.setQueryData(["currentUser"], user);
+      localStorage.setItem("user", JSON.stringify(user));
     },
     onError: (error) => {
       console.error("❌ Błąd edycji użytkownika:", error.message);

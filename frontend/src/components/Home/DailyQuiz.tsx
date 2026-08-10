@@ -92,7 +92,6 @@ function DailyQuiz() {
       if (correct >= 4) {
         toast.success("Quiz completed! You earned 30 EXP.");
         editUser({
-          id: user._id,
           data: { exp: user.exp + 30 * (user.streak.length / 100 + 1) },
         });
         localStorage.setItem(
@@ -106,7 +105,6 @@ function DailyQuiz() {
        incrementDailyQuest({ index: 2, userId: user._id });
 
         editUser({
-          id: user._id,
           data: {
             quiz: {
               finished: true,
@@ -192,7 +190,6 @@ function DailyQuiz() {
                 onClick={() => {
                   if (user.quiz.finished === true) {
                     editUser({
-                      id: user._id,
                       data: {
                         quiz: {
                           finished: false,

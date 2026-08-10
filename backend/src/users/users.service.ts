@@ -32,7 +32,7 @@ export class UsersService {
   async update(id: string, input: Record<string, unknown>): Promise<PublicUser> {
     const allowed: UpdateUserInput = {};
     const keys: (keyof UpdateUserInput)[] = [
-      "name", "email", "latestActivity", "streak", "timeSpentLearning", "premium",
+      "name", "email", "latestActivity", "streak", "timeSpentLearning",
       "exp", "finishedLessons", "friends", "avatar", "quiz",
     ];
     for (const key of keys) {

@@ -10,7 +10,7 @@ function BuyPremium() {
   async function checkout() {
     try {
       if (!user) return;
-      const session = await axios(apiUrl(`/checkout/${user._id}`), { withCredentials: true });
+      const session = await axios(apiUrl("/checkout"), { withCredentials: true });
       window.location.href = session.data.session.url;
     } catch (error) { console.log(error); }
   }

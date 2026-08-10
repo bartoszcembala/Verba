@@ -17,7 +17,7 @@ function Modal({ setIsOpen, isOpen }: { setIsOpen: (isOpen: boolean) => void; is
   ).slice(0, 6);
 
   function addFriend({ _id, name, avatar }: { _id: string; name: string; avatar: string }) {
-    editUser({ id: user!._id, data: { friends: [...user!.friends, { name, friendId: _id, avatar }] } });
+    editUser({ data: { friends: [...user!.friends, { name, friendId: _id, avatar }] } });
     localStorage.setItem("user", JSON.stringify({ ...user, friends: [...user!.friends, { name, friendId: _id, avatar }] }));
     setIsOpen(false);
     toast.success(`${name} added to your friends.`);

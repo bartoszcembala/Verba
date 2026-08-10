@@ -28,7 +28,6 @@ function Lesson({ lesson }: { lesson: LessonInterface }) {
     }
 
     addActivity({
-      id: user._id,
       activities: readyArr,
     });
 
@@ -44,7 +43,6 @@ function Lesson({ lesson }: { lesson: LessonInterface }) {
         (id: string) => id !== lesson._id,
       );
       editUser({
-        id: user._id,
         data: {
           finishedLessons: filteredLessons,
           exp: user.exp + 30 * (user.streak.length / 100 + 1),
@@ -60,7 +58,6 @@ function Lesson({ lesson }: { lesson: LessonInterface }) {
       );
     } else {
       editUser({
-        id: user._id,
         data: { finishedLessons: [...user.finishedLessons, lesson._id] },
       });
       localStorage.setItem(

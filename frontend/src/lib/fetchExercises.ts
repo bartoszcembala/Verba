@@ -8,6 +8,7 @@ export async function fetchExercise(
 ): Promise<void> {
   const response = await fetch(apiUrl("/exercises/generate"), {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },

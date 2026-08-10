@@ -1,7 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, UseGuards } from "@nestjs/common";
+import type { AuthUser } from "../common/auth/auth-user";
+import { CurrentUser } from "../common/auth/current-user.decorator";
+import { JwtAuthGuard } from "../common/auth/jwt-auth.guard";
 import { apiResponse } from "../common/http/api-response";
 import { UsersService } from "./users.service";
 
+@UseGuards(JwtAuthGuard)
 @Controller("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -11,10 +15,20 @@ export class UsersController {
     return apiResponse(await this.usersService.findAll());
   }
 
-  @Post()
-  async create(@Body() body: Record<string, unknown>) {
-    const user = await this.usersService.create(body as never);
-    return apiResponse({ user });
+  @Get("me")
+  current(@CurrentUser() user: AuthUser) {
+    return apiResponse(user);
+  }
+
+  @Patch("me")
+  async updateCurrent(@CurrentUser() user: AuthUser, @Body() body: Record<string, unknown>) {
+    return apiResponse(await this.usersService.update(user._id, body));
+  }
+
+  @Delete("me")
+  async deleteCurrent(@CurrentUser() user: AuthUser) {
+    await this.usersService.delete(user._id);
+    return { success: true, message: "User deleted" };
   }
 
   @Get(":id")
@@ -22,14 +36,4 @@ export class UsersController {
     return apiResponse(await this.usersService.findOne(id));
   }
 
-  @Patch(":id")
-  async update(@Param("id") id: string, @Body() body: Record<string, unknown>) {
-    return apiResponse(await this.usersService.update(id, body));
-  }
-
-  @Delete(":id")
-  async delete(@Param("id") id: string) {
-    await this.usersService.delete(id);
-    return { success: true, message: "User deleted" };
-  }
 }

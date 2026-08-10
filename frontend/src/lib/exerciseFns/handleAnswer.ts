@@ -16,7 +16,7 @@ type AddLearnedWordFunction = (
   options: { onSuccess: () => void },
 ) => Promise<Progress>;
 
-type EditUserFunction = (input: { id: string; data: Partial<User> }) => Promise<User>;
+type EditUserFunction = (input: { data: Partial<User> }) => Promise<User>;
 
 export async function handleAnswer(
   editUser: EditUserFunction,
@@ -72,7 +72,6 @@ export async function handleAnswer(
     toast.success("Correct!");
     setIsCorrect("correct");
     editUser({
-      id: user._id,
       data: { exp: user.exp + 10 * (user.streak.length / 100 + 1) },
     });
     localStorage.setItem(
