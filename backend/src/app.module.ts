@@ -10,6 +10,7 @@ import { ExercisesModule } from "./exercises/exercises.module";
 import { LearningModulesModule } from "./learning-modules/learning-modules.module";
 import { LessonsModule } from "./lessons/lessons.module";
 import { ProgressModule } from "./progress/progress.module";
+import { ProgressionModule } from "./progression/progression.module";
 import { DbModule } from "./storage/db/db.module";
 import { UsersModule } from "./users/users.module";
 
@@ -35,6 +36,7 @@ import { UsersModule } from "./users/users.module";
     LearningModulesModule,
     LessonsModule,
     ProgressModule,
+    ProgressionModule,
     DailyQuestsModule,
     CheckoutModule,
     HealthModule,

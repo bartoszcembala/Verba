@@ -1,7 +1,7 @@
 import toast from "react-hot-toast";
 import type { QueryClient } from "@tanstack/react-query";
 import type { Dispatch, SetStateAction } from "react";
-import type { DailyQuestsInterface, Progress, User, WordPair } from "../../types";
+import type { Progress, User, WordPair } from "../../types";
 import type { AnswerStatus, ExercisePrompt } from "../../components/Exercise/types";
 
 type LearnedWordPayload = {
@@ -16,10 +16,10 @@ type AddLearnedWordFunction = (
   options: { onSuccess: () => void },
 ) => Promise<Progress>;
 
-type EditUserFunction = (input: { data: Partial<User> }) => Promise<User>;
+type RecordCorrectAnswerFunction = (learnedNewWord: boolean) => Promise<User>;
 
 export async function handleAnswer(
-  editUser: EditUserFunction,
+  recordCorrectAnswer: RecordCorrectAnswerFunction,
   answer: string,
   addLearnedWord: AddLearnedWordFunction,
   setExercise: Dispatch<SetStateAction<ExercisePrompt>>,
@@ -31,10 +31,6 @@ export async function handleAnswer(
   setIsCorrect: Dispatch<SetStateAction<AnswerStatus>>,
   setSelectedVerbs: Dispatch<SetStateAction<WordPair[]>>,
   queryClient: QueryClient,
-  incrementDailyQuest: (payload: {
-    index: number;
-    userId: string;
-  }) => Promise<DailyQuestsInterface>,
 ) {
   if (!user || !progress) return;
 
@@ -48,7 +44,8 @@ export async function handleAnswer(
   }
 
   if (answer === exercise.correctAnswer) {
-    if (!activeProgress.learned.flat().includes(answer)) {
+    const learnedNewWord = !activeProgress.learned.flat().includes(answer);
+    if (learnedNewWord) {
       addLearnedWord(
         {
           id: activeProgress._id,
@@ -62,25 +59,17 @@ export async function handleAnswer(
           },
         },
       );
-
-      //Daily Quest logic
-
-      incrementDailyQuest({ index: 1, userId: user._id });
     }
 
+    try {
+      await recordCorrectAnswer(learnedNewWord);
+    } catch {
+      toast.error("Could not save your answer. Please try again.");
+      return;
+    }
     setSelectedVerbs((prev) => prev.filter((v) => v[0] !== answer));
     toast.success("Correct!");
     setIsCorrect("correct");
-    editUser({
-      data: { exp: user.exp + 10 * (user.streak.length / 100 + 1) },
-    });
-    localStorage.setItem(
-      "user",
-      JSON.stringify({
-        ...user,
-        exp: user.exp + 10 * (user.streak.length / 100 + 1),
-      }),
-    );
     if (selectedVerbs.length === 1) {
       setExercise({
         question: "",

@@ -13,10 +13,6 @@ interface LoginInput {
   password: string;
 }
 
-interface ActivityInput {
-  activities: string[][];
-}
-
 interface EditUserInput {
   data: Partial<User>;
 }
@@ -126,37 +122,6 @@ export function useUser(userId: string) {
   });
 
   return { user: data, isLoadingUser: isLoading };
-}
-
-export function useActivity() {
-  const queryClient = useQueryClient();
-  const { mutateAsync } = useMutation<User, Error, ActivityInput>({
-    mutationFn: async ({ activities }) => {
-      const res = await fetch(
-        apiUrl("/users/me"),
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ latestActivity: activities }),
-        },
-      );
-
-      const json = await res.json();
-      if (json.success === false) {
-        throw new Error(json.message);
-      }
-
-      return json.data as User;
-    },
-    onSuccess: (user) => {
-      queryClient.setQueryData(["currentUser"], user);
-    },
-  });
-
-  return {
-    addActivity: mutateAsync,
-  };
 }
 
 export function useEditUser() {

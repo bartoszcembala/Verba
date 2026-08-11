@@ -12,8 +12,15 @@ export class DailyQuestsService {
   }
 
   async findByUserId(userId: string): Promise<DailyQuestResponse> {
-    const row = await this.repository.findByUserId(userId);
-    if (!row) throw new NotFoundException("Daily quests not found");
+    let row = await this.repository.findByUserId(userId);
+    if (!row) return this.createDefaultForUser(userId);
+    if (row.day !== this.today()) {
+      row = await this.repository.update(userId, {
+        day: this.today(),
+        quests: DEFAULT_QUESTS.map((quest) => ({ ...quest })),
+      });
+      if (!row) throw new NotFoundException("Daily quests not found");
+    }
     return this.serialize(row);
   }
 
@@ -35,6 +42,7 @@ export class DailyQuestsService {
   }
 
   async increment(userId: string, index: number): Promise<DailyQuestResponse> {
+    await this.findByUserId(userId);
     const current = await this.repository.findByUserId(userId);
     if (!current) throw new NotFoundException("Daily quests not found");
     if (!current.quests[index]) throw new NotFoundException("Quest not found");

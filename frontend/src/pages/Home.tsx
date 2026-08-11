@@ -7,6 +7,7 @@ import { useState } from "react";
 import DailyQuiz from "../components/Home/DailyQuiz";
 import DailyQuests from "../components/Home/DailyQuests";
 import { getUserLevel } from "../lib/getExpLevels";
+import { todayInWarsaw } from "../lib/today";
 
 function Home() {
   const previousDates = getPreviousDates(7);
@@ -15,7 +16,7 @@ function Home() {
   const userLevel = getUserLevel(user?.exp ? Math.floor(user.exp) : 0);
   const timeSpent = user?.timeSpentLearning?.slice(-7).reduce((sum, curr) => sum + curr.value, 0) ?? 0;
   const [dailyQuizOpen, setDailyQuizOpen] = useState(false);
-  const today = new Date().toISOString().split("T")[0];
+  const today = todayInWarsaw();
   const nextPath = user?.latestActivity?.[0] ? `/${user.latestActivity[0][0]}` : "/lessons";
   const nextLabel = user?.latestActivity?.[0] ? user.latestActivity[0][1] : "Start your first lesson";
 

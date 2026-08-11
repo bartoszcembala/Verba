@@ -1,77 +1,34 @@
-import { useContext, useEffect, useMemo } from "react";
-import { useActivity, useEditUser } from "../lib/queries/userQueries";
+import { useContext, useEffect } from "react";
+import { useCurrentUser } from "../lib/queries/userQueries";
+import { useProgression } from "../lib/queries/progressionQueries";
 import { SettingsContext } from "../lib/contexts";
 import { Link, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
-import { LessonInterface, type User } from "../types";
-import { useIncrementDailyQuest } from "../lib/queries/dailyQuestsQueries";
+import { LessonInterface } from "../types";
 
 function Lesson({ lesson }: { lesson: LessonInterface }) {
-  const { incrementDailyQuest } = useIncrementDailyQuest();
-  const { addActivity } = useActivity();
-  const { editUser } = useEditUser();
+  const { recordActivity, completeLesson, isUpdatingProgression } = useProgression();
+  const { user } = useCurrentUser();
+  const userId = user?._id;
 
   const { authorized } = useContext(SettingsContext)!;
-  const user = useMemo(
-    () => JSON.parse(localStorage.getItem("user")!) as User,
-    [],
-  );
   const lessonName = useLocation().pathname.slice(1);
   useEffect(() => {
-    const arrWithout = user.latestActivity.filter(
-      (item) => item[0] !== lessonName,
-    );
-    const readyArr = [...arrWithout, [lessonName, lesson?.displayTitle]];
+    if (!userId) return;
+    void recordActivity({ path: lessonName, label: lesson.displayTitle });
+  }, [lesson.displayTitle, lessonName, recordActivity, userId]);
 
-    while (readyArr.length > 3) {
-      readyArr.shift();
-    }
-
-    addActivity({
-      activities: readyArr,
-    });
-
-    localStorage.setItem(
-      "user",
-      JSON.stringify({ ...user, latestActivity: readyArr.reverse() }),
-    );
-  }, [addActivity, lesson.displayTitle, lessonName, user]);
-
-  function handleFinishLesson() {
-    if (user.finishedLessons.includes(lesson._id)) {
-      const filteredLessons = user.finishedLessons.filter(
-        (id: string) => id !== lesson._id,
-      );
-      editUser({
-        data: {
-          finishedLessons: filteredLessons,
-          exp: user.exp + 30 * (user.streak.length / 100 + 1),
-        },
-      });
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          ...user,
-          finishedLessons: filteredLessons,
-          exp: user.exp + 30 * (user.streak.length / 100 + 1),
-        }),
-      );
-    } else {
-      editUser({
-        data: { finishedLessons: [...user.finishedLessons, lesson._id] },
-      });
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          ...user,
-          finishedLessons: [...user.finishedLessons, lesson._id],
-        }),
-      );
+  async function handleFinishLesson() {
+    if (!user || user.finishedLessons.includes(lesson._id)) return;
+    try {
+      await completeLesson(lesson._id);
       toast.success("Lesson Finished!");
-
-      incrementDailyQuest({ index: 3, userId: user._id });
+    } catch {
+      toast.error("Could not finish this lesson.");
     }
   }
+
+  if (!user) return null;
 
   return (
     <div className="mx-auto grid max-w-[108rem] gap-8 lg:grid-cols-[minmax(0,1fr)_25rem]">
@@ -89,8 +46,8 @@ function Lesson({ lesson }: { lesson: LessonInterface }) {
           ))}
           </div>
         </section>
-        <button onClick={handleFinishLesson} className={`w-full cursor-pointer rounded-lg px-4 py-3 text-[1.4rem] font-semibold ${user.finishedLessons.includes(lesson._id) ? "border border-neutral-300 hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800" : "bg-indigo-600 text-white hover:bg-indigo-700"}`}>
-          {user.finishedLessons.includes(lesson._id) ? "Mark as unfinished" : "Finish lesson"}
+        <button disabled={isUpdatingProgression || user.finishedLessons.includes(lesson._id)} onClick={handleFinishLesson} className={`w-full rounded-lg px-4 py-3 text-[1.4rem] font-semibold ${user.finishedLessons.includes(lesson._id) ? "cursor-default border border-neutral-300 text-neutral-500 dark:border-neutral-700" : "cursor-pointer bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-60"}`}>
+          {user.finishedLessons.includes(lesson._id) ? "Lesson completed" : "Finish lesson"}
         </button>
       </aside>
     </div>

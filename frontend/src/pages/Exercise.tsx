@@ -4,7 +4,7 @@ import { Toaster } from "react-hot-toast";
 import { useLocation } from "react-router-dom";
 import { ExerciseContext, SettingsContext } from "../lib/contexts";
 import Sidebar from "../components/Exercise/Sidebar";
-import { useActivity } from "../lib/queries/userQueries";
+import { useProgression } from "../lib/queries/progressionQueries";
 import { useAddProgress, useProgress } from "../lib/queries/progressQueries";
 import Chart from "../components/Exercise/Chart";
 import Main from "../components/Exercise/Main";
@@ -18,7 +18,7 @@ function Exercise({ initVerbs }: { initVerbs: WordPair[] }) {
 
   const { progress } = useProgress();
   const { addProgress } = useAddProgress();
-  const { addActivity } = useActivity();
+  const { recordActivity } = useProgression();
 
   const { mode } = useContext(SettingsContext)!;
 
@@ -29,6 +29,7 @@ function Exercise({ initVerbs }: { initVerbs: WordPair[] }) {
     () => storedUser ? JSON.parse(storedUser) as User : null,
     [storedUser],
   );
+  const userId = user?._id;
 
   const { modules } = useModules();
   const moduleDisplayName = modules?.find(
@@ -56,25 +57,10 @@ function Exercise({ initVerbs }: { initVerbs: WordPair[] }) {
   ]);
 
   useEffect(() => {
-    if (user) {
-      const arrWithout = user.latestActivity.filter(
-        (item) => item[0] !== module
-      );
-      const readyArr = [...arrWithout, [module, moduleDisplayName ?? module]];
-
-      while (readyArr.length > 3) {
-        readyArr.shift();
-      }
-
-      addActivity({
-        activities: readyArr,
-      });
-      localStorage.setItem(
-        "user",
-        JSON.stringify({ ...user, latestActivity: readyArr.reverse() })
-      );
+    if (userId) {
+      void recordActivity({ path: module, label: moduleDisplayName ?? module });
     }
-  }, [addActivity, module, moduleDisplayName, user]);
+  }, [module, moduleDisplayName, recordActivity, userId]);
 
   useEffect(() => {
     if (!progress) return;

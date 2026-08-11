@@ -3,7 +3,8 @@ import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { SettingsContext } from "../lib/contexts";
-import { useEditUser, useLogout } from "../lib/queries/userQueries";
+import { useLogout } from "../lib/queries/userQueries";
+import { useProgression } from "../lib/queries/progressionQueries";
 import { useDailyStudyTimer } from "../components/useDailyStudyTimer";
 import { IoHome, IoClipboardOutline } from "react-icons/io5";
 import { HiOutlineBookOpen } from "react-icons/hi2";
@@ -35,7 +36,7 @@ function Layout() {
   const queryClient = useQueryClient();
   const { authorized, setAuthorized, setMode, authLoading } = useContext(SettingsContext)!;
   const { logout } = useLogout();
-  const { editUser } = useEditUser();
+  const { touchStreak } = useProgression();
   useDailyStudyTimer();
 
   useEffect(() => {
@@ -47,6 +48,7 @@ function Layout() {
     () => storedUser ? JSON.parse(storedUser) as User : undefined,
     [storedUser],
   );
+  const userId = user?._id;
   const [darkMode, setDarkMode] = useState(
     () => localStorage.getItem("theme") !== "light",
   );
@@ -82,14 +84,9 @@ function Layout() {
   }, [profileOpen]);
 
   useEffect(() => {
-    if (!user) return;
-    const today = new Date().toISOString().split("T")[0];
-    if (!user.streak.includes(today)) {
-      const updatedStreak = [...user.streak, today];
-      editUser({ data: { streak: updatedStreak } });
-      localStorage.setItem("user", JSON.stringify({ ...user, streak: updatedStreak }));
-    }
-  }, [editUser, user]);
+    if (!userId) return;
+    void touchStreak();
+  }, [touchStreak, userId]);
 
   async function handleLogout() {
     logout();

@@ -3,19 +3,19 @@ import { useProgress } from "../../lib/queries/progressQueries";
 import { shuffleArray } from "../../lib/shuffle";
 import Spinner from "../Spinner";
 import toast from "react-hot-toast";
-import { useEditUser } from "../../lib/queries/userQueries";
+import { useProgression } from "../../lib/queries/progressionQueries";
 import { IoReload } from "react-icons/io5";
 import { CiLock } from "react-icons/ci";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { MdOutlineCancel } from "react-icons/md";
-import { useIncrementDailyQuest } from "../../lib/queries/dailyQuestsQueries";
+import { todayInWarsaw } from "../../lib/today";
 
 function DailyQuiz() {
-  const { incrementDailyQuest } = useIncrementDailyQuest();
   const { progress, isLoadingProgress } = useProgress();
-  const { editUser } = useEditUser();
+  const { completeDailyQuiz } = useProgression();
   const userStr = localStorage.getItem("user");
   const user = userStr ? JSON.parse(userStr) : null;
+  const today = todayInWarsaw();
   const [currQuestion, setCurrQuestion] = useState(0);
   const learnedWords = useMemo(
     () => progress
@@ -81,47 +81,20 @@ function DailyQuiz() {
     setQuizData(newQuizData);
   }, [learnedWords, refresh]);
 
-  function handleSelect(answer: string[]) {
-    if (answer[0] === quizData[currQuestion]?.word) {
-      setCorrect(correct + 1);
-    } else if (answer[0] !== quizData[currQuestion]?.word) {
-      setWrong(wrong + 1);
-    }
+  async function handleSelect(answer: string[]) {
+    const isCorrect = answer[0] === quizData[currQuestion]?.word;
+    const finalCorrect = correct + (isCorrect ? 1 : 0);
+    if (isCorrect) setCorrect(finalCorrect);
+    else setWrong(wrong + 1);
     setCurrQuestion(currQuestion + 1);
     if (currQuestion + 1 === 5) {
-      if (correct >= 4) {
-        toast.success("Quiz completed! You earned 30 EXP.");
-        editUser({
-          data: { exp: user.exp + 30 * (user.streak.length / 100 + 1) },
-        });
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            ...user,
-            exp: user.exp + 30 * (user.streak.length / 100 + 1),
-          }),
-        );
-        //Daily Quest logic
-       incrementDailyQuest({ index: 2, userId: user._id });
-
-        editUser({
-          data: {
-            quiz: {
-              finished: true,
-              date: new Date().toISOString().split("T")[0],
-            },
-          },
-        });
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            ...user,
-            quiz: {
-              finished: true,
-              date: new Date().toISOString().split("T")[0],
-            },
-          }),
-        );
+      if (finalCorrect >= 4) {
+        try {
+          await completeDailyQuiz(finalCorrect);
+          toast.success("Quiz completed! You earned 30 EXP.");
+        } catch {
+          toast.error("Could not save your quiz result.");
+        }
       }
     }
   }
@@ -132,7 +105,7 @@ function DailyQuiz() {
         <div>
           {isLoadingProgress && <Spinner />}
           {currQuestion < 5 &&
-          user.quiz.date !== new Date().toISOString().split("T")[0] ? (
+          user.quiz.date !== today ? (
             <>
               <header className="flex items-center justify-between border-b border-neutral-100 px-6 py-4 dark:border-neutral-800 sm:px-8">
                 <div>
@@ -171,57 +144,32 @@ function DailyQuiz() {
             </>
           ) : (
             <div className="flex flex-col items-start gap-5 p-8 text-left sm:min-h-[13rem] sm:flex-row sm:items-center">
-              <div className={`grid h-18 w-18 shrink-0 place-items-center rounded-lg ${user.quiz.date === new Date().toISOString().split("T")[0] ? "bg-emerald-50 dark:bg-emerald-950/30" : "bg-red-50 dark:bg-red-950/30"}`}>
-                {user.quiz.date === new Date().toISOString().split("T")[0] ? (
+              <div className={`grid h-18 w-18 shrink-0 place-items-center rounded-lg ${user.quiz.date === today ? "bg-emerald-50 dark:bg-emerald-950/30" : "bg-red-50 dark:bg-red-950/30"}`}>
+                {user.quiz.date === today ? (
                   <IoIosCheckmarkCircleOutline className="h-10 w-10 text-emerald-600" />
                 ) : (
                   <MdOutlineCancel className="h-10 w-10 text-red-600" />
                 )}
               </div>
               <div className="min-w-0 flex-1">
-                {user.quiz.date === new Date().toISOString().split("T")[0] ? (
+                {user.quiz.date === today ? (
                   <><h2 className="text-[2rem] font-semibold">Review complete</h2><p className="mt-1 text-[1.3rem] text-neutral-500">You&apos;ve completed today&apos;s vocabulary review.</p></>
                 ) : (
                   <><h2 className="text-[2rem] font-semibold">Almost there</h2><p className="mt-1 text-[1.3rem] text-neutral-500">Review your words and give the quiz another try.</p></>
                 )}
               </div>
 
-              <button
+              {user.quiz.date !== today && <button
                 onClick={() => {
-                  if (user.quiz.finished === true) {
-                    editUser({
-                      data: {
-                        quiz: {
-                          finished: false,
-                          date: "01-01-0001",
-                        },
-                      },
-                    });
-                    localStorage.setItem(
-                      "user",
-                      JSON.stringify({
-                        ...user,
-                        quiz: {
-                          finished: false,
-                          date: "01-01-0001",
-                        },
-                      }),
-                    );
-                    setCurrQuestion(0);
-                    setCorrect(0);
-                    setWrong(0);
-                    setRefresh((prev) => prev + 1);
-                  } else {
-                    setCurrQuestion(0);
-                    setCorrect(0);
-                    setWrong(0);
-                    setRefresh((prev) => prev + 1);
-                  }
+                  setCurrQuestion(0);
+                  setCorrect(0);
+                  setWrong(0);
+                  setRefresh((prev) => prev + 1);
                 }}
                 className="flex cursor-pointer items-center gap-2 rounded-lg border border-neutral-300 px-4 py-2.5 text-[1.3rem] font-semibold hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
               >
                 <IoReload className="h-7 w-7" /> Try again
-              </button>
+              </button>}
             </div>
           )}
         </div>

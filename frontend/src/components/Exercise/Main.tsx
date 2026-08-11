@@ -8,11 +8,8 @@ import {
 } from "../../lib/exerciseFns/exercisesFn";
 import { ExerciseContext } from "../../lib/contexts";
 import Letters from "./Letters";
-import {
-  useIncrementDailyQuest,
-} from "../../lib/queries/dailyQuestsQueries";
 import { FiCheckSquare } from "react-icons/fi";
-import { useEditUser } from "../../lib/queries/userQueries";
+import { useProgression } from "../../lib/queries/progressionQueries";
 import type { AnswerStatus, ExercisePrompt } from "./types";
 
 type ExerciseType = "translate" | "fillblank";
@@ -20,7 +17,7 @@ type ExerciseType = "translate" | "fillblank";
 function Main() {
   const { selectedVerbs, setSelectedVerbs, verbs, progress, module, user } =
     useContext(ExerciseContext)!;
-  const { editUser } = useEditUser();
+  const { recordCorrectExerciseAnswer } = useProgression();
   const { addLearnedWord } = useAddLearnedWord();
   const queryClient = useQueryClient();
   const [exercise, setExercise] = useState<ExercisePrompt>({
@@ -34,7 +31,6 @@ function Main() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [exerciseType, setExerciseType] = useState<ExerciseType>("translate");
   const [writing, setWriting] = useState(true);
-  const { incrementDailyQuest } = useIncrementDailyQuest();
 
   function getExercise(type: ExerciseType) {
     if (type === "translate") {
@@ -54,7 +50,7 @@ function Main() {
 
   function handleAnswer(input: string) {
     handleAnswerImported(
-      editUser,
+      recordCorrectExerciseAnswer,
       input,
       addLearnedWord,
       setExercise,
@@ -66,7 +62,6 @@ function Main() {
       setIsCorrect,
       setSelectedVerbs,
       queryClient,
-      incrementDailyQuest,
     );
   }
 
