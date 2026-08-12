@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtModule, type JwtModuleOptions } from "@nestjs/jwt";
-import { ScheduleModule } from "@nestjs/schedule";
 import { AuthModule } from "./auth/auth.module";
 import { CheckoutModule } from "./checkout/checkout.module";
 import { DailyQuestsModule } from "./daily-quests/daily-quests.module";
@@ -28,7 +27,6 @@ import { UsersModule } from "./users/users.module";
         };
       },
     }),
-    ScheduleModule.forRoot(),
     DbModule,
     AuthModule,
     UsersModule,

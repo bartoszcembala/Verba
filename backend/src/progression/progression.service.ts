@@ -1,9 +1,9 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { DEFAULT_QUESTS } from "../daily-quests/daily-quests.types";
 import { DB } from "../storage/db/db.constants";
 import type { Database } from "../storage/db/db.types";
-import { dailyQuests, users, type DailyQuestItem, type UserRow } from "../storage/schema";
+import { dailyQuestProgress, users, type DailyQuestKey, type UserRow } from "../storage/schema";
 import { toPublicUser, type PublicUser, type UpdateUserInput } from "../users/users.types";
 import type {
   CompleteDailyQuizInput,
@@ -18,8 +18,8 @@ type ProgressionResult = {
 };
 
 type QuestUpdate =
-  | { index: number; increment: number }
-  | { index: number; progress: number };
+  | { key: DailyQuestKey; increment: number }
+  | { key: DailyQuestKey; progress: number };
 
 @Injectable()
 export class ProgressionService {
@@ -62,7 +62,7 @@ export class ProgressionService {
           { date: today, value: input.minutes },
         ],
       };
-    }, { index: 0, progress: input.minutes });
+    }, { key: "study_time", progress: input.minutes });
     return result.user;
   }
 
@@ -78,7 +78,7 @@ export class ProgressionService {
         finishedLessons: [...user.finishedLessons, normalizedLessonId],
         exp: user.exp + this.reward(30, streak),
       };
-    }, { index: 3, increment: 1 });
+    }, { key: "complete_lesson", increment: 1 });
     return result.user;
   }
 
@@ -89,7 +89,7 @@ export class ProgressionService {
     const result = await this.mutateUser(userId, (user) => {
       const streak = this.withToday(user.streak);
       return { streak, exp: user.exp + this.reward(10, streak) };
-    }, input.learnedNewWord ? { index: 1, increment: 1 } : undefined);
+    }, input.learnedNewWord ? { key: "learn_words", increment: 1 } : undefined);
     return result.user;
   }
 
@@ -114,7 +114,7 @@ export class ProgressionService {
         exp: user.exp + this.reward(30, streak),
         quiz: { finished: true, date: today },
       };
-    }, { index: 2, increment: 1 });
+    }, { key: "daily_quiz", increment: 1 });
     return result.user;
   }
 
@@ -142,36 +142,42 @@ export class ProgressionService {
       if (!updated) throw new NotFoundException("User not found");
 
       if (questUpdate) {
+        const day = this.today();
+        const definition = DEFAULT_QUESTS.find(({ key }) => key === questUpdate.key);
+        if (!definition) throw new BadRequestException("Unknown daily quest");
+
         const [questRow] = await transaction
           .select()
-          .from(dailyQuests)
-          .where(eq(dailyQuests.userId, userId))
+          .from(dailyQuestProgress)
+          .where(and(
+            eq(dailyQuestProgress.userId, userId),
+            eq(dailyQuestProgress.day, day),
+            eq(dailyQuestProgress.questKey, questUpdate.key),
+          ))
           .for("update");
-        const currentQuests = questRow?.day === this.today()
-          ? questRow.quests
-          : DEFAULT_QUESTS.map((quest) => ({ ...quest }));
-        const quests = this.updateQuest(currentQuests, questUpdate);
+        const requestedProgress = "progress" in questUpdate
+          ? questUpdate.progress
+          : (questRow?.progress ?? 0) + questUpdate.increment;
+        const progress = Math.min(
+          definition.toObtain,
+          Math.max(questRow?.progress ?? 0, requestedProgress),
+        );
+
         if (questRow) {
           await transaction
-            .update(dailyQuests)
-            .set({ day: this.today(), quests })
-            .where(eq(dailyQuests.userId, userId));
+            .update(dailyQuestProgress)
+            .set({ progress, updatedAt: new Date() })
+            .where(eq(dailyQuestProgress.id, questRow.id));
         } else {
-          await transaction.insert(dailyQuests).values({ userId, day: this.today(), quests });
+          await transaction.insert(dailyQuestProgress).values({
+            userId,
+            day,
+            questKey: questUpdate.key,
+            progress,
+          });
         }
       }
       return { user: toPublicUser(updated), changed: true };
-    });
-  }
-
-  private updateQuest(quests: DailyQuestItem[], update: QuestUpdate): DailyQuestItem[] {
-    return quests.map((quest, index) => {
-      if (index !== update.index) return quest;
-      const requestedProgress = "progress" in update
-        ? update.progress
-        : quest.progress + update.increment;
-      const progress = Math.min(quest.toObtain, Math.max(quest.progress, requestedProgress));
-      return { ...quest, progress, completed: progress >= quest.toObtain };
     });
   }
 

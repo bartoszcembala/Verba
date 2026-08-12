@@ -62,6 +62,7 @@ export interface Progress {
 }
 
 export type dailyQuestType = {
+  key: "study_time" | "learn_words" | "daily_quiz" | "complete_lesson";
   title: string;
   progress: number;
   toObtain: number;

@@ -17,11 +17,3 @@ export type QuizState = {
 };
 
 export type WordPair = [string, string];
-
-export type DailyQuestItem = {
-  title: string;
-  progress: number;
-  toObtain: number;
-  completed: boolean;
-  icon: string;
-};

@@ -23,13 +23,13 @@ export default function DailyQuests() {
           <h2 className="mt-1 text-[2.2rem] font-semibold">Daily quests</h2>
         </div>
         <span className="rounded-md bg-neutral-100 px-3 py-1 text-[1.25rem] font-semibold dark:bg-neutral-800">
-          {dailyQuests?.quests.filter((quest) => quest.completed).length ?? 0}/{dailyQuests?.quests.length ?? 3}
+          {dailyQuests?.quests.filter((quest) => quest.completed).length ?? 0}/{dailyQuests?.quests.length ?? 4}
         </span>
       </div>
       {dailyQuests ? (
         <div className="mt-6 divide-y divide-neutral-100 dark:divide-neutral-800">
-          {dailyQuests.quests.map((quest, index) => (
-            <div key={index} className="flex items-center gap-4 py-4 first:pt-0 last:pb-0">
+          {dailyQuests.quests.map((quest) => (
+            <div key={quest.key} className="flex items-center gap-4 py-4 first:pt-0 last:pb-0">
               <span className={`grid h-16 w-16 shrink-0 place-items-center rounded-lg [&>svg]:h-7 [&>svg]:w-7 ${quest.completed ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400" : "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"}`}>
                 {iconStore[quest.icon]}
               </span>
