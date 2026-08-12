@@ -1,5 +1,4 @@
-import { createContext, type Dispatch, type SetStateAction } from "react";
-import { Progress, User, type WordPair } from "../types";
+import { createContext } from "react";
 
 export type SettingsContextType = {
   mode: "guest" | "user";
@@ -11,18 +10,6 @@ export type SettingsContextType = {
   setId: (v: string | null) => void;
 };
 
-export type ExerciseContextType = {
-  verbs: WordPair[];
-  selectedVerbs: WordPair[];
-  setSelectedVerbs: Dispatch<SetStateAction<WordPair[]>>;
-  progress: Progress[] | undefined;
-  user: User | null;
-  module: string;
-};
-
 export const SettingsContext = createContext<SettingsContextType | undefined>(
-  undefined
-);
-export const ExerciseContext = createContext<ExerciseContextType | undefined>(
   undefined
 );

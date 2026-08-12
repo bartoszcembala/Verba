@@ -1,5 +1,3 @@
-import type { Dispatch, SetStateAction } from "react";
-
 export type WordPair = [string, string];
 
 export type ExercisePrompt = {
@@ -16,5 +14,3 @@ export type AnswerStat = {
   value: number;
   color: string;
 };
-
-export type SetCorrect = Dispatch<SetStateAction<AnswerStat[]>>;

@@ -1,11 +1,9 @@
-import type { Dispatch, SetStateAction } from "react";
 import type { ExercisePrompt, WordPair } from "../components/Exercise/types";
 import { apiUrl } from "./api";
 
 export async function fetchExercise(
   randomVerb: WordPair,
-  setExercise: Dispatch<SetStateAction<ExercisePrompt>>,
-): Promise<void> {
+): Promise<ExercisePrompt> {
   const response = await fetch(apiUrl("/exercises/generate"), {
     method: "POST",
     credentials: "include",
@@ -16,6 +14,5 @@ export async function fetchExercise(
   });
 
   if (!response.ok) throw new Error("Exercise generation failed");
-  const exercise = await response.json() as ExercisePrompt;
-  setExercise(exercise);
+  return response.json() as Promise<ExercisePrompt>;
 }

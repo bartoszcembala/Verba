@@ -2,7 +2,6 @@ import "../index.css";
 import { useEffect, useMemo, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { useLocation } from "react-router-dom";
-import { ExerciseContext } from "../lib/contexts";
 import Sidebar from "../components/Exercise/Sidebar";
 import { useProgression } from "../lib/queries/progressionQueries";
 import { useProgress } from "../lib/queries/progressQueries";
@@ -10,7 +9,7 @@ import Chart from "../components/Exercise/Chart";
 import Main from "../components/Exercise/Main";
 import { User, type WordPair } from "../types";
 import { useModules } from "../lib/queries/modulesQueries";
-import type { AnswerStat } from "../components/Exercise/types";
+import { useExerciseSession } from "../components/Exercise/useExerciseSession";
 
 function Exercise({ initVerbs }: { initVerbs: WordPair[] }) {
   const { progress } = useProgress();
@@ -32,23 +31,13 @@ function Exercise({ initVerbs }: { initVerbs: WordPair[] }) {
   const activeProgress = progress?.find(
     (p) => p.moduleName === module && p.userName === user?.email
   );
-  const verbs = [...initVerbs];
-
-  const [selectedVerbs, setSelectedVerbs] = useState<WordPair[]>([]);
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
-
-  const [correct, setCorrect] = useState<AnswerStat[]>([
-    {
-      name: "correct",
-      value: activeProgress?.learned.length ?? 0,
-      color: "#34563c",
-    },
-    {
-      name: "wrong",
-      value: initVerbs.length - (activeProgress?.learned.length ?? 0),
-      color: "#563434",
-    },
-  ]);
+  const session = useExerciseSession({
+    verbs: initVerbs,
+    moduleName: module,
+    user,
+    activeProgress,
+  });
 
   useEffect(() => {
     if (userId) {
@@ -56,37 +45,9 @@ function Exercise({ initVerbs }: { initVerbs: WordPair[] }) {
     }
   }, [module, moduleDisplayName, recordActivity, userId]);
 
-  useEffect(() => {
-    if (!progress) return;
-
-    setCorrect([
-      {
-        name: "correct",
-        value: activeProgress?.learned.length ?? 0,
-        color: "#34563c",
-      },
-      {
-        name: "wrong",
-        value: initVerbs.length - (activeProgress?.learned.length ?? 0),
-        color: "#563434",
-      },
-    ]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [progress]);
-
   return (
     <>
       <Toaster />
-      <ExerciseContext.Provider
-        value={{
-          verbs,
-          selectedVerbs,
-          setSelectedVerbs,
-          progress,
-          module,
-          user,
-        }}
-      >
         <div className="mx-auto mb-6 flex max-w-[128rem] justify-end lg:hidden">
           <button
             onClick={() => setIsSidebarVisible(!isSidebarVisible)}
@@ -99,21 +60,20 @@ function Exercise({ initVerbs }: { initVerbs: WordPair[] }) {
         <div className="mx-auto flex max-w-[128rem] flex-col gap-6 lg:grid lg:grid-cols-[30rem_minmax(0,1fr)_22rem] lg:items-start">
           {/* Sidebar na małych ekranach */}
           {isSidebarVisible && (
-            <Sidebar setCorrect={setCorrect} className="lg:hidden" />
+            <Sidebar session={session} verbs={initVerbs} activeProgress={activeProgress} className="lg:hidden" />
           )}
 
           {/* Sidebar na dużych ekranach */}
           <div className="hidden lg:block">
-            <Sidebar setCorrect={setCorrect} />
+            <Sidebar session={session} verbs={initVerbs} activeProgress={activeProgress} />
           </div>
 
           {/* Główna zawartość */}
-          <Main />
+          <Main session={session} />
 
           {/* Wykres */}
-          <Chart correct={correct} activeProgress={activeProgress} />
+          <Chart correct={session.stats} activeProgress={activeProgress} />
         </div>
-      </ExerciseContext.Provider>
     </>
   );
 }

@@ -15,7 +15,7 @@ function Chart({ correct, activeProgress }: ChartProps) {
         <div className="text-center">
           <p className="text-[1.35rem] font-medium">
             {correct[0].value}/{correct[1].value}
-            <Percent activeProgress={activeProgress} />
+            <Percent activeProgress={activeProgress} totalWords={correct[0].value + correct[1].value} />
           </p>
 
           <PieChart width={210} height={240}>
