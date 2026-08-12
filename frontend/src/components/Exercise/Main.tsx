@@ -1,6 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useContext, useRef, useState, type KeyboardEvent } from "react";
-import { useAddLearnedWord } from "../../lib/queries/progressQueries";
 import { handleAnswer as handleAnswerImported } from "../../lib/exerciseFns/handleAnswer";
 import {
   getExerciseFill,
@@ -15,10 +14,9 @@ import type { AnswerStatus, ExercisePrompt } from "./types";
 type ExerciseType = "translate" | "fillblank";
 
 function Main() {
-  const { selectedVerbs, setSelectedVerbs, verbs, progress, module, user } =
+  const { selectedVerbs, setSelectedVerbs, verbs, module, user } =
     useContext(ExerciseContext)!;
-  const { recordCorrectExerciseAnswer } = useProgression();
-  const { addLearnedWord } = useAddLearnedWord();
+  const { submitExerciseAnswer } = useProgression();
   const queryClient = useQueryClient();
   const [exercise, setExercise] = useState<ExercisePrompt>({
     question: "",
@@ -50,12 +48,10 @@ function Main() {
 
   function handleAnswer(input: string) {
     handleAnswerImported(
-      recordCorrectExerciseAnswer,
+      submitExerciseAnswer,
       input,
-      addLearnedWord,
       setExercise,
       selectedVerbs,
-      progress,
       module,
       user,
       exercise,

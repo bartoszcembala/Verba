@@ -1,10 +1,8 @@
 import toast from "react-hot-toast";
 import { useContext } from "react";
 import { ExerciseContext } from "../../lib/contexts";
-import {
-  useEditProgress,
-  useProgress,
-} from "../../lib/queries/progressQueries";
+import { useProgress } from "../../lib/queries/progressQueries";
+import { useProgression } from "../../lib/queries/progressionQueries";
 import { useQueryClient } from "@tanstack/react-query";
 import type { SetCorrect, WordPair } from "./types";
 
@@ -18,7 +16,7 @@ function Sidebar({ setCorrect, className = "" }: SidebarProps) {
   const { verbs, selectedVerbs, setSelectedVerbs, module, user } =
     useContext(ExerciseContext)!;
   const { progress } = useProgress();
-  const { editProgress } = useEditProgress();
+  const { resetExerciseProgress } = useProgression();
   const activeProgress = progress?.find(
     (p) => p.moduleName === module && p.userName === user?.email
   );
@@ -62,10 +60,10 @@ function Sidebar({ setCorrect, className = "" }: SidebarProps) {
         </button>
         <button
           className="col-span-2 cursor-pointer rounded-md px-2 py-2 text-[1.15rem] font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
-          onClick={() => {
+          onClick={async () => {
             if (!activeProgress) return;
-            editProgress({ id: activeProgress._id, data: { learned: [] } });
-            queryClient.invalidateQueries({ queryKey: ["progress"] });
+            await resetExerciseProgress(module);
+            await queryClient.invalidateQueries({ queryKey: ["progress"] });
 
             setCorrect((prev) => [
               { ...prev[0], value: 0 },

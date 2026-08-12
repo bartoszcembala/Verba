@@ -51,17 +51,23 @@ export function useProgression() {
     (lessonId: string) => run({ path: `lessons/${encodeURIComponent(lessonId)}/complete` }),
     [run],
   );
-  const recordCorrectExerciseAnswer = useCallback(
-    (learnedNewWord: boolean) => run({
-      path: "exercises/correct",
-      body: { learnedNewWord },
+  const submitExerciseAnswer = useCallback(
+    (input: { moduleName: string; word: string; answer: string }) => run({
+      path: "exercises/answer",
+      body: input,
+    }),
+    [run],
+  );
+  const resetExerciseProgress = useCallback(
+    (moduleName: string) => run({
+      path: `exercises/${encodeURIComponent(moduleName)}/reset`,
     }),
     [run],
   );
   const completeDailyQuiz = useCallback(
-    (correctAnswers: number) => run({
+    (answers: Array<{ word: string; answer: string }>) => run({
       path: "daily-quiz/complete",
-      body: { correctAnswers, totalQuestions: 5 },
+      body: { answers },
     }),
     [run],
   );
@@ -71,7 +77,8 @@ export function useProgression() {
     touchStreak,
     recordStudyTime,
     completeLesson,
-    recordCorrectExerciseAnswer,
+    submitExerciseAnswer,
+    resetExerciseProgress,
     completeDailyQuiz,
     isUpdatingProgression: mutation.isPending,
   };

@@ -36,12 +36,20 @@ export class ProgressionController {
     return apiResponse(await this.progressionService.completeLesson(user._id, lessonId));
   }
 
-  @Post("exercises/correct")
-  async recordCorrectExerciseAnswer(
+  @Post("exercises/answer")
+  async submitExerciseAnswer(
     @CurrentUser() user: AuthUser,
     @Body() body: RecordExerciseAnswerInput,
   ) {
-    return apiResponse(await this.progressionService.recordCorrectExerciseAnswer(user._id, body));
+    return apiResponse(await this.progressionService.submitExerciseAnswer(user._id, body));
+  }
+
+  @Post("exercises/:moduleName/reset")
+  async resetExerciseProgress(
+    @CurrentUser() user: AuthUser,
+    @Param("moduleName") moduleName: string,
+  ) {
+    return apiResponse(await this.progressionService.resetExerciseProgress(user._id, moduleName));
   }
 
   @Post("daily-quiz/complete")

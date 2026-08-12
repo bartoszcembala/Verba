@@ -11,7 +11,6 @@ import Lessons from "../pages/Lessons";
 import Lesson from "../pages/Lesson";
 import { useLessons } from "../lib/queries/lessonsQueries";
 import { useModules } from "../lib/queries/modulesQueries";
-import { useProgress } from "../lib/queries/progressQueries";
 import BuyPremium from "../pages/BuyPremium";
 import NotFound from "../pages/NotFound";
 import User from "../pages/User";
@@ -19,7 +18,6 @@ import Leaderboard from "../pages/Leaderboard";
 import XpGuide from "../pages/XpGuide";
 
 function AppRoutes() {
-  const { progress } = useProgress();
   const { modules } = useModules();
   const { lessons } = useLessons();
 
@@ -41,7 +39,6 @@ function AppRoutes() {
           <Route path="*" element={<NotFound />} />
 
           {modules &&
-            progress &&
             modules.map((module) => (
               <Route
                 key={module._id}

@@ -1,26 +1,20 @@
 import "../index.css";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { useLocation } from "react-router-dom";
-import { ExerciseContext, SettingsContext } from "../lib/contexts";
+import { ExerciseContext } from "../lib/contexts";
 import Sidebar from "../components/Exercise/Sidebar";
 import { useProgression } from "../lib/queries/progressionQueries";
-import { useAddProgress, useProgress } from "../lib/queries/progressQueries";
+import { useProgress } from "../lib/queries/progressQueries";
 import Chart from "../components/Exercise/Chart";
 import Main from "../components/Exercise/Main";
 import { User, type WordPair } from "../types";
-import { useQueryClient } from "@tanstack/react-query";
 import { useModules } from "../lib/queries/modulesQueries";
 import type { AnswerStat } from "../components/Exercise/types";
 
 function Exercise({ initVerbs }: { initVerbs: WordPair[] }) {
-  const queryClient = useQueryClient();
-
   const { progress } = useProgress();
-  const { addProgress } = useAddProgress();
   const { recordActivity } = useProgression();
-
-  const { mode } = useContext(SettingsContext)!;
 
   const module = useLocation().pathname.slice(1);
 
@@ -64,26 +58,6 @@ function Exercise({ initVerbs }: { initVerbs: WordPair[] }) {
 
   useEffect(() => {
     if (!progress) return;
-
-    if (
-      user &&
-      mode === "user" &&
-      !progress.some(
-        (p) => p.moduleName === module && p.userName === user?.email
-      )
-    ) {
-      const progressObj = {
-        moduleName: module,
-        userName: user.email,
-        learned: [],
-      };
-
-      addProgress(progressObj, {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["progress"] });
-        },
-      });
-    }
 
     setCorrect([
       {

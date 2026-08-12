@@ -8,10 +8,16 @@ export type RecordStudyTimeInput = {
 };
 
 export type RecordExerciseAnswerInput = {
-  learnedNewWord?: boolean;
+  moduleName: string;
+  word: string;
+  answer: string;
+};
+
+export type DailyQuizAnswerInput = {
+  word: string;
+  answer: string;
 };
 
 export type CompleteDailyQuizInput = {
-  correctAnswers: number;
-  totalQuestions: number;
+  answers: DailyQuizAnswerInput[];
 };

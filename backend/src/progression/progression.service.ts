@@ -3,7 +3,16 @@ import { and, eq } from "drizzle-orm";
 import { DEFAULT_QUESTS } from "../daily-quests/daily-quests.types";
 import { DB } from "../storage/db/db.constants";
 import type { Database } from "../storage/db/db.types";
-import { dailyQuestProgress, users, type DailyQuestKey, type UserRow } from "../storage/schema";
+import {
+  dailyQuestProgress,
+  learningModules,
+  lessons,
+  progress,
+  users,
+  type DailyQuestKey,
+  type UserRow,
+  type WordPair,
+} from "../storage/schema";
 import { toPublicUser, type PublicUser, type UpdateUserInput } from "../users/users.types";
 import type {
   CompleteDailyQuizInput,
@@ -20,6 +29,8 @@ type ProgressionResult = {
 type QuestUpdate =
   | { key: DailyQuestKey; increment: number }
   | { key: DailyQuestKey; progress: number };
+
+type DbTransaction = Parameters<Parameters<Database["transaction"]>[0]>[0];
 
 @Injectable()
 export class ProgressionService {
@@ -78,43 +89,151 @@ export class ProgressionService {
         finishedLessons: [...user.finishedLessons, normalizedLessonId],
         exp: user.exp + this.reward(30, streak),
       };
-    }, { key: "complete_lesson", increment: 1 });
+    }, { key: "complete_lesson", increment: 1 }, async (transaction) => {
+      const [lesson] = await transaction
+        .select({ id: lessons.id })
+        .from(lessons)
+        .where(eq(lessons.id, normalizedLessonId))
+        .limit(1);
+      if (!lesson) throw new NotFoundException("Lesson not found");
+    });
     return result.user;
   }
 
-  async recordCorrectExerciseAnswer(
+  async submitExerciseAnswer(
     userId: string,
     input: RecordExerciseAnswerInput,
   ): Promise<PublicUser> {
-    const result = await this.mutateUser(userId, (user) => {
+    const moduleName = input.moduleName?.trim();
+    const word = input.word?.trim();
+    const answer = input.answer?.trim();
+    if (!moduleName || !word || !answer) {
+      throw new BadRequestException("Module, word and answer are required");
+    }
+
+    return this.db.transaction(async (transaction) => {
+      const [user] = await transaction
+        .select()
+        .from(users)
+        .where(eq(users.id, userId))
+        .for("update");
+      if (!user) throw new NotFoundException("User not found");
+
+      const [learningModule] = await transaction
+        .select()
+        .from(learningModules)
+        .where(eq(learningModules.title, moduleName))
+        .limit(1);
+      if (!learningModule) throw new NotFoundException("Learning module not found");
+
+      const canonicalPair = learningModule.words.find(([candidate]) => candidate === word);
+      if (!canonicalPair || answer !== canonicalPair[0]) {
+        throw new BadRequestException("Incorrect exercise answer");
+      }
+
+      const [userProgress] = await transaction
+        .select()
+        .from(progress)
+        .where(and(eq(progress.userName, user.email), eq(progress.moduleName, moduleName)))
+        .for("update");
+      const learned = userProgress?.learned ?? [];
+      const learnedNewWord = !learned.some(([learnedWord]) => learnedWord === canonicalPair[0]);
+      if (!learnedNewWord) return toPublicUser(user);
+
+      const updatedLearned: WordPair[] = [...learned, canonicalPair];
+      if (userProgress) {
+        await transaction
+          .update(progress)
+          .set({ learned: updatedLearned })
+          .where(eq(progress.id, userProgress.id));
+      } else {
+        await transaction.insert(progress).values({
+          userName: user.email,
+          moduleName,
+          learned: updatedLearned,
+        });
+      }
+
       const streak = this.withToday(user.streak);
-      return { streak, exp: user.exp + this.reward(10, streak) };
-    }, input.learnedNewWord ? { key: "learn_words", increment: 1 } : undefined);
-    return result.user;
+      const [updatedUser] = await transaction
+        .update(users)
+        .set({
+          streak,
+          exp: user.exp + this.reward(10, streak),
+          updatedAt: new Date(),
+        })
+        .where(eq(users.id, userId))
+        .returning();
+      if (!updatedUser) throw new NotFoundException("User not found");
+
+      await this.updateQuestInTransaction(transaction, userId, {
+        key: "learn_words",
+        increment: 1,
+      });
+      return toPublicUser(updatedUser);
+    });
+  }
+
+  async resetExerciseProgress(userId: string, moduleName: string): Promise<PublicUser> {
+    const normalizedModuleName = moduleName.trim();
+    if (!normalizedModuleName) throw new BadRequestException("Module is required");
+
+    return this.db.transaction(async (transaction) => {
+      const [user] = await transaction
+        .select()
+        .from(users)
+        .where(eq(users.id, userId))
+        .for("update");
+      if (!user) throw new NotFoundException("User not found");
+
+      const [learningModule] = await transaction
+        .select({ id: learningModules.id })
+        .from(learningModules)
+        .where(eq(learningModules.title, normalizedModuleName))
+        .limit(1);
+      if (!learningModule) throw new NotFoundException("Learning module not found");
+
+      await transaction
+        .update(progress)
+        .set({ learned: [] })
+        .where(and(
+          eq(progress.userName, user.email),
+          eq(progress.moduleName, normalizedModuleName),
+        ));
+      return toPublicUser(user);
+    });
   }
 
   async completeDailyQuiz(userId: string, input: CompleteDailyQuizInput): Promise<PublicUser> {
-    if (
-      !Number.isInteger(input.correctAnswers) ||
-      !Number.isInteger(input.totalQuestions) ||
-      input.totalQuestions !== 5 ||
-      input.correctAnswers < 0 ||
-      input.correctAnswers > input.totalQuestions
-    ) {
+    if (!Array.isArray(input.answers) || input.answers.length !== 5) {
       throw new BadRequestException("Invalid daily quiz result");
     }
 
+    const uniqueWords = new Set(input.answers.map(({ word }) => word));
+    if (uniqueWords.size !== 5) throw new BadRequestException("Daily quiz words must be unique");
+
     const today = this.today();
-    const passed = input.correctAnswers >= 4;
     const result = await this.mutateUser(userId, (user) => {
-      if (!passed || (user.quiz.finished && user.quiz.date === today)) return {};
+      if (user.quiz.finished && user.quiz.date === today) return {};
       const streak = this.withToday(user.streak);
       return {
         streak,
         exp: user.exp + this.reward(30, streak),
         quiz: { finished: true, date: today },
       };
-    }, { key: "daily_quiz", increment: 1 });
+    }, { key: "daily_quiz", increment: 1 }, async (transaction, user) => {
+      const learnedRows = await transaction
+        .select({ learned: progress.learned })
+        .from(progress)
+        .where(eq(progress.userName, user.email));
+      const learnedWords = new Set(
+        learnedRows.flatMap(({ learned }) => learned.map(([word]) => word)),
+      );
+      const correctAnswers = input.answers.filter(
+        ({ word, answer }) => learnedWords.has(word) && answer.trim() === word,
+      ).length;
+      if (correctAnswers < 4) throw new BadRequestException("Daily quiz was not passed");
+    });
     return result.user;
   }
 
@@ -122,6 +241,7 @@ export class ProgressionService {
     userId: string,
     mutation: (user: UserRow) => UpdateUserInput,
     questUpdate?: QuestUpdate,
+    validate?: (transaction: DbTransaction, user: UserRow) => Promise<void>,
   ): Promise<ProgressionResult> {
     return this.db.transaction(async (transaction) => {
       const [user] = await transaction
@@ -130,6 +250,8 @@ export class ProgressionService {
         .where(eq(users.id, userId))
         .for("update");
       if (!user) throw new NotFoundException("User not found");
+
+      if (validate) await validate(transaction, user);
 
       const values = mutation(user);
       if (Object.keys(values).length === 0) return { user: toPublicUser(user), changed: false };
@@ -141,44 +263,50 @@ export class ProgressionService {
         .returning();
       if (!updated) throw new NotFoundException("User not found");
 
-      if (questUpdate) {
-        const day = this.today();
-        const definition = DEFAULT_QUESTS.find(({ key }) => key === questUpdate.key);
-        if (!definition) throw new BadRequestException("Unknown daily quest");
-
-        const [questRow] = await transaction
-          .select()
-          .from(dailyQuestProgress)
-          .where(and(
-            eq(dailyQuestProgress.userId, userId),
-            eq(dailyQuestProgress.day, day),
-            eq(dailyQuestProgress.questKey, questUpdate.key),
-          ))
-          .for("update");
-        const requestedProgress = "progress" in questUpdate
-          ? questUpdate.progress
-          : (questRow?.progress ?? 0) + questUpdate.increment;
-        const progress = Math.min(
-          definition.toObtain,
-          Math.max(questRow?.progress ?? 0, requestedProgress),
-        );
-
-        if (questRow) {
-          await transaction
-            .update(dailyQuestProgress)
-            .set({ progress, updatedAt: new Date() })
-            .where(eq(dailyQuestProgress.id, questRow.id));
-        } else {
-          await transaction.insert(dailyQuestProgress).values({
-            userId,
-            day,
-            questKey: questUpdate.key,
-            progress,
-          });
-        }
-      }
+      if (questUpdate) await this.updateQuestInTransaction(transaction, userId, questUpdate);
       return { user: toPublicUser(updated), changed: true };
     });
+  }
+
+  private async updateQuestInTransaction(
+    transaction: DbTransaction,
+    userId: string,
+    questUpdate: QuestUpdate,
+  ): Promise<void> {
+    const day = this.today();
+    const definition = DEFAULT_QUESTS.find(({ key }) => key === questUpdate.key);
+    if (!definition) throw new BadRequestException("Unknown daily quest");
+
+    const [questRow] = await transaction
+      .select()
+      .from(dailyQuestProgress)
+      .where(and(
+        eq(dailyQuestProgress.userId, userId),
+        eq(dailyQuestProgress.day, day),
+        eq(dailyQuestProgress.questKey, questUpdate.key),
+      ))
+      .for("update");
+    const requestedProgress = "progress" in questUpdate
+      ? questUpdate.progress
+      : (questRow?.progress ?? 0) + questUpdate.increment;
+    const questProgress = Math.min(
+      definition.toObtain,
+      Math.max(questRow?.progress ?? 0, requestedProgress),
+    );
+
+    if (questRow) {
+      await transaction
+        .update(dailyQuestProgress)
+        .set({ progress: questProgress, updatedAt: new Date() })
+        .where(eq(dailyQuestProgress.id, questRow.id));
+    } else {
+      await transaction.insert(dailyQuestProgress).values({
+        userId,
+        day,
+        questKey: questUpdate.key,
+        progress: questProgress,
+      });
+    }
   }
 
   private reward(baseXp: number, streak: string[]): number {

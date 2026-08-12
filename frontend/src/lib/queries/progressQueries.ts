@@ -1,111 +1,19 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 import { apiUrl } from "../api";
-import type { Progress, WordPair } from "../../types";
-
-interface NewProgressInput {
-  moduleName: string;
-  userName: string;
-  learned: WordPair[];
-}
-
-interface LearnedWordInput {
-  id: string;
-  word: { learned: WordPair[] };
-}
-
-interface EditProgressInput {
-  id: string;
-  data: unknown;
-}
+import type { Progress } from "../../types";
 
 export function useProgress() {
   const { data, isLoading } = useQuery<Progress[]>({
     queryKey: ["progress"],
     queryFn: async () => {
-      const res = await fetch(apiUrl("/progress/"), {
-        method: "GET",
+      const response = await fetch(apiUrl("/progress/me"), {
         credentials: "include",
       });
-      const json = await res.json();
+      if (!response.ok) throw new Error("Unable to load progress");
+      const json = await response.json();
       return json.data as Progress[];
     },
   });
 
-  return {
-    progress: data,
-    isLoadingProgress: isLoading,
-  };
-}
-
-export function useAddProgress() {
-  const mutation = useMutation<Progress, Error, NewProgressInput>({
-    mutationFn: async (progress) => {
-      const res = await fetch(apiUrl("/progress/"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(progress),
-      });
-      const json = await res.json();
-
-      if (json.success === false) {
-        throw new Error(json.message);
-      }
-
-      return json.data as Progress;
-    },
-  });
-
-  return {
-    addProgress: mutation.mutateAsync,
-  };
-}
-
-export function useAddLearnedWord() {
-  const mutation = useMutation<Progress, Error, LearnedWordInput>({
-    mutationFn: async ({ id, word }) => {
-      const res = await fetch(
-        apiUrl(`/progress/${id}`),
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify(word),
-        }
-      );
-
-      const json = await res.json();
-      if (json.success === false) {
-        throw new Error(json.message);
-      }
-
-      return json.data as Progress;
-    },
-  });
-
-  return {
-    addLearnedWord: mutation.mutateAsync,
-  };
-}
-
-export function useEditProgress() {
-  const mutation = useMutation<Progress, Error, EditProgressInput>({
-    mutationFn: async ({ id, data }) => {
-      const res = await axios.patch<Progress>(
-        apiUrl(`/progress/${id}`),
-        data,
-        {
-          withCredentials: true,
-        }
-      );
-
-      return res.data;
-    },
-    onError: (error) => {
-      console.error("❌ Błąd edycji progresu:", error.message);
-    },
-  });
-
-  return { editProgress: mutation.mutateAsync };
+  return { progress: data, isLoadingProgress: isLoading };
 }

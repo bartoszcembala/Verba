@@ -25,6 +25,7 @@ function DailyQuiz() {
   );
   const [correct, setCorrect] = useState(0);
   const [wrong, setWrong] = useState(0);
+  const [submittedAnswers, setSubmittedAnswers] = useState<Array<{ word: string; answer: string }>>([]);
   const [refresh, setRefresh] = useState(0);
 
   type QuizItem = {
@@ -83,6 +84,11 @@ function DailyQuiz() {
 
   async function handleSelect(answer: string[]) {
     const isCorrect = answer[0] === quizData[currQuestion]?.word;
+    const answers = [
+      ...submittedAnswers,
+      { word: quizData[currQuestion].word, answer: answer[0] },
+    ];
+    setSubmittedAnswers(answers);
     const finalCorrect = correct + (isCorrect ? 1 : 0);
     if (isCorrect) setCorrect(finalCorrect);
     else setWrong(wrong + 1);
@@ -90,7 +96,7 @@ function DailyQuiz() {
     if (currQuestion + 1 === 5) {
       if (finalCorrect >= 4) {
         try {
-          await completeDailyQuiz(finalCorrect);
+          await completeDailyQuiz(answers);
           toast.success("Quiz completed! You earned 30 EXP.");
         } catch {
           toast.error("Could not save your quiz result.");
@@ -164,6 +170,7 @@ function DailyQuiz() {
                   setCurrQuestion(0);
                   setCorrect(0);
                   setWrong(0);
+                  setSubmittedAnswers([]);
                   setRefresh((prev) => prev + 1);
                 }}
                 className="flex cursor-pointer items-center gap-2 rounded-lg border border-neutral-300 px-4 py-2.5 text-[1.3rem] font-semibold hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800"

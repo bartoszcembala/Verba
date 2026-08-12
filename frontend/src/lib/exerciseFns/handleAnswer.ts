@@ -1,30 +1,20 @@
 import toast from "react-hot-toast";
 import type { QueryClient } from "@tanstack/react-query";
 import type { Dispatch, SetStateAction } from "react";
-import type { Progress, User, WordPair } from "../../types";
+import type { User, WordPair } from "../../types";
 import type { AnswerStatus, ExercisePrompt } from "../../components/Exercise/types";
 
-type LearnedWordPayload = {
-  id: string;
-  word: {
-    learned: WordPair[];
-  };
-};
-
-type AddLearnedWordFunction = (
-  payload: LearnedWordPayload,
-  options: { onSuccess: () => void },
-) => Promise<Progress>;
-
-type RecordCorrectAnswerFunction = (learnedNewWord: boolean) => Promise<User>;
+type SubmitExerciseAnswerFunction = (input: {
+  moduleName: string;
+  word: string;
+  answer: string;
+}) => Promise<User>;
 
 export async function handleAnswer(
-  recordCorrectAnswer: RecordCorrectAnswerFunction,
+  submitExerciseAnswer: SubmitExerciseAnswerFunction,
   answer: string,
-  addLearnedWord: AddLearnedWordFunction,
   setExercise: Dispatch<SetStateAction<ExercisePrompt>>,
   selectedVerbs: WordPair[],
-  progress: Progress[] | undefined,
   module: string,
   user: User | null,
   exercise: ExercisePrompt,
@@ -32,37 +22,16 @@ export async function handleAnswer(
   setSelectedVerbs: Dispatch<SetStateAction<WordPair[]>>,
   queryClient: QueryClient,
 ) {
-  if (!user || !progress) return;
-
-  const activeProgress = progress.find(
-    (p) => p.moduleName === module && p.userName === user.email,
-  );
-
-  if (!activeProgress) {
-    console.warn("Active progress not found");
-    return;
-  }
+  if (!user) return;
 
   if (answer === exercise.correctAnswer) {
-    const learnedNewWord = !activeProgress.learned.flat().includes(answer);
-    if (learnedNewWord) {
-      addLearnedWord(
-        {
-          id: activeProgress._id,
-          word: {
-            learned: [...activeProgress.learned, [answer, exercise.question]],
-          },
-        },
-        {
-          onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["progress"] });
-          },
-        },
-      );
-    }
-
     try {
-      await recordCorrectAnswer(learnedNewWord);
+      await submitExerciseAnswer({
+        moduleName: module,
+        word: exercise.correctAnswer,
+        answer,
+      });
+      await queryClient.invalidateQueries({ queryKey: ["progress"] });
     } catch {
       toast.error("Could not save your answer. Please try again.");
       return;
@@ -81,22 +50,6 @@ export async function handleAnswer(
     }
   } else {
     setIsCorrect("wrong");
-    const filtered = activeProgress.learned.filter(
-      (x) => x[0] !== exercise.correctAnswer,
-    );
-    addLearnedWord(
-      {
-        id: activeProgress._id,
-        word: {
-          learned: [...filtered],
-        },
-      },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["progress"] });
-        },
-      },
-    );
     toast.error("Wrong!");
   }
 }
