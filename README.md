@@ -48,3 +48,13 @@ For local development, forward Stripe events to the backend and copy the printed
 ```bash
 stripe listen --forward-to localhost:5001/api/checkout/webhook
 ```
+
+## Backend tests
+
+Run the authentication and progression end-to-end suite with:
+
+```bash
+cd backend && npm run test:e2e
+```
+
+The runner starts a disposable PostgreSQL container on an automatically assigned local port, applies migrations, runs the API tests, and stops the test database. Set `TEST_DATABASE_URL` to use a dedicated external test database instead.

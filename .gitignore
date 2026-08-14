@@ -9,6 +9,7 @@ job.txt
 **/node_modules/
 **/dist/
 **/dist-ssr/
+**/.e2e-dist/
 **/coverage/
 **/.turbo/
 **/.cache/
