@@ -1,54 +1,45 @@
 import { useEffect, useRef, useState } from "react";
 import { useProgression } from "../lib/queries/progressionQueries";
-import {
-  useGetDailyQuests,
-} from "../lib/queries/dailyQuestsQueries";
+import { useGetDailyQuests } from "../lib/queries/dailyQuestsQueries";
+import { useCurrentUser } from "../lib/queries/userQueries";
 import { todayInWarsaw } from "../lib/today";
 
 export const useDailyStudyTimer = (): number => {
-  const [secondsToday, setSecondsToday] = useState<number>(0);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const updateRef = useRef<NodeJS.Timeout | null>(null);
+  const { user } = useCurrentUser();
   const { recordStudyTime } = useProgression();
-  const { dailyQuests } = useGetDailyQuests();
+  const { dailyQuests } = useGetDailyQuests(Boolean(user));
+  const [secondsToday, setSecondsToday] = useState(0);
+  const secondsRef = useRef(0);
+  const userId = user?._id;
+  const today = todayInWarsaw();
+  const recordedMinutes = user?.timeSpentLearning.find((entry) => entry.date === today)?.value ?? 0;
 
   useEffect(() => {
-    const today = todayInWarsaw();
+    if (!userId) {
+      secondsRef.current = 0;
+      setSecondsToday(0);
+      return;
+    }
 
-    // Odczyt startowej wartości z localStorage
-    const saved: Record<string, number> = JSON.parse(
-      localStorage.getItem("studyTime") || "{}",
-    );
-    setSecondsToday(saved[today] || 0);
+    const initialSeconds = recordedMinutes * 60;
+    secondsRef.current = initialSeconds;
+    setSecondsToday(initialSeconds);
 
-    // Odliczanie sekund co 1 sekundę
-    intervalRef.current = setInterval(() => {
-      setSecondsToday((prev) => {
-        const updated = prev + 1;
-        const updatedData: Record<string, number> = {
-          ...JSON.parse(localStorage.getItem("studyTime") || "{}"),
-          [today]: updated,
-        };
-        localStorage.setItem("studyTime", JSON.stringify(updatedData));
-        return updated;
-      });
+    const tick = window.setInterval(() => {
+      secondsRef.current += 1;
+      setSecondsToday(secondsRef.current);
     }, 1000);
 
-    // Wysyłka danych do backendu co 1 minutę
-    updateRef.current = setInterval(() => {
+    const persist = window.setInterval(() => {
       if (!dailyQuests) return;
-
-      const minutes = Math.floor(
-        JSON.parse(localStorage.getItem("studyTime") || "{}")[today] / 60,
-      );
-      void recordStudyTime(minutes);
+      void recordStudyTime(Math.floor(secondsRef.current / 60));
     }, 60000);
 
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      if (updateRef.current) clearInterval(updateRef.current);
+      window.clearInterval(tick);
+      window.clearInterval(persist);
     };
-  }, [dailyQuests, recordStudyTime]);
+  }, [dailyQuests, recordedMinutes, recordStudyTime, userId]);
 
   return secondsToday;
 };

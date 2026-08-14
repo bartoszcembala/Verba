@@ -9,12 +9,12 @@ import { CiLock } from "react-icons/ci";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { MdOutlineCancel } from "react-icons/md";
 import { todayInWarsaw } from "../../lib/today";
+import { useCurrentUser } from "../../lib/queries/userQueries";
 
 function DailyQuiz() {
   const { progress, isLoadingProgress } = useProgress();
   const { completeDailyQuiz } = useProgression();
-  const userStr = localStorage.getItem("user");
-  const user = userStr ? JSON.parse(userStr) : null;
+  const { user } = useCurrentUser();
   const today = todayInWarsaw();
   const [currQuestion, setCurrQuestion] = useState(0);
   const learnedWords = useMemo(
@@ -81,6 +81,8 @@ function DailyQuiz() {
 
     setQuizData(newQuizData);
   }, [learnedWords, refresh]);
+
+  if (!user) return null;
 
   async function handleSelect(answer: string[]) {
     const isCorrect = answer[0] === quizData[currQuestion]?.word;

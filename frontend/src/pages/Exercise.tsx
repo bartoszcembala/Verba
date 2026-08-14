@@ -1,5 +1,5 @@
 import "../index.css";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { useLocation } from "react-router-dom";
 import Sidebar from "../components/Exercise/Sidebar";
@@ -7,21 +7,18 @@ import { useProgression } from "../lib/queries/progressionQueries";
 import { useProgress } from "../lib/queries/progressQueries";
 import Chart from "../components/Exercise/Chart";
 import Main from "../components/Exercise/Main";
-import { User, type WordPair } from "../types";
+import type { WordPair } from "../types";
 import { useModules } from "../lib/queries/modulesQueries";
 import { useExerciseSession } from "../components/Exercise/useExerciseSession";
+import { useCurrentUser } from "../lib/queries/userQueries";
 
 function Exercise({ initVerbs }: { initVerbs: WordPair[] }) {
   const { progress } = useProgress();
+  const { user } = useCurrentUser();
   const { recordActivity } = useProgression();
 
   const module = useLocation().pathname.slice(1);
 
-  const storedUser = localStorage.getItem("user");
-  const user = useMemo<User | null>(
-    () => storedUser ? JSON.parse(storedUser) as User : null,
-    [storedUser],
-  );
   const userId = user?._id;
 
   const { modules } = useModules();
@@ -35,7 +32,7 @@ function Exercise({ initVerbs }: { initVerbs: WordPair[] }) {
   const session = useExerciseSession({
     verbs: initVerbs,
     moduleName: module,
-    user,
+    user: user ?? null,
     activeProgress,
   });
 

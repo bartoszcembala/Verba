@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { User } from "../types";
 import { getPreviousDates } from "../lib/getPreviousDates";
 import { HiOutlineArrowRight, HiOutlinePlay } from "react-icons/hi2";
 import { LuCrown, LuClock3 } from "react-icons/lu";
@@ -8,11 +7,11 @@ import DailyQuiz from "../components/Home/DailyQuiz";
 import DailyQuests from "../components/Home/DailyQuests";
 import { getUserLevel } from "../lib/getExpLevels";
 import { todayInWarsaw } from "../lib/today";
+import { useCurrentUser } from "../lib/queries/userQueries";
 
 function Home() {
   const previousDates = getPreviousDates(7);
-  const storedUser = localStorage.getItem("user");
-  const user: User | null = storedUser ? JSON.parse(storedUser) : null;
+  const { user } = useCurrentUser();
   const userLevel = getUserLevel(user?.exp ? Math.floor(user.exp) : 0);
   const timeSpent = user?.timeSpentLearning?.slice(-7).reduce((sum, curr) => sum + curr.value, 0) ?? 0;
   const [dailyQuizOpen, setDailyQuizOpen] = useState(false);

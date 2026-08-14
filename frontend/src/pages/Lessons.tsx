@@ -3,10 +3,10 @@ import { useLessons } from "../lib/queries/lessonsQueries";
 import { HiOutlineArrowRight } from "react-icons/hi2";
 import { useState } from "react";
 import Spinner from "../components/Spinner";
+import { useCurrentUser } from "../lib/queries/userQueries";
 
 function Lessons() {
-  const userStr = localStorage.getItem("user");
-  const user = userStr ? JSON.parse(userStr) : null;
+  const { user } = useCurrentUser();
   const { lessons, isLoadingLessons } = useLessons();
   const [filter, setFilter] = useState<"type" | "level">("level");
   const grouped = lessons?.reduce<Record<string, typeof lessons>>((acc, item) => {

@@ -5,8 +5,8 @@ import { useModules } from "../lib/queries/modulesQueries";
 import { useProgress } from "../lib/queries/progressQueries";
 import { FaChevronDown, FaMagnifyingGlass } from "react-icons/fa6";
 import { HiOutlineArrowRight } from "react-icons/hi2";
-import { User } from "../types";
 import Spinner from "../components/Spinner";
+import { useCurrentUser } from "../lib/queries/userQueries";
 
 const categories = ["verbs", "nouns", "dom", "jedzenie", "rodzina"];
 const premiumCategories = ["dom", "jedzenie", "rodzina"];
@@ -15,8 +15,7 @@ function Exercises() {
   const { modules, isLoadingModules } = useModules();
   const { progress, isLoadingProgress } = useProgress();
   const [show, setShow] = useState<string | null>(null);
-  const storedUser = localStorage.getItem("user");
-  const user: User | null = storedUser ? JSON.parse(storedUser) : null;
+  const { user } = useCurrentUser();
   const [searchTerm, setSearchTerm] = useState("");
   const filteredModules = modules?.filter((mod) => `${mod.title} ${mod.displayName}`.toLowerCase().includes(searchTerm.toLowerCase()));
   if (isLoadingModules || isLoadingProgress) return <Spinner />;

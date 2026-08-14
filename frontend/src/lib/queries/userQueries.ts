@@ -41,6 +41,7 @@ export function useCurrentUser() {
 }
 
 export function useLogin() {
+  const queryClient = useQueryClient();
   const mutation = useMutation<User, Error, LoginInput>({
     mutationFn: async (userInformations) => {
       const res = await fetch(
@@ -58,6 +59,9 @@ export function useLogin() {
       const responseReady = await res.json();
       return responseReady.data.user as User;
     },
+    onSuccess: (user) => {
+      queryClient.setQueryData(["currentUser"], user);
+    },
   });
 
   return {
@@ -68,7 +72,7 @@ export function useLogin() {
 
 export function useLogout() {
   const queryClient = useQueryClient();
-  const { mutate } = useMutation<unknown, Error, void>({
+  const { mutateAsync } = useMutation<unknown, Error, void>({
     mutationFn: async () => {
       await fetch(
         apiUrl("/users/logout"),
@@ -80,12 +84,13 @@ export function useLogout() {
       );
     },
     onSuccess: () => {
+      queryClient.clear();
       queryClient.setQueryData(["currentUser"], null);
     },
   });
 
   return {
-    logout: mutate,
+    logout: mutateAsync,
   };
 }
 
@@ -140,7 +145,6 @@ export function useEditUser() {
     },
     onSuccess: (user) => {
       queryClient.setQueryData(["currentUser"], user);
-      localStorage.setItem("user", JSON.stringify(user));
     },
     onError: (error) => {
       console.error("❌ Błąd edycji użytkownika:", error.message);

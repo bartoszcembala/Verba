@@ -1,8 +1,8 @@
 import { getUserLevel, levels } from "../lib/getExpLevels";
-import { User } from "../types";
 import { calculatePercent } from "../lib/calculatePercent";
 import { calculateStreak } from "../lib/calculateStreak";
 import { LuBookOpen, LuCircleCheck, LuTrophy } from "react-icons/lu";
+import { useCurrentUser } from "../lib/queries/userQueries";
 
 const waysToEarn = [
   { icon: LuBookOpen, title: "Learn a new word", xp: "+1 XP", text: "Earn experience as you add vocabulary to your learned list." },
@@ -11,8 +11,7 @@ const waysToEarn = [
 ];
 
 export default function XpGuide() {
-  const storedUser = localStorage.getItem("user");
-  const user: User | null = storedUser ? JSON.parse(storedUser) : null;
+  const { user } = useCurrentUser();
   const userLevel = getUserLevel(user?.exp ? Math.floor(user.exp) : 0);
   const currentIndex = Math.max(0, userLevel.level - 1);
   const prevXP = levels[currentIndex]?.xp ?? 0;

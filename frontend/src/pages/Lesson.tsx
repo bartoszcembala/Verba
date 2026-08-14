@@ -1,7 +1,6 @@
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 import { useCurrentUser } from "../lib/queries/userQueries";
 import { useProgression } from "../lib/queries/progressionQueries";
-import { SettingsContext } from "../lib/contexts";
 import { Link, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import { LessonInterface } from "../types";
@@ -11,7 +10,6 @@ function Lesson({ lesson }: { lesson: LessonInterface }) {
   const { user } = useCurrentUser();
   const userId = user?._id;
 
-  const { authorized } = useContext(SettingsContext)!;
   const lessonName = useLocation().pathname.slice(1);
   useEffect(() => {
     if (!userId) return;
@@ -38,7 +36,7 @@ function Lesson({ lesson }: { lesson: LessonInterface }) {
           <h2 className="text-[1.6rem] font-semibold">Practice this topic</h2>
           <div className="mt-3 space-y-2">
         {lesson.relatedExercises &&
-          authorized &&
+          user &&
           lesson.relatedExercises.map((exercise) => (
             <Link key={exercise} to={`/${exercise}`} className="block rounded-lg bg-neutral-50 px-3 py-2 text-[1.35rem] text-indigo-600 hover:bg-neutral-100 dark:bg-neutral-800 dark:text-indigo-400">
               {exercise}

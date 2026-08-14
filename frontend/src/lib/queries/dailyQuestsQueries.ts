@@ -6,7 +6,7 @@ type ApiResponse<T> = {
   data: T;
 };
 
-export function useGetDailyQuests() {
+export function useGetDailyQuests(enabled = true) {
   const query = useQuery<DailyQuestsInterface>({
     queryKey: ["dailyQuests"],
     queryFn: async () => {
@@ -17,6 +17,7 @@ export function useGetDailyQuests() {
       const body = await response.json() as ApiResponse<DailyQuestsInterface>;
       return body.data;
     },
+    enabled,
   });
 
   return {

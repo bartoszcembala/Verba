@@ -33,7 +33,6 @@ export function useProgression() {
       if (!["activity", "streak"].includes(command.path)) {
         void queryClient.invalidateQueries({ queryKey: ["dailyQuests"] });
       }
-      localStorage.setItem("user", JSON.stringify(user));
     },
   });
 

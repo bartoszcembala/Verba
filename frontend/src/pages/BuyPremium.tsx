@@ -1,11 +1,10 @@
 import axios from "axios";
-import { User } from "../types";
 import { LuCheck, LuCrown } from "react-icons/lu";
 import { apiUrl } from "../lib/api";
+import { useCurrentUser } from "../lib/queries/userQueries";
 
 function BuyPremium() {
-  const userJson = localStorage.getItem("user");
-  const user: User | null = userJson ? JSON.parse(userJson) : null;
+  const { user } = useCurrentUser();
 
   async function checkout() {
     try {

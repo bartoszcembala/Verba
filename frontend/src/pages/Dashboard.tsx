@@ -1,8 +1,7 @@
-import { useContext, useState } from "react";
-import { SettingsContext } from "../lib/contexts";
+import { useState } from "react";
 import { useAddLesson } from "../lib/queries/lessonsQueries";
 import { useEditModules, useModules } from "../lib/queries/modulesQueries";
-import { useUsers } from "../lib/queries/userQueries";
+import { useCurrentUser, useUsers } from "../lib/queries/userQueries";
 import { Module, User } from "../types";
 
 function Dashboard() {
@@ -10,7 +9,7 @@ function Dashboard() {
   const [selectedModule, setSelectedModule] = useState<Module>();
   const [input, setInput] = useState("");
 
-  const { authorized } = useContext(SettingsContext)!;
+  const { user: currentUser } = useCurrentUser();
   const { users } = useUsers();
   const { modules } = useModules();
   const { editModules } = useEditModules();
@@ -48,7 +47,7 @@ function Dashboard() {
 
   return (
     <div className="mx-auto max-w-[120rem]">
-      {authorized ? (
+      {currentUser ? (
         <div className="grid gap-8 lg:grid-cols-[20rem_1fr]">
           <nav className="space-y-1 rounded-xl border border-neutral-200 bg-white p-3 self-start dark:border-neutral-800 dark:bg-neutral-900">
             <p onClick={() => setAction("")} className="cursor-pointer rounded-lg px-3 py-2 text-[1.35rem] hover:bg-neutral-100 dark:hover:bg-neutral-800">

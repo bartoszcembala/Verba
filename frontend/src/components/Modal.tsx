@@ -1,24 +1,22 @@
 import { useEffect, useRef, useState } from "react";
-import { useEditUser, useUsers } from "../lib/queries/userQueries";
-import { User } from "../types";
+import { useCurrentUser, useEditUser, useUsers } from "../lib/queries/userQueries";
 import toast from "react-hot-toast";
 import { FiSearch, FiUserPlus, FiX } from "react-icons/fi";
 
 function Modal({ setIsOpen, isOpen }: { setIsOpen: (isOpen: boolean) => void; isOpen: boolean }) {
   const { users } = useUsers();
+  const { user } = useCurrentUser();
   const { editUser } = useEditUser();
   const [input, setInput] = useState("");
   const modalRef = useRef<HTMLDivElement>(null);
-  const userStr = localStorage.getItem("user");
-  const user: User | null = userStr ? JSON.parse(userStr) : null;
   const query = input.trim().toLowerCase();
   const filteredUsers = users?.filter((candidate) =>
     candidate._id !== user?._id && candidate.name.toLowerCase().includes(query),
   ).slice(0, 6);
 
-  function addFriend({ _id, name, avatar }: { _id: string; name: string; avatar: string }) {
-    editUser({ data: { friends: [...user!.friends, { name, friendId: _id, avatar }] } });
-    localStorage.setItem("user", JSON.stringify({ ...user, friends: [...user!.friends, { name, friendId: _id, avatar }] }));
+  async function addFriend({ _id, name, avatar }: { _id: string; name: string; avatar: string }) {
+    if (!user) return;
+    await editUser({ data: { friends: [...user.friends, { name, friendId: _id, avatar }] } });
     setIsOpen(false);
     toast.success(`${name} added to your friends.`);
   }

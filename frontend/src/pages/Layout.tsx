@@ -1,9 +1,7 @@
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { useQueryClient } from "@tanstack/react-query";
-import { SettingsContext } from "../lib/contexts";
-import { useLogout } from "../lib/queries/userQueries";
+import { useCurrentUser, useLogout } from "../lib/queries/userQueries";
 import { useProgression } from "../lib/queries/progressionQueries";
 import { useDailyStudyTimer } from "../components/useDailyStudyTimer";
 import { IoHome, IoClipboardOutline } from "react-icons/io5";
@@ -13,13 +11,6 @@ import { FaArrowRightFromBracket, FaGithub } from "react-icons/fa6";
 import { FaRegMoon } from "react-icons/fa";
 import { FiSun, FiMenu, FiX, FiUser } from "react-icons/fi";
 import { LuBook, LuCrown } from "react-icons/lu";
-
-type User = {
-  _id: string;
-  name: string;
-  avatar?: string;
-  streak: string[];
-};
 
 const navItems = [
   { to: "/", label: "Home", icon: IoHome, end: true },
@@ -33,21 +24,15 @@ function Layout() {
   const [profileOpen, setProfileOpen] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const { authorized, setAuthorized, setMode, authLoading } = useContext(SettingsContext)!;
+  const { user, isLoadingUser } = useCurrentUser();
   const { logout } = useLogout();
   const { touchStreak } = useProgression();
   useDailyStudyTimer();
 
   useEffect(() => {
-    if (!authLoading && !authorized) navigate("/login");
-  }, [authLoading, authorized, navigate]);
+    if (!isLoadingUser && !user) navigate("/login");
+  }, [isLoadingUser, navigate, user]);
 
-  const storedUser = localStorage.getItem("user");
-  const user = useMemo<User | undefined>(
-    () => storedUser ? JSON.parse(storedUser) as User : undefined,
-    [storedUser],
-  );
   const userId = user?._id;
   const [darkMode, setDarkMode] = useState(
     () => localStorage.getItem("theme") !== "light",
@@ -89,11 +74,7 @@ function Layout() {
   }, [touchStreak, userId]);
 
   async function handleLogout() {
-    logout();
-    queryClient.clear();
-    localStorage.removeItem("user");
-    setMode("guest");
-    setAuthorized(false);
+    await logout();
     toast.success("You have been logged out.");
     navigate("/login");
   }

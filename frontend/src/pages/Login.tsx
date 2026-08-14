@@ -1,8 +1,6 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { Link } from "react-router-dom";
-import { SettingsContext } from "../lib/contexts";
-import { useContext } from "react";
 import { useNavigate } from "react-router";
 import { useLogin } from "../lib/queries/userQueries";
 
@@ -12,21 +10,16 @@ interface LoginFormInputs {
 }
 
 function Login() {
-  const { setAuthorized, setMode, setId } = useContext(SettingsContext)!;
   const { register, handleSubmit, reset } = useForm<LoginFormInputs>();
   const { login } = useLogin();
   const navigate = useNavigate();
 
   async function authenticate(credentials: LoginFormInputs) {
-    const user = await toast.promise(login(credentials), {
+    await toast.promise(login(credentials), {
       loading: "Logging in...",
       success: "Logged in successfully!",
       error: "Logging went wrong!",
     });
-    localStorage.setItem("user", JSON.stringify(user));
-    setMode("user");
-    setAuthorized(true);
-    setId(user._id);
     navigate("/");
     reset();
   }

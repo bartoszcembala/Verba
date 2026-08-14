@@ -1,6 +1,5 @@
 import { calculateStreak } from "../lib/calculateStreak";
 import { Link } from "react-router-dom";
-import { User } from "../types";
 import { LuBrain, LuCrown, LuCalendarDays, LuMail, LuUserPlus } from "react-icons/lu";
 import { IoSettingsOutline, IoBookOutline } from "react-icons/io5";
 import { CiCirclePlus } from "react-icons/ci";
@@ -8,7 +7,7 @@ import { FiMinusCircle } from "react-icons/fi";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { useState } from "react";
 import Modal from "../components/Modal";
-import { useEditUser } from "../lib/queries/userQueries";
+import { useCurrentUser, useEditUser } from "../lib/queries/userQueries";
 import toast from "react-hot-toast";
 import { getLastDates } from "../lib/getLastDates";
 import { SlFire } from "react-icons/sl";
@@ -19,32 +18,30 @@ import { getUserLevel } from "../lib/getExpLevels";
 
 function Account() {
   const { progress } = useProgress();
-  const storedUser = localStorage.getItem("user");
-  const user: User | null = storedUser ? JSON.parse(storedUser) : null;
+  const { user } = useCurrentUser();
   const filtered = progress?.filter((item) => item.userName === user?.email);
   const { editUser } = useEditUser();
   const streak = user ? calculateStreak(user.streak) : 0;
   const [isOpen, setIsOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [userName, setUserName] = useState(user?.name || "");
+  const [userName, setUserName] = useState("");
   const dates = user?.timeSpentLearning.map((d) => ({ date: `${d.date.split("-")[2]}-${d.date.split("-")[1]}`, value: d.value })).slice(-14);
   const wordsLearned = filtered?.reduce((acc, curr) => acc + curr.learned.length, 0) ?? 0;
   const lastDates = getLastDates(dates || []);
-  const [selectedAvatar, setSelectedAvatar] = useState<number | null>(user ? +user.avatar : null);
+  const [selectedAvatar, setSelectedAvatar] = useState<number | null>(null);
 
   if (!user) return null;
+  const currentUser = user;
 
-  function handleDeleteFriend(friendId: string) {
-    const friends = user!.friends.filter((friend) => friend.friendId !== friendId);
-    editUser({ data: { friends } }, { onSuccess: () => toast.success("Friend removed.") });
-    localStorage.setItem("user", JSON.stringify({ ...user, friends }));
+  async function handleDeleteFriend(friendId: string) {
+    const friends = currentUser.friends.filter((friend) => friend.friendId !== friendId);
+    await editUser({ data: { friends } }, { onSuccess: () => toast.success("Friend removed.") });
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     try {
       await editUser({ data: { name: userName, ...(Number.isFinite(selectedAvatar) && { avatar: String(selectedAvatar) }) } });
-      localStorage.setItem("user", JSON.stringify({ ...user, name: userName, ...(Number.isFinite(selectedAvatar) && { avatar: selectedAvatar }) }));
       setSettingsOpen(false);
       toast.success("Profile updated.");
     } catch (error) { console.error(error); }
@@ -63,7 +60,7 @@ function Account() {
     <div className="mx-auto max-w-[108rem]">
       <header className="mb-10 flex items-center justify-between">
         <div><p className="text-[1.3rem] text-neutral-500">Your profile</p><h1 className="mt-1 text-[3.2rem] font-bold tracking-tight">Account</h1></div>
-        <button onClick={() => setSettingsOpen(true)} className="flex items-center gap-2 rounded-lg border border-neutral-300 px-4 py-2.5 text-[1.35rem] font-semibold hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-900"><IoSettingsOutline /> Edit profile</button>
+        <button onClick={() => { setUserName(user.name); setSelectedAvatar(+user.avatar); setSettingsOpen(true); }} className="flex items-center gap-2 rounded-lg border border-neutral-300 px-4 py-2.5 text-[1.35rem] font-semibold hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-900"><IoSettingsOutline /> Edit profile</button>
       </header>
 
       <section className="border-y border-neutral-200 py-8 dark:border-neutral-800">

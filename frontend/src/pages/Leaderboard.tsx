@@ -1,17 +1,17 @@
 import Spinner from "../components/Spinner";
-import { useUsers } from "../lib/queries/userQueries";
+import { useCurrentUser, useUsers } from "../lib/queries/userQueries";
 import { BiSolidCrown } from "react-icons/bi";
 import { LuMedal, LuTrendingUp } from "react-icons/lu";
 
 export default function Leaderboard() {
   const { users, isLoadingUsers } = useUsers();
+  const { user: currentUser } = useCurrentUser();
   const sortedUsers = users
     ? [...users].sort((a, b) => b.exp - a.exp).slice(0, 10)
     : [];
   const topThree = sortedUsers.slice(0, 3);
   const remaining = sortedUsers.slice(3);
-  const storedUser = localStorage.getItem("user");
-  const currentUserId = storedUser ? JSON.parse(storedUser)._id : null;
+  const currentUserId = currentUser?._id;
 
   if (isLoadingUsers) return <Spinner />;
 
