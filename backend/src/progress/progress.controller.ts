@@ -12,6 +12,6 @@ export class ProgressController {
 
   @Get("me")
   async findCurrent(@CurrentUser() user: AuthUser) {
-    return apiResponse(await this.service.findByUser(user.email));
+    return apiResponse(await this.service.findByUser(user._id));
   }
 }

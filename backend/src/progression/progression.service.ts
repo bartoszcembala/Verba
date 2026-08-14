@@ -8,11 +8,13 @@ import {
   learningModules,
   lessons,
   progress,
+  userLessonCompletions,
   users,
   type DailyQuestKey,
   type UserRow,
   type WordPair,
 } from "../storage/schema";
+import { UsersRepository } from "../users/users.repository";
 import { toPublicUser, type PublicUser, type UpdateUserInput } from "../users/users.types";
 import type {
   CompleteDailyQuizInput,
@@ -36,6 +38,7 @@ type DbTransaction = Parameters<Parameters<Database["transaction"]>[0]>[0];
 export class ProgressionService {
   constructor(
     @Inject(DB) private readonly db: Database,
+    private readonly usersRepository: UsersRepository,
   ) {}
 
   recordActivity(userId: string, input: RecordActivityInput): Promise<PublicUser> {
@@ -81,23 +84,40 @@ export class ProgressionService {
     const normalizedLessonId = lessonId.trim();
     if (!normalizedLessonId) throw new BadRequestException("Lesson id is required");
 
-    const result = await this.mutateUser(userId, (user) => {
-      if (user.finishedLessons.includes(normalizedLessonId)) return {};
-      const streak = this.withToday(user.streak);
-      return {
-        streak,
-        finishedLessons: [...user.finishedLessons, normalizedLessonId],
-        exp: user.exp + this.reward(30, streak),
-      };
-    }, { key: "complete_lesson", increment: 1 }, async (transaction) => {
+    await this.db.transaction(async (transaction) => {
+      const [user] = await transaction
+        .select()
+        .from(users)
+        .where(eq(users.id, userId))
+        .for("update");
+      if (!user) throw new NotFoundException("User not found");
+
       const [lesson] = await transaction
         .select({ id: lessons.id })
         .from(lessons)
         .where(eq(lessons.id, normalizedLessonId))
         .limit(1);
       if (!lesson) throw new NotFoundException("Lesson not found");
+
+      const [completion] = await transaction
+        .select({ lessonId: userLessonCompletions.lessonId })
+        .from(userLessonCompletions)
+        .where(and(
+          eq(userLessonCompletions.userId, userId),
+          eq(userLessonCompletions.lessonId, normalizedLessonId),
+        ))
+        .limit(1);
+      if (completion) return;
+
+      const streak = this.withToday(user.streak);
+      await transaction.insert(userLessonCompletions).values({ userId, lessonId: normalizedLessonId });
+      await transaction
+        .update(users)
+        .set({ streak, exp: user.exp + this.reward(30, streak), updatedAt: new Date() })
+        .where(eq(users.id, userId));
+      await this.updateQuestInTransaction(transaction, userId, { key: "complete_lesson", increment: 1 });
     });
-    return result.user;
+    return this.currentUser(userId);
   }
 
   async submitExerciseAnswer(
@@ -111,7 +131,7 @@ export class ProgressionService {
       throw new BadRequestException("Module, word and answer are required");
     }
 
-    return this.db.transaction(async (transaction) => {
+    await this.db.transaction(async (transaction) => {
       const [user] = await transaction
         .select()
         .from(users)
@@ -134,11 +154,14 @@ export class ProgressionService {
       const [userProgress] = await transaction
         .select()
         .from(progress)
-        .where(and(eq(progress.userName, user.email), eq(progress.moduleName, moduleName)))
+        .where(and(
+          eq(progress.userId, userId),
+          eq(progress.learningModuleId, learningModule.id),
+        ))
         .for("update");
       const learned = userProgress?.learned ?? [];
       const learnedNewWord = !learned.some(([learnedWord]) => learnedWord === canonicalPair[0]);
-      if (!learnedNewWord) return toPublicUser(user);
+      if (!learnedNewWord) return;
 
       const updatedLearned: WordPair[] = [...learned, canonicalPair];
       if (userProgress) {
@@ -148,8 +171,8 @@ export class ProgressionService {
           .where(eq(progress.id, userProgress.id));
       } else {
         await transaction.insert(progress).values({
-          userName: user.email,
-          moduleName,
+          userId,
+          learningModuleId: learningModule.id,
           learned: updatedLearned,
         });
       }
@@ -170,15 +193,15 @@ export class ProgressionService {
         key: "learn_words",
         increment: 1,
       });
-      return toPublicUser(updatedUser);
     });
+    return this.currentUser(userId);
   }
 
   async resetExerciseProgress(userId: string, moduleName: string): Promise<PublicUser> {
     const normalizedModuleName = moduleName.trim();
     if (!normalizedModuleName) throw new BadRequestException("Module is required");
 
-    return this.db.transaction(async (transaction) => {
+    await this.db.transaction(async (transaction) => {
       const [user] = await transaction
         .select()
         .from(users)
@@ -197,11 +220,11 @@ export class ProgressionService {
         .update(progress)
         .set({ learned: [] })
         .where(and(
-          eq(progress.userName, user.email),
-          eq(progress.moduleName, normalizedModuleName),
+          eq(progress.userId, userId),
+          eq(progress.learningModuleId, learningModule.id),
         ));
-      return toPublicUser(user);
     });
+    return this.currentUser(userId);
   }
 
   async completeDailyQuiz(userId: string, input: CompleteDailyQuizInput): Promise<PublicUser> {
@@ -225,7 +248,7 @@ export class ProgressionService {
       const learnedRows = await transaction
         .select({ learned: progress.learned })
         .from(progress)
-        .where(eq(progress.userName, user.email));
+        .where(eq(progress.userId, user.id));
       const learnedWords = new Set(
         learnedRows.flatMap(({ learned }) => learned.map(([word]) => word)),
       );
@@ -243,7 +266,7 @@ export class ProgressionService {
     questUpdate?: QuestUpdate,
     validate?: (transaction: DbTransaction, user: UserRow) => Promise<void>,
   ): Promise<ProgressionResult> {
-    return this.db.transaction(async (transaction) => {
+    const changed = await this.db.transaction(async (transaction) => {
       const [user] = await transaction
         .select()
         .from(users)
@@ -254,7 +277,7 @@ export class ProgressionService {
       if (validate) await validate(transaction, user);
 
       const values = mutation(user);
-      if (Object.keys(values).length === 0) return { user: toPublicUser(user), changed: false };
+      if (Object.keys(values).length === 0) return false;
 
       const [updated] = await transaction
         .update(users)
@@ -264,8 +287,9 @@ export class ProgressionService {
       if (!updated) throw new NotFoundException("User not found");
 
       if (questUpdate) await this.updateQuestInTransaction(transaction, userId, questUpdate);
-      return { user: toPublicUser(updated), changed: true };
+      return true;
     });
+    return { user: await this.currentUser(userId), changed };
   }
 
   private async updateQuestInTransaction(
@@ -331,5 +355,11 @@ export class ProgressionService {
 
   private today(): string {
     return new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Warsaw" }).format(new Date());
+  }
+
+  private async currentUser(userId: string): Promise<PublicUser> {
+    const user = await this.usersRepository.findById(userId);
+    if (!user) throw new NotFoundException("User not found");
+    return toPublicUser(user);
   }
 }

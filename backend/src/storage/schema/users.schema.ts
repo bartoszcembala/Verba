@@ -1,7 +1,7 @@
 import { boolean, doublePrecision, jsonb, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 import { pgTable } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
-import type { Friend, LatestActivity, QuizState, StudyTimeEntry } from "./types";
+import type { LatestActivity, QuizState, StudyTimeEntry } from "./types";
 
 export const users = pgTable(
   "users",
@@ -15,10 +15,6 @@ export const users = pgTable(
     timeSpentLearning: jsonb("time_spent_learning").$type<StudyTimeEntry[]>().notNull().default([]),
     premium: boolean("premium").notNull().default(false),
     exp: doublePrecision("exp").notNull().default(0),
-    finishedLessons: jsonb("finished_lessons").$type<string[]>().notNull().default([]),
-    friends: jsonb("friends").$type<Friend[]>().notNull().default([
-      { name: "Bartosz Cembala", friendId: "6a26d73f0bdc4ef25037767d", avatar: "5" },
-    ]),
     avatar: text("avatar").notNull().default("1"),
     quiz: jsonb("quiz").$type<QuizState>().notNull().default({ date: "", finished: false }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

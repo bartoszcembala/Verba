@@ -1,5 +1,10 @@
 import type { Friend, LatestActivity, QuizState, StudyTimeEntry, UserRow } from "../storage/schema";
 
+export type UserWithRelationships = UserRow & {
+  finishedLessons: string[];
+  friends: Friend[];
+};
+
 export type PublicUser = {
   _id: string;
   __v: number;
@@ -26,8 +31,6 @@ export type CreateUserInput = {
   timeSpentLearning?: StudyTimeEntry[];
   premium?: boolean;
   exp?: number;
-  finishedLessons?: string[];
-  friends?: Friend[];
   avatar?: string;
   quiz?: QuizState;
 };
@@ -37,7 +40,7 @@ export type UpdateUserInput = Partial<Omit<CreateUserInput, "id" | "passwordHash
   passwordHash?: string;
 };
 
-export const toPublicUser = (user: UserRow): PublicUser => ({
+export const toPublicUser = (user: UserWithRelationships): PublicUser => ({
   _id: user.id,
   __v: 0,
   name: user.name,

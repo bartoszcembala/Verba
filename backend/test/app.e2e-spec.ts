@@ -63,8 +63,8 @@ function responseData(response: ApiResult): JsonRecord {
   return response.body.data as JsonRecord;
 }
 
-async function signup(): Promise<{ cookie: string; user: JsonRecord }> {
-  const response = await request("/api/users/signup", { method: "POST", body: signupInput });
+async function signup(input = signupInput): Promise<{ cookie: string; user: JsonRecord }> {
+  const response = await request("/api/users/signup", { method: "POST", body: input });
   assert.equal(response.status, 201);
   const data = responseData(response);
   assert.ok(data.user && typeof data.user === "object");
@@ -149,6 +149,40 @@ describe("authentication", () => {
     const response = await request("/api/users/me");
     assert.equal(response.status, 401);
   });
+
+  it("stores friendships as user references and returns current profile data", async () => {
+    const owner = await signup();
+    const friend = await signup({
+      name: "Second Learner",
+      email: "friend@example.com",
+      password: "strong-password",
+      passwordConfirm: "strong-password",
+    });
+
+    const updated = await request("/api/users/me", {
+      method: "PATCH",
+      cookie: owner.cookie,
+      body: { friends: [{ friendId: friend.user._id, name: "Forged Name", avatar: "99" }] },
+    });
+    assert.equal(updated.status, 200);
+    assert.deepEqual(responseData(updated).friends, [{
+      friendId: friend.user._id,
+      name: "Second Learner",
+      avatar: "1",
+    }]);
+
+    await request("/api/users/me", {
+      method: "PATCH",
+      cookie: friend.cookie,
+      body: { name: "Renamed Friend", avatar: "3" },
+    });
+    const refreshed = responseData(await request("/api/users/me", { cookie: owner.cookie }));
+    assert.deepEqual(refreshed.friends, [{
+      friendId: friend.user._id,
+      name: "Renamed Friend",
+      avatar: "3",
+    }]);
+  });
 });
 
 describe("progression", () => {
@@ -220,17 +254,34 @@ describe("progression", () => {
     assert.equal(duplicate.status, 201);
     assert.equal(responseData(duplicate).exp, 10.1);
 
+    const renamed = await request("/api/users/me", {
+      method: "PATCH",
+      cookie,
+      body: { email: "renamed@example.com" },
+    });
+    assert.equal(renamed.status, 200);
+    const progressResponse = await request("/api/progress/me", { cookie });
+    assert.equal(progressResponse.status, 200);
+    const progressRows = progressResponse.body.data as JsonRecord[];
+    assert.equal(progressRows[0]?.userName, "renamed@example.com");
+    assert.equal(progressRows[0]?.moduleName, "e2e-module");
+
     const quests = responseData(await request("/api/daily-quests/me", { cookie }));
     const wordsQuest = (quests.quests as JsonRecord[]).find((quest) => quest.key === "learn_words");
     assert.equal(wordsQuest?.progress, 1);
   });
 
   it("accepts a passed daily quiz and prevents repeated XP", async () => {
-    const { cookie } = await signup();
+    const { cookie, user } = await signup();
     const quizWords = ["uno", "dos", "tres", "cuatro", "cinco"];
+    const [learningModule] = await db.insert(learningModules).values({
+      title: "quiz-module",
+      displayName: "Quiz Module",
+      words: quizWords.map((word) => [word, `${word}-translation`]),
+    }).returning();
     await db.insert(progress).values({
-      userName: signupInput.email,
-      moduleName: "quiz-module",
+      userId: user._id as string,
+      learningModuleId: learningModule.id,
       learned: quizWords.map((word) => [word, `${word}-translation`]),
     });
 
@@ -255,5 +306,29 @@ describe("progression", () => {
     const quizQuest = (quests.quests as JsonRecord[]).find((quest) => quest.key === "daily_quiz");
     assert.equal(quizQuest?.progress, 1);
     assert.equal(quizQuest?.completed, true);
+  });
+
+  it("returns normalized lesson exercise relationships in the existing API shape", async () => {
+    await db.insert(learningModules).values({
+      title: "related-module",
+      displayName: "Related Module",
+      words: [],
+    });
+    const created = await request("/api/lesson", {
+      method: "POST",
+      body: {
+        title: "related-lesson",
+        number: 2,
+        displayTitle: "Related Lesson",
+        html: "<p>Relationship test</p>",
+        relatedExercises: ["related-module"],
+      },
+    });
+    assert.equal(created.status, 201);
+
+    const listed = await request("/api/lesson");
+    assert.equal(listed.status, 200);
+    const lessonRows = listed.body.data as JsonRecord[];
+    assert.deepEqual(lessonRows[0]?.relatedExercises, ["related-module"]);
   });
 });

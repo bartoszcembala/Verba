@@ -25,9 +25,10 @@ export const lessons = pgTable(
     number: integer("number").notNull(),
     displayTitle: text("display_title").notNull(),
     html: text("html").notNull(),
-    relatedExercises: jsonb("related_exercises").$type<string[]>().notNull().default([]),
     type: text("type"),
     level: text("level"),
   },
   (table) => [uniqueIndex("lessons_title_unique").on(table.title)],
 );
+
+export type LessonRow = typeof lessons.$inferSelect;
