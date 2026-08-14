@@ -21,6 +21,7 @@ export interface User {
   __v: number;
   name: string;
   email: string;
+  role: "user" | "admin";
   password: string;
   latestActivity: string[][];
   streak: string[];

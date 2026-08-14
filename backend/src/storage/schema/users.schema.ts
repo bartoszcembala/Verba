@@ -1,7 +1,10 @@
 import { boolean, doublePrecision, jsonb, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
-import { pgTable } from "drizzle-orm/pg-core";
+import { pgEnum, pgTable } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import type { LatestActivity, QuizState, StudyTimeEntry } from "./types";
+
+export const userRole = pgEnum("user_role", ["user", "admin"]);
+export type UserRole = (typeof userRole.enumValues)[number];
 
 export const users = pgTable(
   "users",
@@ -10,6 +13,7 @@ export const users = pgTable(
     name: text("name").notNull(),
     email: text("email").notNull(),
     passwordHash: text("password_hash").notNull(),
+    role: userRole("role").notNull().default("user"),
     latestActivity: jsonb("latest_activity").$type<LatestActivity>().notNull().default([]),
     streak: jsonb("streak").$type<string[]>().notNull().default([]),
     timeSpentLearning: jsonb("time_spent_learning").$type<StudyTimeEntry[]>().notNull().default([]),

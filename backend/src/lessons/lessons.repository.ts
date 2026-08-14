@@ -47,6 +47,43 @@ export class LessonsRepository {
     return { ...row, relatedExercises: [...new Set(relatedExercises)] };
   }
 
+  async update(id: string, input: Partial<LessonInput>): Promise<LessonWithRelationships | undefined> {
+    const { id: _ignoredId, relatedExercises, ...lessonInput } = input;
+    const row = await this.db.transaction(async (transaction) => {
+      const [updated] = await transaction
+        .update(lessons)
+        .set(lessonInput)
+        .where(eq(lessons.id, id))
+        .returning();
+      if (!updated || relatedExercises === undefined) return updated;
+
+      const uniqueTitles = [...new Set(relatedExercises)];
+      const modules = uniqueTitles.length === 0
+        ? []
+        : await transaction
+          .select({ id: learningModules.id })
+          .from(learningModules)
+          .where(inArray(learningModules.title, uniqueTitles));
+      if (modules.length !== uniqueTitles.length) {
+        throw new BadRequestException("One or more related exercises do not exist");
+      }
+
+      await transaction.delete(lessonRelatedExercises).where(eq(lessonRelatedExercises.lessonId, id));
+      if (modules.length > 0) {
+        await transaction.insert(lessonRelatedExercises).values(
+          modules.map(({ id: learningModuleId }) => ({ lessonId: id, learningModuleId })),
+        );
+      }
+      return updated;
+    });
+    return row ? (await this.hydrate([row]))[0] : undefined;
+  }
+
+  async delete(id: string): Promise<boolean> {
+    const deleted = await this.db.delete(lessons).where(eq(lessons.id, id)).returning({ id: lessons.id });
+    return deleted.length > 0;
+  }
+
   private async hydrate(rows: LessonRow[]): Promise<LessonWithRelationships[]> {
     if (rows.length === 0) return [];
     const related = await this.db

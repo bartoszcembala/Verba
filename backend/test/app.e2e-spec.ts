@@ -4,6 +4,7 @@ import type { AddressInfo } from "node:net";
 import type { INestApplication } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import cookieParser from "cookie-parser";
+import { eq } from "drizzle-orm";
 import type { Sql } from "postgres";
 import { AppModule } from "../src/app.module";
 import { DB, POSTGRES_CLIENT } from "../src/storage/db/db.constants";
@@ -104,6 +105,7 @@ describe("authentication", () => {
     const { cookie, user } = await signup();
 
     assert.equal(user.email, signupInput.email);
+    assert.equal(user.role, "user");
     assert.equal(user.premium, false);
     assert.equal("password" in user, false);
     assert.equal("passwordHash" in user, false);
@@ -308,14 +310,46 @@ describe("progression", () => {
     assert.equal(quizQuest?.completed, true);
   });
 
-  it("returns normalized lesson exercise relationships in the existing API shape", async () => {
-    await db.insert(learningModules).values({
+  it("allows only administrators to manage modules and lessons", async () => {
+    const { cookie, user } = await signup();
+    const moduleInput = {
       title: "related-module",
       displayName: "Related Module",
       words: [],
+    };
+
+    const unauthenticated = await request("/api/modules", {
+      method: "POST",
+      body: moduleInput,
     });
+    assert.equal(unauthenticated.status, 401);
+
+    const forbidden = await request("/api/modules", {
+      method: "POST",
+      cookie,
+      body: moduleInput,
+    });
+    assert.equal(forbidden.status, 403);
+
+    await db.update(users).set({ role: "admin" }).where(eq(users.id, user._id as string));
+    const createdModule = await request("/api/modules", {
+      method: "POST",
+      cookie,
+      body: moduleInput,
+    });
+    assert.equal(createdModule.status, 201);
+    const module = (responseData(createdModule).module as JsonRecord);
+
+    const updatedModule = await request(`/api/modules/${module._id as string}`, {
+      method: "PATCH",
+      cookie,
+      body: { displayName: "Updated Related Module" },
+    });
+    assert.equal(updatedModule.status, 200);
+
     const created = await request("/api/lesson", {
       method: "POST",
+      cookie,
       body: {
         title: "related-lesson",
         number: 2,
@@ -325,10 +359,31 @@ describe("progression", () => {
       },
     });
     assert.equal(created.status, 201);
+    const lesson = responseData(created).lesson as JsonRecord;
+
+    const updatedLesson = await request(`/api/lesson/${lesson._id as string}`, {
+      method: "PATCH",
+      cookie,
+      body: { displayTitle: "Updated Lesson", relatedExercises: ["related-module"] },
+    });
+    assert.equal(updatedLesson.status, 200);
+    assert.equal(responseData(updatedLesson).displayTitle, "Updated Lesson");
 
     const listed = await request("/api/lesson");
     assert.equal(listed.status, 200);
     const lessonRows = listed.body.data as JsonRecord[];
     assert.deepEqual(lessonRows[0]?.relatedExercises, ["related-module"]);
+
+    const deletedLesson = await request(`/api/lesson/${lesson._id as string}`, {
+      method: "DELETE",
+      cookie,
+    });
+    assert.equal(deletedLesson.status, 200);
+
+    const deletedModule = await request(`/api/modules/${module._id as string}`, {
+      method: "DELETE",
+      cookie,
+    });
+    assert.equal(deletedModule.status, 200);
   });
 });

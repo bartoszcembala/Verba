@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { LessonsRepository, type LessonInput } from "./lessons.repository";
 
 @Injectable()
@@ -11,6 +11,16 @@ export class LessonsService {
 
   async create(body: LessonInput) {
     return this.serialize(await this.repository.create(body));
+  }
+
+  async update(id: string, body: Partial<LessonInput>) {
+    const lesson = await this.repository.update(id, body);
+    if (!lesson) throw new NotFoundException("Lesson not found");
+    return this.serialize(lesson);
+  }
+
+  async delete(id: string) {
+    if (!await this.repository.delete(id)) throw new NotFoundException("Lesson not found");
   }
 
   private serialize(row: Awaited<ReturnType<LessonsRepository["create"]>>) {

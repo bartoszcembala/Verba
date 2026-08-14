@@ -58,3 +58,13 @@ cd backend && npm run test:e2e
 ```
 
 The runner starts a disposable PostgreSQL container on an automatically assigned local port, applies migrations, runs the API tests, and stops the test database. Set `TEST_DATABASE_URL` to use a dedicated external test database instead.
+
+## Administrator access
+
+New accounts have the `user` role. After applying database migrations, promote an existing account from the backend directory:
+
+```bash
+npm run user:promote -- admin@example.com
+```
+
+Only administrators can create, update, or delete learning modules and lessons. Reading learning content remains public.

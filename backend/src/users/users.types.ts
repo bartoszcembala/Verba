@@ -1,4 +1,4 @@
-import type { Friend, LatestActivity, QuizState, StudyTimeEntry, UserRow } from "../storage/schema";
+import type { Friend, LatestActivity, QuizState, StudyTimeEntry, UserRole, UserRow } from "../storage/schema";
 
 export type UserWithRelationships = UserRow & {
   finishedLessons: string[];
@@ -10,6 +10,7 @@ export type PublicUser = {
   __v: number;
   name: string;
   email: string;
+  role: UserRole;
   latestActivity: LatestActivity;
   streak: string[];
   timeSpentLearning: StudyTimeEntry[];
@@ -26,6 +27,7 @@ export type CreateUserInput = {
   name: string;
   email: string;
   passwordHash: string;
+  role?: UserRole;
   latestActivity?: LatestActivity;
   streak?: string[];
   timeSpentLearning?: StudyTimeEntry[];
@@ -45,6 +47,7 @@ export const toPublicUser = (user: UserWithRelationships): PublicUser => ({
   __v: 0,
   name: user.name,
   email: user.email,
+  role: user.role,
   latestActivity: user.latestActivity,
   streak: user.streak,
   timeSpentLearning: user.timeSpentLearning,
