@@ -33,14 +33,18 @@ Make sure Node.js 20+, npm, Docker, and OpenSSL are installed, then run:
 ./setup.sh
 ```
 
-The setup script creates missing environment files, installs frontend and backend dependencies, starts PostgreSQL, applies Drizzle migrations, and verifies both builds. Existing `.env` files and database data are preserved.
+The setup script creates missing environment files, installs frontend and backend dependencies, starts PostgreSQL, applies Drizzle migrations, verifies both builds, and runs the frontend and backend. Existing `.env` files and database data are preserved. Press Ctrl+C to stop both application processes.
 
-After setup, start the applications in separate terminals:
+## Stripe webhooks
 
-```bash
-cd backend && npm run start:dev
+Set `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` in `backend/.env`. Configure Stripe to send `checkout.session.completed` and `checkout.session.async_payment_succeeded` events to:
+
+```text
+https://your-api-domain/api/checkout/webhook
 ```
 
+For local development, forward Stripe events to the backend and copy the printed `whsec_...` value into `STRIPE_WEBHOOK_SECRET`:
+
 ```bash
-cd frontend && npm run dev
+stripe listen --forward-to localhost:5001/api/checkout/webhook
 ```

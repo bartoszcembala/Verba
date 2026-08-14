@@ -37,7 +37,7 @@ export function useCurrentUser() {
     retry: false,
   });
 
-  return { user: query.data, isLoadingUser: query.isLoading };
+  return { user: query.data, isLoadingUser: query.isLoading, refetchUser: query.refetch };
 }
 
 export function useLogin() {
