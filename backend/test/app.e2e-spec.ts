@@ -34,11 +34,12 @@ let postgresClient: Sql;
 
 async function request(
   path: string,
-  options: { body?: unknown; cookie?: string; method?: string } = {},
+  options: { body?: unknown; cookie?: string; ip?: string; method?: string } = {},
 ): Promise<ApiResult> {
   const headers = new Headers();
   if (options.body !== undefined) headers.set("content-type", "application/json");
   if (options.cookie) headers.set("cookie", options.cookie);
+  if (options.ip) headers.set("x-forwarded-for", options.ip);
 
   const response = await fetch(`${baseUrl}${path}`, {
     method: options.method ?? "GET",
@@ -65,8 +66,14 @@ function responseData(response: ApiResult): JsonRecord {
   return response.body.data as JsonRecord;
 }
 
+let signupIp = 1;
+
 async function signup(input = signupInput): Promise<{ cookie: string; user: JsonRecord }> {
-  const response = await request("/api/users/signup", { method: "POST", body: input });
+  const response = await request("/api/users/signup", {
+    method: "POST",
+    body: input,
+    ip: `198.51.100.${signupIp++}`,
+  });
   assert.equal(response.status, 201);
   const data = responseData(response);
   assert.ok(data.user && typeof data.user === "object");
@@ -78,6 +85,7 @@ before(async () => {
   assert.equal(process.env.NODE_ENV, "test", "E2E tests must run with NODE_ENV=test");
 
   app = await NestFactory.create(AppModule, { logger: ["error"], rawBody: true });
+  app.getHttpAdapter().getInstance().set("trust proxy", 1);
   app.setGlobalPrefix("api");
   app.use(cookieParser());
   app.useGlobalPipes(createAppValidationPipe());
@@ -167,6 +175,47 @@ describe("authentication", () => {
   it("protects authenticated endpoints", async () => {
     const response = await request("/api/users/me");
     assert.equal(response.status, 401);
+  });
+
+  it("rate limits repeated login attempts by IP address", async () => {
+    const ip = "203.0.113.10";
+
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+      const response = await request("/api/users/login", {
+        method: "POST",
+        body: { email: "missing@example.com", password: "incorrect-password" },
+        ip,
+      });
+      assert.equal(response.status, 401);
+    }
+
+    const blocked = await request("/api/users/login", {
+      method: "POST",
+      body: { email: "missing@example.com", password: "incorrect-password" },
+      ip,
+    });
+    assert.equal(blocked.status, 429);
+  });
+
+  it("rate limits repeated signup attempts by IP address", async () => {
+    const ip = "203.0.113.11";
+    const invalidSignup = { ...signupInput, email: "not-an-email" };
+
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+      const response = await request("/api/users/signup", {
+        method: "POST",
+        body: invalidSignup,
+        ip,
+      });
+      assert.equal(response.status, 400);
+    }
+
+    const blocked = await request("/api/users/signup", {
+      method: "POST",
+      body: invalidSignup,
+      ip,
+    });
+    assert.equal(blocked.status, 429);
   });
 
   it("stores friendships as user references and returns current profile data", async () => {
