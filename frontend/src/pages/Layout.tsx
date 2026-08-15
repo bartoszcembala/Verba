@@ -24,14 +24,10 @@ function Layout() {
   const [profileOpen, setProfileOpen] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const { user, isLoadingUser } = useCurrentUser();
+  const { user } = useCurrentUser();
   const { logout } = useLogout();
   const { touchStreak } = useProgression();
   useDailyStudyTimer();
-
-  useEffect(() => {
-    if (!isLoadingUser && !user) navigate("/login");
-  }, [isLoadingUser, navigate, user]);
 
   const userId = user?._id;
   const [darkMode, setDarkMode] = useState(

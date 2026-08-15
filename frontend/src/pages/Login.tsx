@@ -1,7 +1,6 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useLogin } from "../lib/queries/userQueries";
 
 interface LoginFormInputs {
@@ -13,6 +12,15 @@ function Login() {
   const { register, handleSubmit, reset } = useForm<LoginFormInputs>();
   const { login } = useLogin();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const requestedPath = (location.state as { from?: unknown } | null)?.from;
+  const destination = typeof requestedPath === "string"
+    && requestedPath.startsWith("/")
+    && !requestedPath.startsWith("//")
+    && requestedPath !== "/login"
+    ? requestedPath
+    : "/";
 
   async function authenticate(credentials: LoginFormInputs) {
     await toast.promise(login(credentials), {
@@ -20,7 +28,7 @@ function Login() {
       success: "Logged in successfully!",
       error: "Logging went wrong!",
     });
-    navigate("/");
+    navigate(destination, { replace: true });
     reset();
   }
 

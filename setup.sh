@@ -24,6 +24,37 @@ cleanup_on_error() {
     exit "$exit_code"
 }
 
+terminate_process_tree() {
+    local parent_pid="$1"
+    local child_pid
+
+    if command -v pgrep > /dev/null 2>&1; then
+        while IFS= read -r child_pid; do
+            [[ -n "$child_pid" ]] && terminate_process_tree "$child_pid"
+        done < <(pgrep -P "$parent_pid" 2>/dev/null || true)
+    fi
+
+    if kill -0 "$parent_pid" 2>/dev/null; then
+        kill "$parent_pid" 2>/dev/null || true
+    fi
+}
+
+assert_port_available() {
+    local port="$1"
+    local service_name="$2"
+    local listener_pid=""
+
+    if command -v lsof > /dev/null 2>&1; then
+        listener_pid="$(lsof -nP -iTCP:"$port" -sTCP:LISTEN -t 2>/dev/null | head -n 1 || true)"
+    fi
+
+    if [[ -n "$listener_pid" ]]; then
+        echo -e "  ${RED}✗${NC} ${service_name} port ${port} is already used by PID ${listener_pid}"
+        echo "    Stop the existing process, then run ./setup.sh again."
+        return 1
+    fi
+}
+
 cleanup_servers() {
     local exit_code=$?
     trap - EXIT INT TERM
@@ -31,13 +62,8 @@ cleanup_servers() {
     echo ""
     echo -e "${YELLOW}Stopping Verba services...${NC}"
 
-    if [[ -n "$FRONTEND_PID" ]] && kill -0 "$FRONTEND_PID" 2>/dev/null; then
-        kill "$FRONTEND_PID" 2>/dev/null || true
-    fi
-
-    if [[ -n "$BACKEND_PID" ]] && kill -0 "$BACKEND_PID" 2>/dev/null; then
-        kill "$BACKEND_PID" 2>/dev/null || true
-    fi
+    [[ -n "$FRONTEND_PID" ]] && terminate_process_tree "$FRONTEND_PID"
+    [[ -n "$BACKEND_PID" ]] && terminate_process_tree "$BACKEND_PID"
 
     [[ -n "$FRONTEND_PID" ]] && wait "$FRONTEND_PID" 2>/dev/null || true
     [[ -n "$BACKEND_PID" ]] && wait "$BACKEND_PID" 2>/dev/null || true
@@ -164,6 +190,9 @@ if ! docker compose --project-directory "$BACKEND_DIR" ps --status running --ser
     exit 1
 fi
 echo -e "  ${GREEN}✓${NC} PostgreSQL container is running"
+assert_port_available 5001 "Backend"
+assert_port_available 5173 "Frontend"
+echo -e "  ${GREEN}✓${NC} Application ports are available"
 echo ""
 
 trap - ERR
