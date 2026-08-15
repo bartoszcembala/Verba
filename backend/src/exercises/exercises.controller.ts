@@ -1,7 +1,7 @@
 import { Body, Controller, Post, UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "../common/auth/jwt-auth.guard";
 import { ExercisesService } from "./exercises.service";
-import type { GenerateExerciseInput } from "./exercises.types";
+import { GenerateExerciseInput } from "./exercises.types";
 
 @UseGuards(JwtAuthGuard)
 @Controller("exercises")

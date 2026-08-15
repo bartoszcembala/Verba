@@ -3,6 +3,7 @@ import { NestFactory } from "@nestjs/core";
 import { ConfigService } from "@nestjs/config";
 import cookieParser from "cookie-parser";
 import { AppModule } from "./app.module";
+import { createAppValidationPipe } from "./common/validation/app-validation.pipe";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { rawBody: true });
@@ -10,6 +11,7 @@ async function bootstrap() {
 
   app.setGlobalPrefix("api");
   app.use(cookieParser());
+  app.useGlobalPipes(createAppValidationPipe());
   app.enableCors({
     origin: [
       config.get<string>("FRONTEND_URL", "http://localhost:5173"),

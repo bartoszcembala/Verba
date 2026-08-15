@@ -4,6 +4,7 @@ import { CurrentUser } from "../common/auth/current-user.decorator";
 import { JwtAuthGuard } from "../common/auth/jwt-auth.guard";
 import { apiResponse } from "../common/http/api-response";
 import { UsersService } from "./users.service";
+import { UpdateCurrentUserDto } from "./users.dto";
 
 @UseGuards(JwtAuthGuard)
 @Controller("users")
@@ -21,7 +22,7 @@ export class UsersController {
   }
 
   @Patch("me")
-  async updateCurrent(@CurrentUser() user: AuthUser, @Body() body: Record<string, unknown>) {
+  async updateCurrent(@CurrentUser() user: AuthUser, @Body() body: UpdateCurrentUserDto) {
     return apiResponse(await this.usersService.update(user._id, body));
   }
 

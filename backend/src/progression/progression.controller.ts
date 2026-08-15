@@ -4,7 +4,7 @@ import { CurrentUser } from "../common/auth/current-user.decorator";
 import { JwtAuthGuard } from "../common/auth/jwt-auth.guard";
 import { apiResponse } from "../common/http/api-response";
 import { ProgressionService } from "./progression.service";
-import type {
+import {
   CompleteDailyQuizInput,
   RecordActivityInput,
   RecordExerciseAnswerInput,

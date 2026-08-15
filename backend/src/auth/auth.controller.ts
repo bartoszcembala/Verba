@@ -1,7 +1,7 @@
 import { Body, Controller, Post, Res } from "@nestjs/common";
 import type { Response } from "express";
 import { AuthService } from "./auth.service";
-import type { LoginInput, SignupInput } from "./auth.types";
+import { LoginInput, SignupInput } from "./auth.types";
 
 @Controller("users")
 export class AuthController {

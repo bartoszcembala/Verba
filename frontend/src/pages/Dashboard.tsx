@@ -25,7 +25,7 @@ function Dashboard() {
 
   function handleAddLesson() {
     addLesson(
-      { title: "Main lesson", html: input },
+      { title: "Main lesson", number: 1, displayTitle: "Main lesson", html: input },
       
     );
   }

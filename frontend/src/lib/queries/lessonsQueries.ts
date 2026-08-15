@@ -5,6 +5,8 @@ import { apiUrl } from "../api";
 
 interface NewLessonInput {
   title: string;
+  number: number;
+  displayTitle: string;
   html: string;
 }
 
@@ -26,12 +28,12 @@ export function useLessons() {
 
 export function useAddLesson() {
   const mutation = useMutation<LessonInterface, Error, NewLessonInput>({
-    mutationFn: async ({ title, html }) => {
+    mutationFn: async ({ title, number, displayTitle, html }) => {
       const res = await fetch(apiUrl("/lesson/"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ title, html }),
+        body: JSON.stringify({ title, number, displayTitle, html }),
       });
 
       const json = await res.json();

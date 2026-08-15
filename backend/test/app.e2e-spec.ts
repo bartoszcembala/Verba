@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import { eq } from "drizzle-orm";
 import type { Sql } from "postgres";
 import { AppModule } from "../src/app.module";
+import { createAppValidationPipe } from "../src/common/validation/app-validation.pipe";
 import { DB, POSTGRES_CLIENT } from "../src/storage/db/db.constants";
 import type { Database } from "../src/storage/db/db.types";
 import { dailyQuestProgress, learningModules, lessons, progress, users } from "../src/storage/schema";
@@ -79,6 +80,7 @@ before(async () => {
   app = await NestFactory.create(AppModule, { logger: ["error"], rawBody: true });
   app.setGlobalPrefix("api");
   app.use(cookieParser());
+  app.useGlobalPipes(createAppValidationPipe());
   await app.listen(0, "127.0.0.1");
 
   const address = app.getHttpServer().address() as AddressInfo;
@@ -131,6 +133,21 @@ describe("authentication", () => {
     assert.equal(invalidLogin.status, 401);
   });
 
+  it("rejects malformed and unknown authentication fields", async () => {
+    const malformed = await request("/api/users/signup", {
+      method: "POST",
+      body: {
+        ...signupInput,
+        email: "not-an-email",
+        password: "short",
+        passwordConfirm: "short",
+        role: "admin",
+      },
+    });
+    assert.equal(malformed.status, 400);
+    assert.equal((await db.select().from(users)).length, 0);
+  });
+
   it("logs in with the correct password and clears the cookie on logout", async () => {
     await signup();
 
@@ -164,7 +181,7 @@ describe("authentication", () => {
     const updated = await request("/api/users/me", {
       method: "PATCH",
       cookie: owner.cookie,
-      body: { friends: [{ friendId: friend.user._id, name: "Forged Name", avatar: "99" }] },
+      body: { friends: [{ friendId: friend.user._id, name: "Forged Name", avatar: "5" }] },
     });
     assert.equal(updated.status, 200);
     assert.deepEqual(responseData(updated).friends, [{
@@ -184,6 +201,13 @@ describe("authentication", () => {
       name: "Renamed Friend",
       avatar: "3",
     }]);
+
+    const privilegeEscalation = await request("/api/users/me", {
+      method: "PATCH",
+      cookie: owner.cookie,
+      body: { role: "admin", premium: true },
+    });
+    assert.equal(privilegeEscalation.status, 400);
   });
 });
 
@@ -191,6 +215,23 @@ describe("progression", () => {
   it("rejects progression mutations without authentication", async () => {
     const response = await request("/api/progression/streak", { method: "POST" });
     assert.equal(response.status, 401);
+  });
+
+  it("rejects malformed progression payloads before service execution", async () => {
+    const { cookie } = await signup();
+    const wrongType = await request("/api/progression/study-time", {
+      method: "POST",
+      cookie,
+      body: { minutes: "10" },
+    });
+    assert.equal(wrongType.status, 400);
+
+    const unknownField = await request("/api/progression/activity", {
+      method: "POST",
+      cookie,
+      body: { path: "/lesson", label: "Lesson", exp: 100000 },
+    });
+    assert.equal(unknownField.status, 400);
   });
 
   it("awards lesson XP and quest progress only once", async () => {
@@ -332,6 +373,13 @@ describe("progression", () => {
     assert.equal(forbidden.status, 403);
 
     await db.update(users).set({ role: "admin" }).where(eq(users.id, user._id as string));
+    const malformedModule = await request("/api/modules", {
+      method: "POST",
+      cookie,
+      body: { ...moduleInput, words: [["missing-translation"]] },
+    });
+    assert.equal(malformedModule.status, 400);
+
     const createdModule = await request("/api/modules", {
       method: "POST",
       cookie,

@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import { UsersRepository } from "./users.repository";
 import type { CreateUserInput, PublicUser, UpdateUserInput } from "./users.types";
 import { toPublicUser } from "./users.types";
+import type { UpdateCurrentUserDto } from "./users.dto";
 
 type RawCreateUserBody = Omit<CreateUserInput, "passwordHash"> & {
   password: string;
@@ -29,23 +30,17 @@ export class UsersService {
     return toPublicUser(await this.repository.create({ ...rest, passwordHash }));
   }
 
-  async update(id: string, input: Record<string, unknown>): Promise<PublicUser> {
+  async update(id: string, input: UpdateCurrentUserDto): Promise<PublicUser> {
     const allowed: UpdateUserInput = {};
-    const keys: (keyof UpdateUserInput)[] = [
-      "name", "email", "avatar",
-    ];
-    for (const key of keys) {
-      if (input[key] !== undefined) Object.assign(allowed, { [key]: input[key] });
-    }
+    if (input.name !== undefined) allowed.name = input.name;
+    if (input.email !== undefined) allowed.email = input.email;
+    if (input.avatar !== undefined) allowed.avatar = input.avatar;
     if (typeof input.password === "string") allowed.passwordHash = await bcrypt.hash(input.password, 12);
     let user = await this.repository.update(id, allowed);
     if (!user) throw new NotFoundException("User not found");
 
     if (input.friends !== undefined) {
-      if (!Array.isArray(input.friends) || input.friends.some(
-        (friend) => !friend || typeof friend !== "object" || typeof (friend as { friendId?: unknown }).friendId !== "string",
-      )) throw new BadRequestException("Friends must contain valid user references");
-      const friendIds = input.friends.map((friend) => (friend as { friendId: string }).friendId);
+      const friendIds = input.friends.map((friend) => friend.friendId);
       if (!await this.repository.replaceFriends(id, friendIds)) {
         throw new BadRequestException("One or more friends do not exist");
       }
