@@ -12,5 +12,4 @@ export type AnswerStatus = "correct" | "wrong" | "";
 export type AnswerStat = {
   name: "correct" | "wrong";
   value: number;
-  color: string;
 };

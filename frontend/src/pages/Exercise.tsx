@@ -69,7 +69,7 @@ function Exercise({ initVerbs }: { initVerbs: WordPair[] }) {
           <Main session={session} />
 
           {/* Wykres */}
-          <Chart correct={session.stats} activeProgress={activeProgress} />
+          <Chart stats={session.stats} />
         </div>
     </>
   );

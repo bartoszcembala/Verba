@@ -216,8 +216,8 @@ export function useExerciseSession({
   const stats = useMemo(() => {
     const learned = activeProgress?.learned.length ?? 0;
     return [
-      { name: "correct" as const, value: learned, color: "#34563c" },
-      { name: "wrong" as const, value: Math.max(0, verbs.length - learned), color: "#563434" },
+      { name: "correct" as const, value: learned },
+      { name: "wrong" as const, value: Math.max(0, verbs.length - learned) },
     ];
   }, [activeProgress?.learned.length, verbs.length]);
 

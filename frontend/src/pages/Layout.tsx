@@ -66,7 +66,7 @@ function Layout() {
 
   useEffect(() => {
     if (!userId) return;
-    void touchStreak();
+    void touchStreak().catch(() => undefined);
   }, [touchStreak, userId]);
 
   async function handleLogout() {
