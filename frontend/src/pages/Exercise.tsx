@@ -1,4 +1,3 @@
-import "../index.css";
 import { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { useLocation } from "react-router-dom";
