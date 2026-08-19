@@ -1,21 +1,33 @@
-import { useRef, type KeyboardEvent } from "react";
+import { useEffect, useRef, type KeyboardEvent } from "react";
 import { FiCheckSquare } from "react-icons/fi";
 import Spinner from "../Spinner";
 import Letters from "./Letters";
 import type { ExerciseSession } from "./useExerciseSession";
 
 function Main({ session }: { session: ExerciseSession }) {
-  const { state } = session;
+  const { state, nextQuestion } = session;
   const inputRef = useRef<HTMLInputElement>(null);
   const prompt = state.prompt;
   const hasFeedback = state.phase === "feedback";
-  const isBusy = state.phase === "loading" || state.phase === "submitting";
+  const isBusy = state.phase === "loading";
+
+  useEffect(() => {
+    if (state.phase !== "feedback" || state.feedback !== "correct") return;
+
+    function handleFeedbackEnter(event: globalThis.KeyboardEvent) {
+      if (event.key !== "Enter" || event.repeat) return;
+      event.preventDefault();
+      void nextQuestion();
+    }
+
+    window.addEventListener("keydown", handleFeedbackEnter);
+    return () => window.removeEventListener("keydown", handleFeedbackEnter);
+  }, [nextQuestion, state.feedback, state.phase]);
 
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
     if (event.key !== "Enter") return;
     event.preventDefault();
-    if (hasFeedback) void session.nextQuestion();
-    else if (state.phase === "answering") void session.submitAnswer(state.input);
+    if (state.phase === "answering") void session.submitAnswer(state.input);
   }
 
   return (
@@ -120,7 +132,7 @@ function Main({ session }: { session: ExerciseSession }) {
                   </button>
                 ) : (
                   <button type="button" disabled={isBusy || !state.input.trim()} className="h-20 cursor-pointer rounded-lg bg-indigo-600 px-7 text-[1.35rem] font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60" onClick={() => void session.submitAnswer(state.input)}>
-                    {state.phase === "submitting" ? "Saving…" : "Check"}
+                    Check
                   </button>
                 )}
               </div>

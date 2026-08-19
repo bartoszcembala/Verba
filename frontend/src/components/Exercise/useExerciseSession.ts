@@ -14,7 +14,6 @@ export type ExercisePhase =
   | "ready"
   | "loading"
   | "answering"
-  | "submitting"
   | "feedback"
   | "complete"
   | "error";
@@ -38,9 +37,9 @@ type Action =
   | { type: "LOAD_PROMPT" }
   | { type: "PROMPT_READY"; prompt: ExercisePrompt }
   | { type: "PROMPT_FAILED"; message: string }
-  | { type: "SUBMIT" }
   | { type: "WRONG" }
   | { type: "CORRECT"; word: string }
+  | { type: "RESTORE_WORD"; word: WordPair }
   | { type: "RESET_ERROR" };
 
 const initialState: State = {
@@ -57,7 +56,7 @@ const initialState: State = {
 function reducer(state: State, action: Action): State {
   switch (action.type) {
     case "SET_SELECTION": {
-      if (state.phase === "loading" || state.phase === "submitting") return state;
+      if (state.phase === "loading") return state;
       const noWords = action.words.length === 0;
       const shouldReturnToReady = !state.prompt || ["selecting", "complete", "error"].includes(state.phase);
       return {
@@ -68,7 +67,7 @@ function reducer(state: State, action: Action): State {
       };
     }
     case "SET_EXERCISE_TYPE":
-      if (state.phase === "loading" || state.phase === "submitting") return state;
+      if (state.phase === "loading") return state;
       return {
         ...state,
         exerciseType: action.exerciseType,
@@ -88,8 +87,6 @@ function reducer(state: State, action: Action): State {
       return { ...state, phase: "answering", prompt: action.prompt, input: "", feedback: "", error: null };
     case "PROMPT_FAILED":
       return { ...state, phase: "error", prompt: null, error: action.message };
-    case "SUBMIT":
-      return { ...state, phase: "submitting", feedback: "", error: null };
     case "WRONG":
       return { ...state, phase: "feedback", feedback: "wrong" };
     case "CORRECT": {
@@ -101,6 +98,13 @@ function reducer(state: State, action: Action): State {
         feedback: "correct",
       };
     }
+    case "RESTORE_WORD":
+      if (state.selectedWords.some(([word]) => word === action.word[0])) return state;
+      return {
+        ...state,
+        selectedWords: [...state.selectedWords, action.word],
+        phase: state.phase === "complete" ? "feedback" : state.phase,
+      };
     case "RESET_ERROR":
       return { ...state, phase: state.selectedWords.length ? "ready" : "selecting", error: null };
   }
@@ -154,7 +158,7 @@ export function useExerciseSession({
   }, [activeProgress?.learned, setSelection, verbs]);
 
   const nextQuestion = useCallback(async () => {
-    if (state.selectedWords.length === 0 || state.phase === "loading" || state.phase === "submitting") return;
+    if (state.selectedWords.length === 0 || state.phase === "loading") return;
     dispatch({ type: "LOAD_PROMPT" });
     try {
       const prompt = state.exerciseType === "translate"
@@ -169,29 +173,33 @@ export function useExerciseSession({
     }
   }, [state.exerciseType, state.phase, state.selectedWords, verbs]);
 
-  const submitAnswer = useCallback(async (answer: string) => {
-    if (!state.prompt || !user || state.phase === "submitting") return;
-    if (answer !== state.prompt.correctAnswer) {
+  const submitAnswer = useCallback((answer: string) => {
+    if (!state.prompt || !user || state.phase !== "answering") return;
+    const normalizedAnswer = answer.trim();
+    if (normalizedAnswer !== state.prompt.correctAnswer) {
       dispatch({ type: "WRONG" });
       toast.error("Wrong!");
       return;
     }
 
-    dispatch({ type: "SUBMIT" });
-    try {
-      await submitExerciseAnswer({
-        moduleName,
-        word: state.prompt.correctAnswer,
-        answer,
+    const correctWord = state.prompt.correctAnswer;
+    const wordPair = verbs.find(([word]) => word === correctWord);
+    dispatch({ type: "CORRECT", word: correctWord });
+    toast.success("Correct!");
+
+    void submitExerciseAnswer({
+      moduleName,
+      word: correctWord,
+      answer: normalizedAnswer,
+    })
+      .then(() => {
+        void queryClient.invalidateQueries({ queryKey: ["progress"] });
+      })
+      .catch(() => {
+        if (wordPair) dispatch({ type: "RESTORE_WORD", word: wordPair });
+        toast.error("Your answer was correct, but progress could not be saved. The word was added back.");
       });
-      await queryClient.invalidateQueries({ queryKey: ["progress"] });
-      dispatch({ type: "CORRECT", word: state.prompt.correctAnswer });
-      toast.success("Correct!");
-    } catch {
-      dispatch({ type: "PROMPT_FAILED", message: "Could not save your answer. Please try again." });
-      toast.error("Could not save your answer. Please try again.");
-    }
-  }, [moduleName, queryClient, state.phase, state.prompt, submitExerciseAnswer, user]);
+  }, [moduleName, queryClient, state.phase, state.prompt, submitExerciseAnswer, user, verbs]);
 
   const resetProgress = useCallback(async () => {
     await resetExerciseProgress(moduleName);
