@@ -116,7 +116,7 @@ function Main({ session }: { session: ExerciseSession }) {
                     <FiCheckSquare className="h-7 w-7" />
                   </button>
                   <input
-                    className="h-20 min-w-0 flex-1 bg-transparent text-[1.55rem]"
+                    className="h-20 min-w-0 flex-1 bg-transparent px-3 text-[1.55rem]"
                     type="text"
                     ref={inputRef}
                     value={state.input}
