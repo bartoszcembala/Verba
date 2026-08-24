@@ -1,5 +1,6 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import bcrypt from "bcrypt";
+import { DEMO_ACCOUNT_EMAIL } from "../common/auth/demo-account";
 import { UsersRepository } from "./users.repository";
 import type { CreateUserInput, PublicUser, UpdateUserInput } from "./users.types";
 import { toPublicUser } from "./users.types";
@@ -31,6 +32,7 @@ export class UsersService {
   }
 
   async update(id: string, input: UpdateCurrentUserDto): Promise<PublicUser> {
+    await this.assertMutableAccount(id);
     const allowed: UpdateUserInput = {};
     if (input.name !== undefined) allowed.name = input.name;
     if (input.email !== undefined) allowed.email = input.email;
@@ -50,7 +52,14 @@ export class UsersService {
     return toPublicUser(user);
   }
 
-  delete(id: string): Promise<void> {
+  async delete(id: string): Promise<void> {
+    await this.assertMutableAccount(id);
     return this.repository.delete(id);
+  }
+
+  private async assertMutableAccount(id: string): Promise<void> {
+    if (await this.repository.findEmailById(id) === DEMO_ACCOUNT_EMAIL) {
+      throw new ForbiddenException("The demo account cannot be edited or deleted");
+    }
   }
 }

@@ -229,6 +229,14 @@ npm run user:promote -- admin@example.com
 
 Administrators can create, update, and delete learning modules and lessons. Reading learning content remains public, while account data, progression commands, exercises, and premium operations require authentication.
 
+Create or reset the recruiter demo account from the backend directory:
+
+```bash
+npm run user:seed-demo
+```
+
+The command uses `PRODUCTION_DATABASE_URL` when it is set, otherwise it falls back to `DATABASE_URL`. It resets only the demo account and its own learning progress. The account signs in as `acc@demo.pl` with password `12345678`, has the regular `user` role, and cannot edit or delete its profile.
+
 ## Stripe webhooks
 
 Set `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` in `backend/.env`. Configure Stripe to deliver these events:

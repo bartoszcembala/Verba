@@ -23,6 +23,15 @@ export class UsersRepository {
     return user ? (await this.hydrate([user]))[0] : undefined;
   }
 
+  async findEmailById(id: string): Promise<string | undefined> {
+    const [user] = await this.db
+      .select({ email: users.email })
+      .from(users)
+      .where(eq(users.id, id))
+      .limit(1);
+    return user?.email;
+  }
+
   async create(input: CreateUserInput): Promise<UserWithRelationships> {
     const [user] = await this.db.insert(users).values({ ...input, email: input.email.toLowerCase() }).returning();
     return { ...user, finishedLessons: [], friends: [] };
