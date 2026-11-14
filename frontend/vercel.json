@@ -3,7 +3,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://verba-ywgu.onrender.com/api/:path*"
+      "destination": "https://verba-1-sqwf.onrender.com/api/:path*"
     },
     {
       "source": "/(.*)",

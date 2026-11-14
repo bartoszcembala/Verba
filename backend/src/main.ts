@@ -17,7 +17,7 @@ async function bootstrap() {
     origin: [
       config.get<string>("FRONTEND_URL", "http://localhost:5173"),
       "https://verba-ebon.vercel.app",
-      "https://verba-ywgu.onrender.com",
+      "https://verba-1-sqwf.onrender.com",
       "https://verba-i9dm972qa-bartoszs-projects-9616a4a5.vercel.app",
     ],
     credentials: true,
